@@ -56,7 +56,11 @@ export function Header({ title, subtitle }: HeaderProps) {
             .from('users')
             .select('full_name, email, avatar_url')
             .eq('id', user.id)
-            .single()
+            .maybeSingle<{
+              full_name: string | null
+              email: string | null
+              avatar_url: string | null
+            }>()
 
           if (error && error.code !== 'PGRST116') {
             console.error('Error fetching user profile:', error)
