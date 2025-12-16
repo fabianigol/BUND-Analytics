@@ -51,49 +51,16 @@ import {
 } from 'lucide-react'
 import { formatDate } from '@/lib/utils/format'
 
-// Mock users
-const mockUsers = [
-  {
-    id: '1',
-    name: 'Juan Fabián',
-    email: 'juan@bundcompany.com',
-    role: 'admin',
-    avatar: null,
-    status: 'active',
-    lastLogin: new Date().toISOString(),
-    createdAt: new Date(Date.now() - 90 * 86400000).toISOString(),
-  },
-  {
-    id: '2',
-    name: 'María García',
-    email: 'maria@bundcompany.com',
-    role: 'marketing_manager',
-    avatar: null,
-    status: 'active',
-    lastLogin: new Date(Date.now() - 3600000).toISOString(),
-    createdAt: new Date(Date.now() - 60 * 86400000).toISOString(),
-  },
-  {
-    id: '3',
-    name: 'Carlos López',
-    email: 'carlos@bundcompany.com',
-    role: 'viewer',
-    avatar: null,
-    status: 'active',
-    lastLogin: new Date(Date.now() - 86400000).toISOString(),
-    createdAt: new Date(Date.now() - 30 * 86400000).toISOString(),
-  },
-  {
-    id: '4',
-    name: 'Ana Martínez',
-    email: 'ana@bundcompany.com',
-    role: 'marketing_manager',
-    avatar: null,
-    status: 'pending',
-    lastLogin: null,
-    createdAt: new Date(Date.now() - 7 * 86400000).toISOString(),
-  },
-]
+const mockUsers: Array<{
+  id: string
+  name: string
+  email: string
+  role: string
+  avatar: string | null
+  status: string
+  lastLogin: string | null
+  createdAt: string
+}> = []
 
 const roleLabels: Record<string, string> = {
   admin: 'Administrador',

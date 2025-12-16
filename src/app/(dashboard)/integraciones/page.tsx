@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Header } from '@/components/dashboard/Header'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -28,6 +28,7 @@ import {
   Settings,
   ExternalLink,
   Key,
+  Loader2,
 } from 'lucide-react'
 import { formatRelativeTime } from '@/lib/utils/format'
 
@@ -41,6 +42,11 @@ interface Integration {
   lastSync?: string
   status: 'connected' | 'disconnected' | 'error'
   docsUrl: string
+}
+
+interface MetaCredentials {
+  accessToken: string
+  adAccountId: string
 }
 
 const integrations: Integration[] = [
@@ -98,6 +104,185 @@ const integrations: Integration[] = [
 
 export default function IntegracionesPage() {
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null)
+  const [integrations, setIntegrations] = useState<Integration[]>([])
+  const [loading, setLoading] = useState(true)
+  const [syncing, setSyncing] = useState<string | null>(null)
+  const [metaCredentials, setMetaCredentials] = useState<MetaCredentials>({
+    accessToken: '',
+    adAccountId: '',
+  })
+  const [connecting, setConnecting] = useState(false)
+  const [openDialog, setOpenDialog] = useState<string | null>(null)
+
+  // Cargar estado de integraciones
+  useEffect(() => {
+    loadIntegrations()
+  }, [])
+
+  const loadIntegrations = async () => {
+    try {
+      setLoading(true)
+      
+      // Cargar estado de Meta
+      const metaResponse = await fetch('/api/integrations/meta')
+      const metaData = await metaResponse.json()
+
+      const baseIntegrations: Integration[] = [
+        {
+          id: 'calendly',
+          name: 'Calendly',
+          description: 'Sincroniza citas y eventos del calendario',
+          icon: Calendar,
+          iconColor: 'bg-blue-100 text-blue-600',
+          connected: false,
+          status: 'disconnected',
+          docsUrl: 'https://developer.calendly.com/',
+        },
+        {
+          id: 'shopify',
+          name: 'Shopify',
+          description: 'Importa ventas, pedidos y datos de productos',
+          icon: ShoppingBag,
+          iconColor: 'bg-green-100 text-green-600',
+          connected: false,
+          status: 'disconnected',
+          docsUrl: 'https://shopify.dev/docs/api',
+        },
+        {
+          id: 'meta',
+          name: 'Meta Marketing',
+          description: 'Conecta campañas de Facebook e Instagram Ads',
+          icon: Megaphone,
+          iconColor: 'bg-indigo-100 text-indigo-600',
+          connected: metaData.connected || false,
+          lastSync: metaData.lastSync || undefined,
+          status: metaData.connected ? 'connected' : 'disconnected',
+          docsUrl: 'https://developers.facebook.com/docs/marketing-apis',
+        },
+        {
+          id: 'analytics',
+          name: 'Google Analytics 4',
+          description: 'Importa datos de tráfico y comportamiento web',
+          icon: BarChart3,
+          iconColor: 'bg-amber-100 text-amber-600',
+          connected: false,
+          status: 'disconnected',
+          docsUrl: 'https://developers.google.com/analytics',
+        },
+        {
+          id: 'airtable',
+          name: 'Airtable',
+          description: 'Sincroniza bases de datos y registros',
+          icon: Database,
+          iconColor: 'bg-rose-100 text-rose-600',
+          connected: false,
+          status: 'disconnected',
+          docsUrl: 'https://airtable.com/developers/web/api',
+        },
+      ]
+
+      setIntegrations(baseIntegrations)
+    } catch (error) {
+      console.error('Error loading integrations:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleConnectMeta = async () => {
+    if (!metaCredentials.accessToken || !metaCredentials.adAccountId) {
+      alert('Por favor, completa todos los campos')
+      return
+    }
+
+    try {
+      setConnecting(true)
+      const response = await fetch('/api/integrations/meta', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(metaCredentials),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al conectar Meta')
+      }
+
+      // Recargar integraciones
+      await loadIntegrations()
+      setOpenDialog(null)
+      setMetaCredentials({ accessToken: '', adAccountId: '' })
+      alert('Meta conectado correctamente')
+    } catch (error) {
+      console.error('Error connecting Meta:', error)
+      alert(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`)
+    } finally {
+      setConnecting(false)
+    }
+  }
+
+  const handleSyncMeta = async () => {
+    try {
+      setSyncing('meta')
+      const response = await fetch('/api/sync/meta', {
+        method: 'POST',
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        // Mostrar error más detallado
+        const errorMsg = data.details 
+          ? `${data.error}\n\nDetalles: ${data.details}` 
+          : data.error || 'Error al sincronizar'
+        throw new Error(errorMsg)
+      }
+
+      // Recargar integraciones para actualizar lastSync
+      await loadIntegrations()
+      
+      // Mostrar mensaje detallado
+      let message = `Sincronización completada:\n\n`
+      message += `✅ ${data.records_synced} campañas sincronizadas`
+      if (data.total_campaigns) {
+        message += ` de ${data.total_campaigns} totales`
+        if (data.pages_processed) {
+          message += ` (${data.pages_processed} páginas procesadas)`
+        }
+      }
+      if (data.failed_count > 0) {
+        message += `\n⚠️ ${data.failed_count} campañas fallaron`
+      }
+      if (data.skipped_count > 0) {
+        message += `\n⏭️ ${data.skipped_count} campañas sin datos`
+      }
+      
+      alert(message)
+    } catch (error) {
+      console.error('Error syncing Meta:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
+      alert(`Error al sincronizar:\n\n${errorMessage}`)
+    } finally {
+      setSyncing(null)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex flex-col">
+        <Header
+          title="Integraciones"
+          subtitle="Conecta tus herramientas de marketing"
+        />
+        <div className="flex-1 flex items-center justify-center p-6">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col">
@@ -187,12 +372,17 @@ export default function IntegracionesPage() {
                 </div>
 
                 <div className="flex gap-2">
-                  <Dialog>
+                  <Dialog open={openDialog === integration.id} onOpenChange={(open) => setOpenDialog(open ? integration.id : null)}>
                     <DialogTrigger asChild>
                       <Button
                         className="flex-1"
                         variant={integration.connected ? 'outline' : 'default'}
-                        onClick={() => setSelectedIntegration(integration)}
+                        onClick={() => {
+                          setSelectedIntegration(integration)
+                          if (integration.id === 'meta' && integration.connected) {
+                            // Si ya está conectado, solo abrir para ver configuración
+                          }
+                        }}
                       >
                         {integration.connected ? (
                           <>
@@ -209,9 +399,13 @@ export default function IntegracionesPage() {
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Conectar {integration.name}</DialogTitle>
+                        <DialogTitle>
+                          {integration.connected ? 'Configurar' : 'Conectar'} {integration.name}
+                        </DialogTitle>
                         <DialogDescription>
-                          Introduce las credenciales de API para conectar {integration.name}
+                          {integration.connected
+                            ? `Gestiona la configuración de ${integration.name}`
+                            : `Introduce las credenciales de API para conectar ${integration.name}`}
                         </DialogDescription>
                       </DialogHeader>
                       <div className="space-y-4 py-4">
@@ -243,13 +437,38 @@ export default function IntegracionesPage() {
                           <>
                             <div className="space-y-2">
                               <Label>Access Token</Label>
-                              <Input type="password" placeholder="Tu access token de Meta" />
+                              <Input
+                                type="password"
+                                placeholder="Tu access token de Meta"
+                                value={metaCredentials.accessToken}
+                                onChange={(e) =>
+                                  setMetaCredentials({
+                                    ...metaCredentials,
+                                    accessToken: e.target.value,
+                                  })
+                                }
+                              />
                             </div>
                             <div className="space-y-2">
                               <Label>Ad Account ID</Label>
-                              <Input placeholder="act_123456789" />
+                              <Input
+                                placeholder="act_123456789"
+                                value={metaCredentials.adAccountId}
+                                onChange={(e) =>
+                                  setMetaCredentials({
+                                    ...metaCredentials,
+                                    adAccountId: e.target.value,
+                                  })
+                                }
+                              />
                               <p className="text-xs text-muted-foreground">
-                                Obtén las credenciales desde Meta Business Suite → Settings
+                                Tu Ad Account ID: 756949758484112 (puedes usar con o sin prefijo "act_")
+                                <br />
+                                <strong>⚠️ Importante:</strong> El token debe tener permisos <code>ads_read</code> y <code>ads_management</code>
+                                <br />
+                                Obtén el Access Token desde developers.facebook.com → Tools → Graph API Explorer
+                                <br />
+                                Asegúrate de seleccionar los permisos correctos antes de generar el token.
                               </p>
                             </div>
                           </>
@@ -292,13 +511,38 @@ export default function IntegracionesPage() {
                             Documentación
                           </a>
                         </Button>
-                        <Button>Conectar</Button>
+                        {integration.id === 'meta' ? (
+                          <Button
+                            onClick={handleConnectMeta}
+                            disabled={connecting}
+                          >
+                            {connecting ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Conectando...
+                              </>
+                            ) : (
+                              integration.connected ? 'Actualizar' : 'Conectar'
+                            )}
+                          </Button>
+                        ) : (
+                          <Button disabled>Conectar</Button>
+                        )}
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
-                  {integration.connected && (
-                    <Button variant="outline" size="icon">
-                      <RefreshCw className="h-4 w-4" />
+                  {integration.connected && integration.id === 'meta' && (
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleSyncMeta}
+                      disabled={syncing === 'meta'}
+                    >
+                      {syncing === 'meta' ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <RefreshCw className="h-4 w-4" />
+                      )}
                     </Button>
                   )}
                 </div>

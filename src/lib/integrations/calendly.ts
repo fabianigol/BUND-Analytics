@@ -2,6 +2,62 @@ import { CalendlyEvent } from '@/types'
 
 const CALENDLY_API_URL = 'https://api.calendly.com'
 
+// Utilidades para parsear información de tienda, tipo y sala desde nombres de usuarios
+export interface StoreInfo {
+  store: string | null
+  eventType: 'Fitting' | 'Medición' | null
+  room: 'I' | 'II' | null
+  fullName: string
+}
+
+/**
+ * Extrae información de tienda, tipo de evento y sala del nombre del usuario de Calendly
+ * Ejemplos:
+ * - "The Bundclub Madrid [Fitting I]" → { store: "Madrid", eventType: "Fitting", room: "I" }
+ * - "The Bundclub Sevilla [Medición II]" → { store: "Sevilla", eventType: "Medición", room: "II" }
+ */
+export function parseStoreInfo(userName: string): StoreInfo {
+  const fullName = userName.trim()
+  
+  // Extraer tienda (ciudad) - busca "The Bundclub [Ciudad]"
+  const storeMatch = fullName.match(/The Bundclub\s+([^[\]]+)/i)
+  const store = storeMatch ? storeMatch[1].trim() : null
+
+  // Extraer tipo de evento y sala - busca "[Tipo Sala]" o "[Tipo I]" o "[Tipo II]"
+  const bracketMatch = fullName.match(/\[([^\]]+)\]/)
+  let eventType: 'Fitting' | 'Medición' | null = null
+  let room: 'I' | 'II' | null = null
+
+  if (bracketMatch) {
+    const bracketContent = bracketMatch[1].trim()
+    
+    // Detectar tipo de evento
+    if (bracketContent.toLowerCase().includes('fitting')) {
+      eventType = 'Fitting'
+    } else if (bracketContent.toLowerCase().includes('medición') || bracketContent.toLowerCase().includes('medicion')) {
+      eventType = 'Medición'
+    }
+
+    // Detectar sala (I o II)
+    if (bracketContent.match(/\bI\b/) && !bracketContent.match(/\bII\b/)) {
+      room = 'I'
+    } else if (bracketContent.match(/\bII\b/)) {
+      room = 'II'
+    } else if (bracketContent.match(/\b1\b/) && !bracketContent.match(/\b2\b/)) {
+      room = 'I'
+    } else if (bracketContent.match(/\b2\b/)) {
+      room = 'II'
+    }
+  }
+
+  return {
+    store,
+    eventType,
+    room,
+    fullName,
+  }
+}
+
 interface CalendlyConfig {
   apiKey: string
 }
@@ -37,19 +93,36 @@ export class CalendlyService {
   }
 
   async getScheduledEvents(params: {
-    userUri: string
+    userUri?: string
+    organizationUri?: string
     minStartTime?: string
     maxStartTime?: string
     status?: 'active' | 'canceled'
     count?: number
+    pageToken?: string | null
   }) {
-    const searchParams = new URLSearchParams({
-      user: params.userUri,
-      ...(params.minStartTime && { min_start_time: params.minStartTime }),
-      ...(params.maxStartTime && { max_start_time: params.maxStartTime }),
-      ...(params.status && { status: params.status }),
-      ...(params.count && { count: params.count.toString() }),
-    })
+    const searchParams = new URLSearchParams()
+    if (params.userUri) {
+      searchParams.set('user', params.userUri)
+    }
+    if (params.organizationUri) {
+      searchParams.set('organization', params.organizationUri)
+    }
+    if (params.minStartTime) {
+      searchParams.set('min_start_time', params.minStartTime)
+    }
+    if (params.maxStartTime) {
+      searchParams.set('max_start_time', params.maxStartTime)
+    }
+    if (params.status) {
+      searchParams.set('status', params.status)
+    }
+    if (params.count) {
+      searchParams.set('count', params.count.toString())
+    }
+    if (params.pageToken) {
+      searchParams.set('page_token', params.pageToken)
+    }
 
     return this.request<{
       collection: Array<{
@@ -84,8 +157,12 @@ export class CalendlyService {
     }>(`/scheduled_events/${eventUuid}/invitees`)
   }
 
-  async getEventTypes(userUri: string) {
-    const searchParams = new URLSearchParams({ user: userUri })
+  async getEventTypes(userUri?: string) {
+    const searchParams = new URLSearchParams()
+    if (userUri) {
+      searchParams.set('user', userUri)
+    }
+    const query = searchParams.toString()
     return this.request<{
       collection: Array<{
         uri: string
@@ -95,8 +172,65 @@ export class CalendlyService {
         duration: number
         kind: string
         type: string
+        owner: string
       }>
-    }>(`/event_types?${searchParams}`)
+      pagination: { count: number; next_page: string | null }
+    }>(`/event_types${query ? `?${query}` : ''}`)
+  }
+
+  async getEventTypeDetails(eventTypeUri: string) {
+    const eventTypeUuid = eventTypeUri.split('/').pop()
+    return this.request<{
+      resource: {
+        uri: string
+        name: string
+        active: boolean
+        slug: string
+        duration: number
+        kind: string
+        type: string
+        owner: string
+      }
+    }>(`/event_types/${eventTypeUuid}`)
+  }
+
+  async getOrganizationMembers(organizationUri: string) {
+    const searchParams = new URLSearchParams({ organization: organizationUri })
+    return this.request<{
+      collection: Array<{
+        uri: string
+        name: string
+        email: string
+        slug: string
+        avatar_url?: string
+      }>
+      pagination: { count: number; next_page: string | null }
+    }>(`/organization_memberships?${searchParams}`)
+  }
+
+  async getCurrentOrganization() {
+    return this.request<{
+      collection: Array<{
+        uri: string
+        role: string
+        user: {
+          uri: string
+          name: string
+          email: string
+        }
+        organization: {
+          uri: string
+          name: string
+        }
+      }>
+    }>('/organization_memberships')
+  }
+
+  async getUser(userUri: string) {
+    const userUuid = userUri.split('/').pop()
+    return this.request<{
+      resource: { uri: string; name: string; email: string }
+    }>(`/users/${userUuid}`)
   }
 
   // Transform Calendly API data to our internal format

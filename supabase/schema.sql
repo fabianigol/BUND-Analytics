@@ -106,10 +106,31 @@ CREATE TABLE IF NOT EXISTS public.meta_campaigns (
   cpc DECIMAL(10, 4) NOT NULL DEFAULT 0,
   ctr DECIMAL(10, 4) NOT NULL DEFAULT 0,
   roas DECIMAL(10, 4) NOT NULL DEFAULT 0,
+  reach INTEGER DEFAULT 0,
+  link_clicks INTEGER DEFAULT 0,
+  actions JSONB DEFAULT '[]'::jsonb,
+  cost_per_result DECIMAL(10, 4) DEFAULT 0,
   date DATE NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Add new columns if they don't exist (for existing databases)
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'meta_campaigns' AND column_name = 'reach') THEN
+    ALTER TABLE public.meta_campaigns ADD COLUMN reach INTEGER DEFAULT 0;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'meta_campaigns' AND column_name = 'link_clicks') THEN
+    ALTER TABLE public.meta_campaigns ADD COLUMN link_clicks INTEGER DEFAULT 0;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'meta_campaigns' AND column_name = 'actions') THEN
+    ALTER TABLE public.meta_campaigns ADD COLUMN actions JSONB DEFAULT '[]'::jsonb;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'meta_campaigns' AND column_name = 'cost_per_result') THEN
+    ALTER TABLE public.meta_campaigns ADD COLUMN cost_per_result DECIMAL(10, 4) DEFAULT 0;
+  END IF;
+END $$;
 
 CREATE INDEX IF NOT EXISTS idx_meta_campaigns_date ON public.meta_campaigns(date);
 CREATE INDEX IF NOT EXISTS idx_meta_campaigns_campaign_id ON public.meta_campaigns(campaign_id);

@@ -98,6 +98,14 @@ export interface MetaCampaign {
   roas: number;
   date: string;
   created_at: string;
+  // Nuevos campos de Meta
+  reach?: number;
+  link_clicks?: number;
+  actions?: Array<{ action_type: string; value: string }>;
+  cost_per_result?: number;
+  budget?: string;
+  attribution_setting?: string;
+  ends?: string;
 }
 
 export interface MetaAdSet {

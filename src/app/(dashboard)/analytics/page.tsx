@@ -3,7 +3,7 @@
 import { Header } from '@/components/dashboard/Header'
 import { MetricCard } from '@/components/dashboard/MetricCard'
 import { AreaChart, BarChart, PieChart, LineChart } from '@/components/dashboard/Charts'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import {
   Table,
@@ -25,46 +25,13 @@ import {
 } from 'lucide-react'
 import { mockDashboardMetrics, mockAnalyticsData, mockTrafficSources } from '@/lib/utils/mock-data'
 import { formatNumber, formatCompactNumber, formatPercentage, formatDuration } from '@/lib/utils/format'
-import { subDays, format } from 'date-fns'
-
-// Generate sessions data
-const sessionsData = Array.from({ length: 30 }, (_, i) => {
-  const date = subDays(new Date(), 29 - i)
-  return {
-    date: format(date, 'dd MMM'),
-    value: Math.floor(Math.random() * 1500) + 500,
-  }
-})
-
-// Users vs New Users data
-const usersData = Array.from({ length: 30 }, (_, i) => {
-  const date = subDays(new Date(), 29 - i)
-  const users = Math.floor(Math.random() * 800) + 300
-  return {
-    date: format(date, 'dd MMM'),
-    usuarios: users,
-    nuevos: Math.floor(users * (Math.random() * 0.4 + 0.2)),
-  }
-})
-
-// Device distribution
-const deviceData = [
-  { name: 'Móvil', value: 58, color: 'var(--chart-1)' },
-  { name: 'Desktop', value: 35, color: 'var(--chart-2)' },
-  { name: 'Tablet', value: 7, color: 'var(--chart-3)' },
-]
-
-// Countries data
-const countriesData = [
-  { name: 'España', sessions: 12456, percentage: 53 },
-  { name: 'México', sessions: 4567, percentage: 19 },
-  { name: 'Argentina', sessions: 2890, percentage: 12 },
-  { name: 'Colombia', sessions: 1678, percentage: 7 },
-  { name: 'Chile', sessions: 1234, percentage: 5 },
-  { name: 'Otros', sessions: 931, percentage: 4 },
-]
+const sessionsData: { date: string; value: number }[] = []
+const usersData: { date: string; usuarios: number; nuevos: number }[] = []
+const deviceData: { name: string; value: number; color: string }[] = []
+const countriesData: { name: string; sessions: number; percentage: number }[] = []
 
 export default function AnalyticsPage() {
+  const hasAnalytics = Boolean(mockAnalyticsData)
   return (
     <div className="flex flex-col">
       <Header
@@ -77,28 +44,28 @@ export default function AnalyticsPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <MetricCard
             title="Sesiones"
-            value={formatCompactNumber(mockDashboardMetrics.totalSessions)}
+            value={mockDashboardMetrics.totalSessions ? formatCompactNumber(mockDashboardMetrics.totalSessions) : '—'}
             change={mockDashboardMetrics.sessionsChange}
             icon={Eye}
             iconColor="bg-blue-100 text-blue-600"
           />
           <MetricCard
             title="Usuarios"
-            value={formatCompactNumber(mockDashboardMetrics.totalUsers)}
+            value={mockDashboardMetrics.totalUsers ? formatCompactNumber(mockDashboardMetrics.totalUsers) : '—'}
             change={mockDashboardMetrics.usersChange}
             icon={Users}
             iconColor="bg-emerald-100 text-emerald-600"
           />
           <MetricCard
             title="Páginas Vistas"
-            value={formatCompactNumber(mockAnalyticsData.page_views)}
-            change={12.4}
+            value={hasAnalytics && mockAnalyticsData?.page_views ? formatCompactNumber(mockAnalyticsData.page_views) : '—'}
+            change={0}
             icon={Globe}
             iconColor="bg-purple-100 text-purple-600"
           />
           <MetricCard
             title="Tasa de Rebote"
-            value={formatPercentage(mockDashboardMetrics.bounceRate)}
+            value={mockDashboardMetrics.bounceRate ? formatPercentage(mockDashboardMetrics.bounceRate) : '—'}
             change={mockDashboardMetrics.bounceRateChange}
             trend={mockDashboardMetrics.bounceRateChange < 0 ? 'up' : 'down'}
             icon={MousePointer}
@@ -116,7 +83,9 @@ export default function AnalyticsPage() {
               <div>
                 <p className="text-sm text-muted-foreground">Duración Media</p>
                 <p className="text-xl font-semibold">
-                  {formatDuration(mockAnalyticsData.avg_session_duration)}
+                  {hasAnalytics && mockAnalyticsData?.avg_session_duration
+                    ? formatDuration(mockAnalyticsData.avg_session_duration)
+                    : '—'}
                 </p>
               </div>
             </CardContent>
@@ -151,47 +120,60 @@ export default function AnalyticsPage() {
 
         {/* Charts Row 1 */}
         <div className="grid gap-6 lg:grid-cols-2">
-          <AreaChart
-            title="Sesiones - Últimos 30 días"
-            data={sessionsData}
-            color="var(--chart-2)"
-          />
-          <LineChart
-            title="Usuarios vs Nuevos Usuarios"
-            data={usersData}
-            xAxisKey="date"
-            lines={[
-              { dataKey: 'usuarios', name: 'Usuarios', color: 'var(--chart-1)' },
-              { dataKey: 'nuevos', name: 'Nuevos', color: 'var(--chart-3)', dashed: true },
-            ]}
-          />
+          <Card>
+            <CardHeader>
+              <CardTitle>Sesiones - Últimos 30 días</CardTitle>
+              <CardDescription>Sin datos. Conecta GA4.</CardDescription>
+            </CardHeader>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Usuarios vs Nuevos Usuarios</CardTitle>
+              <CardDescription>Sin datos. Conecta GA4.</CardDescription>
+            </CardHeader>
+          </Card>
         </div>
 
         {/* Charts Row 2 */}
         <div className="grid gap-6 lg:grid-cols-3">
-          <PieChart title="Fuentes de Tráfico" data={mockTrafficSources} height={280} />
-          <PieChart title="Dispositivos" data={deviceData} height={280} />
+          <Card>
+            <CardHeader>
+              <CardTitle>Fuentes de Tráfico</CardTitle>
+              <CardDescription>Sin datos. Conecta GA4.</CardDescription>
+            </CardHeader>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Dispositivos</CardTitle>
+              <CardDescription>Sin datos. Conecta GA4.</CardDescription>
+            </CardHeader>
+          </Card>
 
           {/* Top Pages */}
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-medium">Páginas Más Visitadas</CardTitle>
+              <CardDescription>Sin datos. Conecta GA4.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {mockAnalyticsData.top_pages.map((page, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium truncate max-w-[150px]">{page.page_title}</span>
-                    <span className="text-muted-foreground">
-                      {formatCompactNumber(page.page_views)}
-                    </span>
-                  </div>
-                  <Progress
-                    value={(page.page_views / mockAnalyticsData.top_pages[0].page_views) * 100}
-                    className="h-1.5"
-                  />
-                </div>
-              ))}
+              {hasAnalytics && mockAnalyticsData?.top_pages
+                ? mockAnalyticsData.top_pages.map((page, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="font-medium truncate max-w-[150px]">{page.page_title}</span>
+                        <span className="text-muted-foreground">
+                          {formatCompactNumber(page.page_views)}
+                        </span>
+                      </div>
+                      <Progress
+                        value={(page.page_views / (mockAnalyticsData.top_pages[0]?.page_views || 1)) * 100}
+                        className="h-1.5"
+                      />
+                    </div>
+                  ))
+                : (
+                  <p className="text-sm text-muted-foreground">Sin páginas aún.</p>
+                )}
             </CardContent>
           </Card>
         </div>
@@ -200,6 +182,7 @@ export default function AnalyticsPage() {
         <Card>
           <CardHeader className="pb-4">
             <CardTitle className="text-base font-medium">Tráfico por País</CardTitle>
+            <CardDescription>Sin datos. Conecta GA4.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -226,6 +209,13 @@ export default function AnalyticsPage() {
                     </TableCell>
                   </TableRow>
                 ))}
+                {!countriesData.length && (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center text-sm text-muted-foreground">
+                      Sin países listados.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </CardContent>

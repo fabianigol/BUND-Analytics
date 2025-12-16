@@ -23,10 +23,15 @@ import {
   mockTrafficSources,
 } from '@/lib/utils/mock-data'
 import { formatCurrency, formatNumber, formatCompactNumber } from '@/lib/utils/format'
+import { CardDescription } from '@/components/ui/card'
 
 export default function DashboardPage() {
   const revenueData = generateRevenueChartData()
   const multiSeriesData = generateMultiSeriesChartData()
+  const hasRevenueData = revenueData.length > 0
+  const hasMultiSeriesData = multiSeriesData.length > 0
+  const hasProducts = mockTopProducts.length > 0
+  const hasTraffic = mockTrafficSources.length > 0
 
   return (
     <div className="flex flex-col">
@@ -40,7 +45,7 @@ export default function DashboardPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <MetricCard
             title="Ingresos Totales"
-            value={formatCurrency(mockDashboardMetrics.totalRevenue)}
+            value={mockDashboardMetrics.totalRevenue ? formatCurrency(mockDashboardMetrics.totalRevenue) : '—'}
             change={mockDashboardMetrics.revenueChange}
             changeLabel="vs. mes anterior"
             icon={DollarSign}
@@ -48,7 +53,7 @@ export default function DashboardPage() {
           />
           <MetricCard
             title="Citas del Mes"
-            value={formatNumber(mockDashboardMetrics.totalAppointments)}
+            value={mockDashboardMetrics.totalAppointments ? formatNumber(mockDashboardMetrics.totalAppointments) : '—'}
             change={mockDashboardMetrics.appointmentsChange}
             changeLabel="vs. mes anterior"
             icon={Calendar}
@@ -56,7 +61,7 @@ export default function DashboardPage() {
           />
           <MetricCard
             title="ROAS General"
-            value={`${mockDashboardMetrics.overallRoas}x`}
+            value={mockDashboardMetrics.overallRoas ? `${mockDashboardMetrics.overallRoas}x` : '—'}
             change={mockDashboardMetrics.roasChange}
             changeLabel="vs. mes anterior"
             icon={Target}
@@ -64,7 +69,7 @@ export default function DashboardPage() {
           />
           <MetricCard
             title="Sesiones Web"
-            value={formatCompactNumber(mockDashboardMetrics.totalSessions)}
+            value={mockDashboardMetrics.totalSessions ? formatCompactNumber(mockDashboardMetrics.totalSessions) : '—'}
             change={mockDashboardMetrics.sessionsChange}
             changeLabel="vs. mes anterior"
             icon={Users}
@@ -76,28 +81,28 @@ export default function DashboardPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <MetricCard
             title="Pedidos"
-            value={formatNumber(mockDashboardMetrics.totalOrders)}
+            value={mockDashboardMetrics.totalOrders ? formatNumber(mockDashboardMetrics.totalOrders) : '—'}
             change={mockDashboardMetrics.ordersChange}
             icon={ShoppingCart}
             iconColor="bg-sky-100 text-sky-600 dark:bg-sky-950 dark:text-sky-400"
           />
           <MetricCard
             title="Gasto en Ads"
-            value={formatCurrency(mockDashboardMetrics.totalAdSpend)}
+            value={mockDashboardMetrics.totalAdSpend ? formatCurrency(mockDashboardMetrics.totalAdSpend) : '—'}
             change={mockDashboardMetrics.adSpendChange}
             icon={TrendingUp}
             iconColor="bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-400"
           />
           <MetricCard
             title="Clics Totales"
-            value={formatCompactNumber(mockDashboardMetrics.totalClicks)}
+            value={mockDashboardMetrics.totalClicks ? formatCompactNumber(mockDashboardMetrics.totalClicks) : '—'}
             change={mockDashboardMetrics.clicksChange}
             icon={MousePointer}
             iconColor="bg-indigo-100 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400"
           />
           <MetricCard
             title="Impresiones"
-            value={formatCompactNumber(mockDashboardMetrics.totalImpressions)}
+            value={mockDashboardMetrics.totalImpressions ? formatCompactNumber(mockDashboardMetrics.totalImpressions) : '—'}
             change={mockDashboardMetrics.impressionsChange}
             icon={Eye}
             iconColor="bg-teal-100 text-teal-600 dark:bg-teal-950 dark:text-teal-400"
@@ -106,22 +111,41 @@ export default function DashboardPage() {
 
         {/* Charts Row */}
         <div className="grid gap-6 lg:grid-cols-2">
-          <AreaChart
-            title="Ingresos - Últimos 30 días"
-            data={revenueData}
-            color="var(--chart-1)"
-            formatValue={(v) => formatCurrency(v)}
-          />
-          <LineChart
-            title="Rendimiento Comparativo"
-            data={multiSeriesData}
-            xAxisKey="date"
-            lines={[
-              { dataKey: 'ventas', name: 'Ventas (€)', color: 'var(--chart-1)' },
-              { dataKey: 'gasto_ads', name: 'Gasto Ads (€)', color: 'var(--chart-4)' },
-            ]}
-            formatValue={(v) => formatCurrency(v)}
-          />
+          {hasRevenueData ? (
+            <AreaChart
+              title="Ingresos - Últimos 30 días"
+              data={revenueData}
+              color="var(--chart-1)"
+              formatValue={(v) => formatCurrency(v)}
+            />
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle>Ingresos - Últimos 30 días</CardTitle>
+                <CardDescription>Sin datos aún. Conecta la API para ver el histórico.</CardDescription>
+              </CardHeader>
+            </Card>
+          )}
+
+          {hasMultiSeriesData ? (
+            <LineChart
+              title="Rendimiento Comparativo"
+              data={multiSeriesData}
+              xAxisKey="date"
+              lines={[
+                { dataKey: 'ventas', name: 'Ventas (€)', color: 'var(--chart-1)' },
+                { dataKey: 'gasto_ads', name: 'Gasto Ads (€)', color: 'var(--chart-4)' },
+              ]}
+              formatValue={(v) => formatCurrency(v)}
+            />
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle>Rendimiento Comparativo</CardTitle>
+                <CardDescription>Sin datos comparativos hasta que llegue la API.</CardDescription>
+              </CardHeader>
+            </Card>
+          )}
         </div>
 
         {/* Bottom Row */}
@@ -132,33 +156,46 @@ export default function DashboardPage() {
               <CardTitle className="text-base font-medium">Top Productos</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {mockTopProducts.map((product, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
-                      {index + 1}
-                    </span>
-                    <div>
-                      <p className="text-sm font-medium">{product.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {product.sales} ventas
-                      </p>
+              {hasProducts ? (
+                mockTopProducts.map((product, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                        {index + 1}
+                      </span>
+                      <div>
+                        <p className="text-sm font-medium">{product.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {product.sales} ventas
+                        </p>
+                      </div>
                     </div>
+                    <span className="text-sm font-semibold">
+                      {formatCurrency(product.revenue)}
+                    </span>
                   </div>
-                  <span className="text-sm font-semibold">
-                    {formatCurrency(product.revenue)}
-                  </span>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">Sin datos de productos. Conecta Shopify o la API correspondiente.</p>
+              )}
             </CardContent>
           </Card>
 
           {/* Traffic Sources */}
-          <PieChart
-            title="Fuentes de Tráfico"
-            data={mockTrafficSources}
-            height={280}
-          />
+          {hasTraffic ? (
+            <PieChart
+              title="Fuentes de Tráfico"
+              data={mockTrafficSources}
+              height={280}
+            />
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle>Fuentes de Tráfico</CardTitle>
+                <CardDescription>Conecta Analytics para ver el desglose de tráfico.</CardDescription>
+              </CardHeader>
+            </Card>
+          )}
 
           {/* Quick Insights */}
           <Card className="lg:col-span-1">
