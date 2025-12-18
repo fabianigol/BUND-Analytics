@@ -3,7 +3,15 @@
 import { useMemo, useState, useEffect } from 'react'
 import { Header } from '@/components/dashboard/Header'
 import { MetricCard } from '@/components/dashboard/MetricCard'
-import { AreaChart, BarChart, LineChart } from '@/components/dashboard/Charts'
+import { AreaChart, BarChart, LineChart, PieChart, FunnelChart } from '@/components/dashboard/Charts'
+import {
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+} from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -40,6 +48,7 @@ import {
   Loader2,
   Calendar,
   ShoppingBag,
+  XCircle,
 } from 'lucide-react'
 import { MetaCampaign } from '@/types'
 import { formatCurrency, formatNumber, formatCompactNumber, formatPercentage } from '@/lib/utils/format'
@@ -134,6 +143,7 @@ export default function AdsPage() {
   const [loading, setLoading] = useState(true)
   const [syncing, setSyncing] = useState(false)
   const [lastSync, setLastSync] = useState<string | null>(null)
+  const [selectedCampaignsForFunnel, setSelectedCampaignsForFunnel] = useState<string[]>([])
 
   useEffect(() => {
     loadCampaigns()
@@ -215,8 +225,22 @@ export default function AdsPage() {
   const handleSync = async () => {
     try {
       setSyncing(true)
+      
+      // Preparar body con filtros de fecha si están configurados
+      const body: { startDate?: string; endDate?: string } = {}
+      const dateRange = getDateRange
+      if (dateRange && dateRange.start && dateRange.end) {
+        body.startDate = dateRange.start
+        body.endDate = dateRange.end
+        console.log(`[Ads Page] Syncing with date range: ${body.startDate} to ${body.endDate}`)
+      }
+      
       const response = await fetch('/api/sync/meta', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: Object.keys(body).length > 0 ? JSON.stringify(body) : undefined,
       })
 
       if (!response.ok) {
@@ -326,6 +350,9 @@ export default function AdsPage() {
       })
     }
 
+    // Filtrar solo campañas con gasto > 0€
+    filtered = filtered.filter((campaign) => campaign.spend > 0)
+
     // Agrupar por campaign_id y sumar métricas si hay múltiples entradas
     const grouped = new Map<string, MetaCampaign>()
     
@@ -397,7 +424,7 @@ export default function AdsPage() {
   const avgCtr = totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0
   const hasCampaigns = filteredCampaigns.length > 0
 
-  // Calcular conversiones por tipo desde actions
+  // Calcular conversiones por tipo basado en el nombre de la campaña
   const conversionsByType = useMemo(() => {
     const types: Record<string, number> = {
       citas: 0,
@@ -406,24 +433,20 @@ export default function AdsPage() {
     }
 
     filteredCampaigns.forEach((campaign) => {
-      const actions = (campaign.actions as Array<{ action_type: string; value: string }>) || []
+      const campaignNameUpper = campaign.campaign_name.toUpperCase()
       
-      // Log action types for debugging (only once)
-      if (actions.length > 0) {
-        const uniqueTypes = new Set(actions.map(a => a.action_type))
-        if (uniqueTypes.size > 0) {
-          console.log('[Ads Page] Action types found:', Array.from(uniqueTypes).slice(0, 10))
-        }
+      // Citas: campañas con "Thebundclub" en el nombre
+      if (campaignNameUpper.includes('THEBUNDCLUB') || campaignNameUpper.includes('THE BUNDCLUB')) {
+        types.citas += campaign.conversions || 0
       }
-      
-      actions.forEach((action) => {
-        const value = parseInt(action.value) || 0
-        const category = categorizeActionType(action.action_type)
-        
-        if (category) {
-          types[category] += value
-        }
-      })
+      // Leads: campañas con "Leads" en el nombre
+      else if (campaignNameUpper.includes('LEADS')) {
+        types.leads += campaign.conversions || 0
+      }
+      // Ventas: campañas con "ecom" en el nombre
+      else if (campaignNameUpper.includes('ECOM')) {
+        types.ventas += campaign.conversions || 0
+      }
     })
 
     return types
@@ -438,6 +461,105 @@ export default function AdsPage() {
   }, [filteredCampaigns])
 
   const totalConversions = conversionsByType.citas + conversionsByType.leads + conversionsByType.ventas
+
+  // Evolución mensual del Cost per Result para campañas TheBundClub (una línea por campaña)
+  const theBundClubMonthlyData = useMemo(() => {
+    // Filtrar campañas que contengan "TheBundClub" en el nombre (case insensitive)
+    // Usar todas las campañas, no solo las filtradas, para mostrar todo el año
+    const theBundClubCampaigns = campaigns.filter((c) => {
+      const nameUpper = c.campaign_name.toUpperCase()
+      return nameUpper.includes('THEBUNDCLUB') || nameUpper.includes('THE BUNDCLUB')
+    })
+
+    // Obtener lista única de campañas
+    const uniqueCampaigns = Array.from(
+      new Map(theBundClubCampaigns.map(c => [c.campaign_id, c])).values()
+    )
+
+    // Agrupar por campaña y mes
+    // Estructura: Map<campaign_id, Map<monthKey, { spend, conversions }>>
+    const campaignMonthlyData = new Map<string, Map<string, { spend: number; conversions: number }>>()
+    
+    theBundClubCampaigns.forEach((campaign) => {
+      const date = new Date(campaign.date)
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+      
+      if (!campaignMonthlyData.has(campaign.campaign_id)) {
+        campaignMonthlyData.set(campaign.campaign_id, new Map())
+      }
+      
+      const campaignData = campaignMonthlyData.get(campaign.campaign_id)!
+      if (!campaignData.has(monthKey)) {
+        campaignData.set(monthKey, { spend: 0, conversions: 0 })
+      }
+      
+      const monthData = campaignData.get(monthKey)!
+      monthData.spend += campaign.spend || 0
+      monthData.conversions += campaign.conversions || 0
+    })
+
+    // Generar todos los meses del año actual
+    const currentYear = new Date().getFullYear()
+    const allMonths: string[] = []
+    for (let month = 1; month <= 12; month++) {
+      const monthKey = `${currentYear}-${String(month).padStart(2, '0')}`
+      allMonths.push(monthKey)
+    }
+
+    // Crear estructura de datos para el gráfico
+    // Cada objeto representa un mes y tiene un campo por cada campaña
+    const chartData = allMonths.map((monthKey) => {
+      const date = new Date(monthKey + '-01')
+      const monthLabel = date.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })
+      
+      const monthData: Record<string, string | number> = {
+        month: monthLabel,
+        monthKey,
+      }
+      
+      // Para cada campaña, calcular su Cost per Result en este mes
+      uniqueCampaigns.forEach((campaign) => {
+        const campaignData = campaignMonthlyData.get(campaign.campaign_id)
+        const monthDataForCampaign = campaignData?.get(monthKey) || { spend: 0, conversions: 0 }
+        
+        let costPerResult = 0
+        if (monthDataForCampaign.conversions > 0 && monthDataForCampaign.spend > 0) {
+          costPerResult = monthDataForCampaign.spend / monthDataForCampaign.conversions
+        }
+        
+        // Usar el campaign_id como clave (sanitizado para ser válido como key de objeto)
+        const safeKey = `campaign_${campaign.campaign_id.replace(/[^a-zA-Z0-9]/g, '_')}`
+        monthData[safeKey] = costPerResult
+      })
+      
+      return monthData
+    })
+
+    // Crear array de líneas para el LineChart
+    const lines = uniqueCampaigns.map((campaign, index) => {
+      // Paleta de colores burdeos
+      const colors = [
+        '#7C2D12', '#991B1B', '#B91C1C', '#DC2626', '#EF4444',
+        '#F87171', '#722F37', '#5C2E37', '#4A1F1F', '#6B1F1F',
+      ]
+      const safeKey = `campaign_${campaign.campaign_id.replace(/[^a-zA-Z0-9]/g, '_')}`
+      
+      return {
+        dataKey: safeKey,
+        name: campaign.campaign_name.length > 30 
+          ? `${campaign.campaign_name.substring(0, 30)}...` 
+          : campaign.campaign_name,
+        color: colors[index % colors.length],
+        strokeWidth: 2,
+      }
+    })
+
+    return {
+      data: chartData,
+      lines,
+      campaigns: uniqueCampaigns,
+    }
+  }, [campaigns])
 
   // Campañas activas ordenadas por presupuesto (mayor a menor)
   // Usar todas las campañas, no solo las filtradas, para la distribución del presupuesto
@@ -617,7 +739,7 @@ export default function AdsPage() {
           />
           <MetricCard
             title="Conversiones"
-            value={totalConversions > 0 ? `${formatNumber(totalConversions)} (${formatNumber(conversionsByType.citas)} citas, ${formatNumber(conversionsByType.leads)} leads, ${formatNumber(conversionsByType.ventas)} ventas)` : '—'}
+            value={totalConversions > 0 ? formatNumber(totalConversions) : '—'}
             change={0}
             icon={TrendingUp}
             iconColor="bg-blue-100 text-blue-600"
@@ -669,154 +791,345 @@ export default function AdsPage() {
         </div>
 
         {/* Charts */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base font-medium">Gasto vs Conversiones</CardTitle>
+        <div className="grid gap-6 lg:grid-cols-2 lg:items-stretch">
+          {/* Columna izquierda: Embudo de Conversión (altura completa) */}
+          <Card className="flex flex-col">
+            <CardHeader className="pb-4">
+              <div className="flex flex-col gap-4">
+                <div>
+                  <CardTitle className="text-base font-medium">Embudo de Conversión</CardTitle>
+                  <CardDescription>
+                    Comparación de flujo de impresiones a resultados por campaña
+                  </CardDescription>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Selecciona campañas para comparar:</label>
+                  <Select
+                    value=""
+                    onValueChange={(value) => {
+                      if (!selectedCampaignsForFunnel.includes(value)) {
+                        setSelectedCampaignsForFunnel([...selectedCampaignsForFunnel, value])
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder={`${selectedCampaignsForFunnel.length > 0 ? `${selectedCampaignsForFunnel.length} campaña(s) seleccionada(s)` : 'Selecciona campañas'}`} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {filteredCampaigns
+                        .filter(c => c && c.spend > 0 && !selectedCampaignsForFunnel.includes(c.id))
+                        .sort((a, b) => a.campaign_name.localeCompare(b.campaign_name))
+                        .map((campaign) => (
+                          <SelectItem key={campaign.id} value={campaign.id}>
+                            {campaign.campaign_name}
+                          </SelectItem>
+                        ))}
+                      {filteredCampaigns.filter(c => c && c.spend > 0 && !selectedCampaignsForFunnel.includes(c.id)).length === 0 && (
+                        <SelectItem value="" disabled>Todas las campañas están seleccionadas</SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
+                  {selectedCampaignsForFunnel.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {selectedCampaignsForFunnel.map((campaignId) => {
+                        const campaign = filteredCampaigns.find(c => c.id === campaignId)
+                        if (!campaign) return null
+                        return (
+                          <Badge
+                            key={campaignId}
+                            variant="secondary"
+                            className="flex items-center gap-1 pr-1"
+                          >
+                            <span className="text-xs">{campaign.campaign_name.length > 25 ? `${campaign.campaign_name.substring(0, 25)}...` : campaign.campaign_name}</span>
+                            <button
+                              onClick={() => {
+                                setSelectedCampaignsForFunnel(selectedCampaignsForFunnel.filter(id => id !== campaignId))
+                              }}
+                              className="ml-1 rounded-full hover:bg-muted p-0.5"
+                            >
+                              <XCircle className="h-3 w-3" />
+                            </button>
+                          </Badge>
+                        )
+                      })}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSelectedCampaignsForFunnel([])}
+                        className="h-6 text-xs"
+                      >
+                        Limpiar todo
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="flex-1 flex flex-col">
+              {selectedCampaignsForFunnel.length > 0 ? (
+                (() => {
+                  const selectedCampaigns = filteredCampaigns.filter(c => 
+                    selectedCampaignsForFunnel.includes(c.id)
+                  )
+
+                  if (selectedCampaigns.length === 0) {
+                    return (
+                      <div className="flex h-[400px] items-center justify-center">
+                        <p className="text-sm text-muted-foreground">Campañas no encontradas</p>
+                      </div>
+                    )
+                  }
+
+                  // Paleta de colores basada en la imagen proporcionada
+                  // Colores más vibrantes y diferenciados para mejor visualización
+                  // Paleta de colores burdeos para cada campaña
+                  // Cada campaña tiene un gradiente de burdeos a través de las etapas
+                  const campaignColorPalettes = [
+                    // Paleta 1: Burdeos oscuro a claro
+                    ['#7C2D12', '#991B1B', '#B91C1C', '#DC2626'],
+                    // Paleta 2: Burdeos medio oscuro
+                    ['#991B1B', '#B91C1C', '#DC2626', '#EF4444'],
+                    // Paleta 3: Burdeos rojizo
+                    ['#B91C1C', '#DC2626', '#EF4444', '#F87171'],
+                    // Paleta 4: Burdeos vino
+                    ['#6B1F1F', '#8B2A2A', '#A83A3A', '#C94A4A'],
+                    // Paleta 5: Burdeos granate
+                    ['#722F37', '#8B3A42', '#A44A52', '#BD5A62'],
+                    // Paleta 6: Burdeos terroso
+                    ['#5C2E37', '#6D3E47', '#7E4E57', '#8F5E67'],
+                    // Paleta 7: Burdeos profundo
+                    ['#4A1F1F', '#5A2F2F', '#6A3F3F', '#7A4F4F'],
+                  ]
+
+                  // Preparar datos para FunnelGraph.js con formato 2D para comparación
+                  // Para múltiples campañas, necesitamos un array de colores por etapa
+                  const numStages = 4
+                  const colors: string[][] = []
+                  
+                  // Para cada etapa, crear un array de colores (uno por campaña)
+                  for (let stage = 0; stage < numStages; stage++) {
+                    const stageColors: string[] = []
+                    selectedCampaigns.forEach((_, campaignIndex) => {
+                      const palette = campaignColorPalettes[campaignIndex % campaignColorPalettes.length]
+                      stageColors.push(palette[stage % palette.length])
+                    })
+                    colors.push(stageColors)
+                  }
+
+                  const funnelData = {
+                    labels: ['Impresiones', 'Alcance (Reach)', 'Link Clicks', 'Results'],
+                    subLabels: selectedCampaigns.map(c => c.campaign_name.length > 20 
+                      ? `${c.campaign_name.substring(0, 20)}...` 
+                      : c.campaign_name),
+                    colors: colors,
+                    values: [
+                      // Impresiones (valores de cada campaña)
+                      selectedCampaigns.map(c => c.impressions || 0),
+                      // Alcance (Reach) (valores de cada campaña)
+                      selectedCampaigns.map(c => c.reach || 0),
+                      // Link Clicks (valores de cada campaña)
+                      selectedCampaigns.map(c => c.link_clicks || c.clicks || 0),
+                      // Results (valores de cada campaña)
+                      selectedCampaigns.map(c => c.conversions || 0),
+                    ],
+                  }
+
+                  return (
+                    <FunnelChart
+                      title=""
+                      data={funnelData}
+                      direction="horizontal"
+                      displayPercent={true}
+                      height={600}
+                      campaignNames={selectedCampaigns.map(c => c.campaign_name)}
+                    />
+                  )
+                })()
+              ) : (
+                <div className="flex h-[400px] items-center justify-center">
+                  <p className="text-sm text-muted-foreground">Selecciona al menos una campaña para ver el embudo comparativo</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          
+          {/* Columna derecha: Presupuesto y Cost per Result */}
+          <div className="flex flex-col gap-6">
+            {/* Presupuesto (mitad superior) */}
+            <Card className="flex-1">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base font-medium">Distribución del Presupuesto</CardTitle>
               <CardDescription>
-                Distribución de gasto y conversiones por tipo
+                {filteredCampaigns.length > 0
+                  ? `${filteredCampaigns.length} campañas en el período seleccionado`
+                  : 'Sin datos para el período seleccionado.'}
               </CardDescription>
             </CardHeader>
             <CardContent>
               {filteredCampaigns.length > 0 ? (
-                <div className="space-y-4">
-                  <BarChart
-                    title=""
-                    data={[
-                      {
-                        name: 'Citas',
-                        value: (() => {
-                          // Calcular gasto proporcional para citas
-                          let totalSpendForCitas = 0
-                          filteredCampaigns.forEach((c) => {
-                            const actions = (c.actions as Array<{ action_type: string; value: string }>) || []
-                            const citasInCampaign = actions
-                              .filter(a => categorizeActionType(a.action_type) === 'citas')
-                              .reduce((sum, a) => sum + (parseInt(a.value) || 0), 0)
-                            if (citasInCampaign > 0 && c.conversions > 0) {
-                              totalSpendForCitas += c.spend * (citasInCampaign / c.conversions)
-                            } else if (citasInCampaign > 0) {
-                              // Si hay citas pero no conversiones totales, usar el gasto completo
-                              totalSpendForCitas += c.spend
+                <div className="space-y-6">
+                  {/* Gráfico Circular */}
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height={300}>
+                      <RechartsPieChart>
+                        <Pie
+                          data={filteredCampaigns
+                            .filter(c => c && c.spend > 0)
+                            .sort((a, b) => (b?.spend || 0) - (a?.spend || 0))
+                            .map((campaign, index) => {
+                            if (!campaign) return null
+                            
+                            const totalFilteredSpend = filteredCampaigns
+                              .filter(c => c && c.spend > 0)
+                              .reduce((sum, c) => sum + (c?.spend || 0), 0)
+                            const percentage = totalFilteredSpend > 0 ? ((campaign.spend || 0) / totalFilteredSpend) * 100 : 0
+                            
+                            // Colores alternados para mejor visualización
+                            const colors = [
+                              '#7C2D12', '#991B1B', '#B91C1C', '#DC2626', '#EF4444',
+                              '#F87171', '#FCA5A5', '#FECACA', '#FEE2E2', '#FEF2F2',
+                              '#DC143C', '#C41E3A', '#8B0000', '#800020', '#722F37',
+                              '#5C2E37', '#4A2C2A', '#3D1E1E', '#2D1B1B', '#1A0F0F',
+                            ]
+                            const color = colors[index % colors.length]
+                            
+                            return {
+                              name: (campaign.campaign_name || 'Sin nombre').length > 25 
+                                ? `${(campaign.campaign_name || 'Sin nombre').substring(0, 25)}...` 
+                                : (campaign.campaign_name || 'Sin nombre'),
+                              value: campaign.spend || 0,
+                              color,
+                              fullName: campaign.campaign_name || 'Sin nombre',
+                              percentage: percentage.toFixed(1),
                             }
                           })
-                          return totalSpendForCitas
-                        })(),
-                        color: '#7C2D12', // Burdeos muy oscuro
-                      },
-                      {
-                        name: 'Leads',
-                        value: (() => {
-                          let totalSpendForLeads = 0
-                          filteredCampaigns.forEach((c) => {
-                            const actions = (c.actions as Array<{ action_type: string; value: string }>) || []
-                            const leadsInCampaign = actions
-                              .filter(a => categorizeActionType(a.action_type) === 'leads')
-                              .reduce((sum, a) => sum + (parseInt(a.value) || 0), 0)
-                            if (leadsInCampaign > 0 && c.conversions > 0) {
-                              totalSpendForLeads += c.spend * (leadsInCampaign / c.conversions)
-                            } else if (leadsInCampaign > 0) {
-                              totalSpendForLeads += c.spend
+                          .filter(item => item !== null)}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={80}
+                          outerRadius={140}
+                          paddingAngle={2}
+                          dataKey="value"
+                          strokeWidth={0}
+                        >
+                          {filteredCampaigns
+                            .filter(c => c && c.spend > 0)
+                            .sort((a, b) => (b?.spend || 0) - (a?.spend || 0))
+                            .map((_, index) => {
+                            const colors = [
+                              '#7C2D12', '#991B1B', '#B91C1C', '#DC2626', '#EF4444',
+                              '#F87171', '#FCA5A5', '#FECACA', '#FEE2E2', '#FEF2F2',
+                              '#DC143C', '#C41E3A', '#8B0000', '#800020', '#722F37',
+                              '#5C2E37', '#4A2C2A', '#3D1E1E', '#2D1B1B', '#1A0F0F',
+                            ]
+                            return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                          })}
+                        </Pie>
+                        <Tooltip
+                          content={({ active, payload }) => {
+                            if (active && payload && payload.length && payload[0]?.payload) {
+                              const item = payload[0].payload
+                              const total = filteredCampaigns
+                                .filter(c => c && c.spend > 0)
+                                .reduce((sum, c) => sum + (c?.spend || 0), 0)
+                              const percentage = total > 0 ? ((item.value || 0) / total) * 100 : 0
+                              return (
+                                <div className="rounded-lg border bg-background p-3 shadow-lg">
+                                  <div className="flex items-center gap-2">
+                                    <div
+                                      className="h-3 w-3 rounded-full"
+                                      style={{ backgroundColor: item.color || '#7C2D12' }}
+                                    />
+                                    <span className="font-medium text-sm">{item.fullName || 'Sin nombre'}</span>
+                                  </div>
+                                  <p className="mt-1 text-lg font-semibold">
+                                    {formatCurrency(item.value || 0)}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {percentage.toFixed(1)}% del total
+                                  </p>
+                                </div>
+                              )
                             }
-                          })
-                          return totalSpendForLeads
-                        })(),
-                        color: '#991B1B', // Burdeos oscuro
-                      },
-                      {
-                        name: 'Ventas',
-                        value: (() => {
-                          let totalSpendForVentas = 0
-                          filteredCampaigns.forEach((c) => {
-                            const actions = (c.actions as Array<{ action_type: string; value: string }>) || []
-                            const ventasInCampaign = actions
-                              .filter(a => categorizeActionType(a.action_type) === 'ventas')
-                              .reduce((sum, a) => sum + (parseInt(a.value) || 0), 0)
-                            if (ventasInCampaign > 0 && c.conversions > 0) {
-                              totalSpendForVentas += c.spend * (ventasInCampaign / c.conversions)
-                            } else if (ventasInCampaign > 0) {
-                              totalSpendForVentas += c.spend
-                            }
-                          })
-                          return totalSpendForVentas
-                        })(),
-                        color: '#B91C1C', // Burdeos medio oscuro
-                      },
-                    ]}
-                    dataKey="value"
-                    xAxisKey="name"
-                    height={200}
-                    formatValue={(v) => formatCurrency(v)}
-                  />
-                  <div className="grid grid-cols-3 gap-4 text-center">
-                    <div>
-                      <p className="text-2xl font-bold" style={{ color: '#7C2D12' }}>
-                        {formatNumber(conversionsByType.citas)}
-                      </p>
-                      <p className="text-xs text-muted-foreground">Citas</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold" style={{ color: '#991B1B' }}>
-                        {formatNumber(conversionsByType.leads)}
-                      </p>
-                      <p className="text-xs text-muted-foreground">Leads</p>
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold" style={{ color: '#B91C1C' }}>
-                        {formatNumber(conversionsByType.ventas)}
-                      </p>
-                      <p className="text-xs text-muted-foreground">Ventas</p>
-                    </div>
+                            return null
+                          }}
+                        />
+                        <Legend
+                          layout="vertical"
+                          verticalAlign="middle"
+                          align="right"
+                          content={({ payload }) => {
+                            if (!payload || payload.length === 0) return null
+                            
+                            const sortedCampaigns = [...filteredCampaigns].sort((a, b) => b.spend - a.spend)
+                            const total = sortedCampaigns.reduce((sum, c) => sum + (c?.spend || 0), 0)
+                            
+                            return (
+                              <div className="flex flex-col gap-2 pl-4 max-h-[350px] overflow-y-auto">
+                                {payload.map((entry, index) => {
+                                  if (!entry || !entry.payload) return null
+                                  
+                                  const item = entry.payload
+                                  const campaign = sortedCampaigns.find(c => c?.campaign_name === item.fullName) || sortedCampaigns[index]
+                                  
+                                  if (!campaign) return null
+                                  
+                                  const percentage = total > 0 ? ((campaign.spend / total) * 100).toFixed(1) : '0'
+                                  return (
+                                    <div key={index} className="flex items-center gap-2 text-xs">
+                                      <div
+                                        className="h-3 w-3 rounded-full flex-shrink-0"
+                                        style={{ backgroundColor: entry.color || '#7C2D12' }}
+                                      />
+                                      <span className="text-muted-foreground truncate flex-1">
+                                        {campaign.campaign_name && campaign.campaign_name.length > 20 
+                                          ? `${campaign.campaign_name.substring(0, 20)}...` 
+                                          : campaign.campaign_name || 'Sin nombre'}
+                                      </span>
+                                      <span className="font-medium whitespace-nowrap">{percentage}%</span>
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            )
+                          }}
+                        />
+                      </RechartsPieChart>
+                    </ResponsiveContainer>
                   </div>
                 </div>
               ) : (
-                <div className="flex h-[250px] items-center justify-center">
-                  <p className="text-sm text-muted-foreground">Sin datos aún</p>
-                </div>
+                <p className="text-sm text-muted-foreground">No hay campañas en el período seleccionado.</p>
               )}
             </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base font-medium">Distribución del Presupuesto</CardTitle>
-              <CardDescription>
-                {activeCampaignsBySpend.length > 0
-                  ? `${activeCampaignsBySpend.length} campañas activas`
-                  : 'Sin datos de campañas activas.'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {activeCampaignsBySpend.length > 0 ? (
-                <div className="max-h-[400px] overflow-y-auto space-y-4 pr-2">
-                  {activeCampaignsBySpend.map((campaign) => {
-                    const totalActiveSpend = activeCampaignsBySpend.reduce((sum, c) => sum + c.spend, 0)
-                    const percentage = totalActiveSpend > 0 ? (campaign.spend / totalActiveSpend) * 100 : 0
-                    return (
-                      <div key={campaign.id} className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="font-medium truncate pr-2">{campaign.campaign_name}</span>
-                          <span className="text-muted-foreground whitespace-nowrap">
-                            {formatCurrency(campaign.spend)} ({formatPercentage(percentage, 0)})
-                          </span>
-                        </div>
-                        <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted">
-                          <div
-                            className="h-full transition-all"
-                            style={{
-                              width: `${percentage}%`,
-                              backgroundColor: '#7C2D12', // Burdeos muy oscuro
-                            }}
-                          />
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">No hay campañas activas.</p>
-              )}
-            </CardContent>
-          </Card>
+            </Card>
+            
+            {/* Cost per Result (mitad inferior) */}
+            {theBundClubMonthlyData.lines && theBundClubMonthlyData.lines.length > 0 ? (
+              <LineChart
+                title="Evolución Cost per Result - TheBundClub"
+                data={theBundClubMonthlyData.data}
+                lines={theBundClubMonthlyData.lines}
+                xAxisKey="month"
+                height={300}
+                formatValue={(v) => formatCurrency(v)}
+              />
+            ) : (
+              <Card className="flex-1">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base font-medium">Evolución Cost per Result - TheBundClub</CardTitle>
+                  <CardDescription>
+                    Evolución mensual del Cost per Result de las campañas TheBundClub durante el año
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    No hay datos de campañas TheBundClub para mostrar.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </div>
 
         {/* Campaigns Table */}
@@ -874,18 +1187,6 @@ export default function AdsPage() {
               </TableHeader>
               <TableBody>
                 {filteredCampaigns.map((campaign) => {
-                  // Extraer Results por tipo desde actions
-                  const actions = (campaign.actions as Array<{ action_type: string; value: string }>) || []
-                  const resultsByType: Record<string, number> = {}
-                  actions.forEach((action) => {
-                    const value = parseInt(action.value) || 0
-                    resultsByType[action.action_type] = (resultsByType[action.action_type] || 0) + value
-                  })
-                  const resultsText = Object.entries(resultsByType)
-                    .filter(([_, value]) => value > 0)
-                    .map(([type, value]) => `${value} ${type}`)
-                    .join(', ') || '0'
-
                   return (
                     <TableRow key={campaign.id}>
                       <TableCell>
@@ -910,19 +1211,12 @@ export default function AdsPage() {
                       <TableCell className="text-right">
                         {campaign.cost_per_result && campaign.cost_per_result > 0
                           ? formatCurrency(campaign.cost_per_result)
-                          : campaign.conversions > 0
+                          : campaign.conversions > 0 && campaign.spend > 0
                           ? formatCurrency(campaign.spend / campaign.conversions)
                           : '—'}
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex flex-col items-end gap-1">
-                          {resultsText && (
-                            <span className="text-sm font-medium" title={resultsText}>
-                              {resultsText.length > 30 ? `${resultsText.substring(0, 30)}...` : resultsText}
-                            </span>
-                          )}
-                          {!resultsText && <span className="text-sm text-muted-foreground">0</span>}
-                        </div>
+                        {formatNumber(campaign.conversions)}
                       </TableCell>
                     </TableRow>
                   )

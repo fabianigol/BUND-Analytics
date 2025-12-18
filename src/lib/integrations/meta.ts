@@ -309,6 +309,224 @@ export class MetaService {
     })
   }
 
+  // Determinar el tipo de acción principal según el objetivo de la campaña
+  private getPrimaryActionType(objective: string, actions: Array<{ action_type: string; value: string }>): {
+    actionType: string | null
+    value: number
+  } {
+    if (!actions || actions.length === 0) {
+      return { actionType: null, value: 0 }
+    }
+    
+    const objectiveUpper = objective.toUpperCase()
+    
+    // Para OUTCOME_LEADS: buscar CITA CONFIRMADA o Form1_Short_Completed o TypeformSubmit
+    if (objectiveUpper.includes('OUTCOME_LEADS') || objectiveUpper.includes('LEAD')) {
+      // Prioridad: CITA CONFIRMADA > Form1_Short_Completed > TypeformSubmit > otros leads
+      const priorityPatterns = [
+        /cita.?confirmada/i,
+        /form1.?short.?completed/i,
+        /typeform.?submit/i,
+        /leads.*form/i,
+      ]
+      
+      // Buscar por coincidencia exacta primero
+      const exactMatches = [
+        'CITA CONFIRMADA',
+        'cita_confirmada',
+        'onsite_conversion.cita_confirmada',
+        'offsite_conversion.cita_confirmada',
+        'Form1_Short_Completed',
+        'form1_short_completed',
+        'TypeformSubmit',
+        'typeformsubmit',
+        'Leads (Form)',
+        'leads (form)',
+      ]
+      
+      for (const exactMatch of exactMatches) {
+        const action = actions.find(a => {
+          const actionTypeLower = a.action_type.toLowerCase()
+          const matchLower = exactMatch.toLowerCase()
+          return a.action_type === exactMatch || actionTypeLower === matchLower
+        })
+        if (action && parseInt(action.value) > 0) {
+          return {
+            actionType: action.action_type,
+            value: parseInt(action.value) || 0,
+          }
+        }
+      }
+      
+      // Si no hay coincidencia exacta, buscar por patrón
+      for (const pattern of priorityPatterns) {
+        const matchingActions = actions
+          .map(a => ({ ...a, valueNum: parseInt(a.value) || 0 }))
+          .filter(a => a.valueNum > 0 && pattern.test(a.action_type))
+          .sort((a, b) => b.valueNum - a.valueNum) // Ordenar por valor descendente
+        
+        if (matchingActions.length > 0) {
+          console.log(`[Meta Transform] Found action by pattern for OUTCOME_LEADS: ${matchingActions[0].action_type} = ${matchingActions[0].valueNum}`)
+          return {
+            actionType: matchingActions[0].action_type,
+            value: matchingActions[0].valueNum,
+          }
+        }
+      }
+      
+      // Si aún no encontramos nada, buscar cualquier acción que contenga palabras clave de conversión
+      const conversionKeywords = ['conversion', 'cita', 'form', 'lead', 'submit', 'complete']
+      const keywordActions = actions
+        .map(a => ({ ...a, valueNum: parseInt(a.value) || 0 }))
+        .filter(a => {
+          if (a.valueNum <= 0) return false
+          const actionTypeLower = a.action_type.toLowerCase()
+          return conversionKeywords.some(keyword => actionTypeLower.includes(keyword))
+        })
+        .sort((a, b) => b.valueNum - a.valueNum)
+      
+      if (keywordActions.length > 0) {
+        console.log(`[Meta Transform] Found action by keyword for OUTCOME_LEADS: ${keywordActions[0].action_type} = ${keywordActions[0].valueNum}`)
+        return {
+          actionType: keywordActions[0].action_type,
+          value: keywordActions[0].valueNum,
+        }
+      }
+    }
+    
+    // Para OUTCOME_SALES: buscar primero CITA CONFIRMADA (si existe), luego Website purchases
+    // Meta Ads Manager prioriza CITA CONFIRMADA sobre Website purchases cuando ambas están presentes
+    if (objectiveUpper.includes('OUTCOME_SALES') || objectiveUpper.includes('SALES') || objectiveUpper.includes('PURCHASE')) {
+      // Primero buscar CITA CONFIRMADA (prioridad para campañas de citas)
+      const citaMatches = [
+        'CITA CONFIRMADA',
+        'cita_confirmada',
+        'onsite_conversion.cita_confirmada',
+        'offsite_conversion.cita_confirmada',
+      ]
+      
+      for (const exactMatch of citaMatches) {
+        const action = actions.find(a => {
+          const actionTypeLower = a.action_type.toLowerCase()
+          const matchLower = exactMatch.toLowerCase()
+          return a.action_type === exactMatch || actionTypeLower === matchLower
+        })
+        if (action && parseInt(action.value) > 0) {
+          console.log(`[Meta Transform] OUTCOME_SALES: Found CITA CONFIRMADA (priority): ${action.action_type} = ${action.value}`)
+          return {
+            actionType: action.action_type,
+            value: parseInt(action.value) || 0,
+          }
+        }
+      }
+      
+      // Si no hay CITA CONFIRMADA, buscar por patrón
+      const citaPattern = /cita.?confirmada/i
+      const citaAction = actions.find(a => {
+        const value = parseInt(a.value) || 0
+        return value > 0 && citaPattern.test(a.action_type)
+      })
+      if (citaAction) {
+        console.log(`[Meta Transform] OUTCOME_SALES: Found CITA CONFIRMADA by pattern: ${citaAction.action_type} = ${citaAction.value}`)
+        return {
+          actionType: citaAction.action_type,
+          value: parseInt(citaAction.value) || 0,
+        }
+      }
+      
+      // Si no hay CITA CONFIRMADA, buscar Website purchases
+      const purchaseMatches = [
+        'Website purchases',
+        'website_purchase',
+        'onsite_conversion.purchase',
+        'offsite_conversion.purchase',
+        'purchase',
+      ]
+      
+      for (const exactMatch of purchaseMatches) {
+        const action = actions.find(a => {
+          const actionTypeLower = a.action_type.toLowerCase()
+          const matchLower = exactMatch.toLowerCase()
+          return a.action_type === exactMatch || actionTypeLower === matchLower
+        })
+        if (action && parseInt(action.value) > 0) {
+          console.log(`[Meta Transform] OUTCOME_SALES: Found Website purchases: ${action.action_type} = ${action.value}`)
+          return {
+            actionType: action.action_type,
+            value: parseInt(action.value) || 0,
+          }
+        }
+      }
+      
+      // Buscar por patrón de purchase
+      const purchasePattern = /purchase/i
+      const purchaseAction = actions.find(a => {
+        const value = parseInt(a.value) || 0
+        return value > 0 && purchasePattern.test(a.action_type)
+      })
+      if (purchaseAction) {
+        console.log(`[Meta Transform] OUTCOME_SALES: Found purchase by pattern: ${purchaseAction.action_type} = ${purchaseAction.value}`)
+        return {
+          actionType: purchaseAction.action_type,
+          value: parseInt(purchaseAction.value) || 0,
+        }
+      }
+    }
+    
+    // Si no encontramos una acción principal, buscar acciones de conversión (excluir engagement)
+    // Excluir acciones de engagement comunes que no son conversiones reales
+    const engagementActions = [
+      'link_click',
+      'landing_page_view',
+      'post_engagement',
+      'page_engagement',
+      'post_reaction',
+      'post_comment',
+      'post_share',
+      'video_view',
+      'video_play',
+      'photo_view',
+      'onsite_conversion.web_site_visit',
+      'offsite_conversion.web_site_visit',
+    ]
+    
+    // Filtrar acciones de conversión (excluir engagement)
+    const conversionActions = actions
+      .map(a => ({ ...a, valueNum: parseInt(a.value) || 0 }))
+      .filter(a => {
+        if (a.valueNum <= 0) return false
+        const actionTypeLower = a.action_type.toLowerCase()
+        // Excluir acciones de engagement
+        return !engagementActions.some(engagement => actionTypeLower.includes(engagement.toLowerCase()))
+      })
+      .sort((a, b) => b.valueNum - a.valueNum)
+    
+    // Si encontramos acciones de conversión, usar la de mayor valor
+    if (conversionActions.length > 0) {
+      console.log(`[Meta Transform] Using conversion action (fallback): ${conversionActions[0].action_type} = ${conversionActions[0].valueNum}`)
+      return {
+        actionType: conversionActions[0].action_type,
+        value: conversionActions[0].valueNum,
+      }
+    }
+    
+    // Último recurso: usar cualquier acción con valor > 0 (pero loguear advertencia)
+    const anyAction = actions
+      .map(a => ({ ...a, valueNum: parseInt(a.value) || 0 }))
+      .filter(a => a.valueNum > 0)
+      .sort((a, b) => b.valueNum - a.valueNum)[0]
+    
+    if (anyAction) {
+      console.warn(`[Meta Transform] Using non-conversion action as fallback: ${anyAction.action_type} = ${anyAction.valueNum}`)
+      return {
+        actionType: anyAction.action_type,
+        value: anyAction.valueNum,
+      }
+    }
+    
+    return { actionType: null, value: 0 }
+  }
+
   // Transform Meta API data to our internal format
   transformCampaign(
     campaign: { id: string; name: string; status: string; objective: string; created_time: string },
@@ -337,28 +555,84 @@ export class MetaService {
     // Calcular conversiones totales desde actions
     const actions = insights?.actions || []
     
+    // Determinar el objetivo real: si el nombre contiene "Thebundclub", es OUTCOME_SALES
+    // Esto corrige casos donde el objective puede estar mal configurado
+    const campaignNameUpper = campaign.name.toUpperCase()
+    let effectiveObjective = campaign.objective
+    
+    if (campaignNameUpper.includes('THEBUNDCLUB') || campaignNameUpper.includes('THE BUNDCLUB')) {
+      effectiveObjective = 'OUTCOME_SALES'
+      console.log(`[Meta Transform] Campaign "${campaign.name}" detected as OUTCOME_SALES based on name`)
+    }
+    
     // Log para debug
     if (actions.length > 0) {
       console.log(`[Meta Transform] Actions found for campaign:`, actions.map(a => `${a.action_type}: ${a.value}`).slice(0, 5))
     }
     
+    // Determinar el resultado principal según el objetivo efectivo de la campaña
+    const primaryResult = this.getPrimaryActionType(effectiveObjective, actions)
+    
+    // Log para debug
+    if (actions.length > 0) {
+      console.log(`[Meta Transform] Campaign: ${campaign.name}, Objective: ${campaign.objective}`)
+      console.log(`[Meta Transform] Available actions:`, actions.map(a => `${a.action_type}: ${a.value}`).join(', '))
+      console.log(`[Meta Transform] Primary result: ${primaryResult.actionType} = ${primaryResult.value}`)
+    }
+    
+    // Calcular conversiones totales desde actions (para compatibilidad)
     const totalConversions = actions.reduce((sum, action) => {
       return sum + (parseInt(action.value) || 0)
     }, 0)
+    
+    // Usar el resultado principal como "conversions" (lo que Meta muestra como "Results")
+    const primaryConversions = primaryResult.value
     
     const cpm = insights?.cpm ? parseFloat(insights.cpm) || 0 : 0
     const cpc = insights?.cpc ? parseFloat(insights.cpc) || 0 : 0
     const ctr = insights?.ctr ? parseFloat(insights.ctr) || 0 : 0
     
-    // Calcular cost_per_result (promedio de cost_per_action_type)
+    // Calcular cost_per_result basado en el resultado principal
+    // Si tenemos cost_per_action_type para la acción principal, usarlo
+    // Si no, calcular como spend / primaryConversions
     let cost_per_result = 0
-    if (insights?.cost_per_action_type && insights.cost_per_action_type.length > 0) {
-      const totalCost = insights.cost_per_action_type.reduce((sum, cpa) => {
-        return sum + (parseFloat(cpa.value) || 0)
-      }, 0)
-      cost_per_result = totalCost / insights.cost_per_action_type.length
-    } else if (totalConversions > 0) {
-      cost_per_result = spend / totalConversions
+    if (primaryResult.actionType && insights?.cost_per_action_type) {
+      const primaryActionLower = primaryResult.actionType.toLowerCase()
+      
+      // Buscar coincidencia exacta primero
+      let primaryCostPerAction = insights.cost_per_action_type.find(cpa => 
+        cpa.action_type === primaryResult.actionType
+      )
+      
+      // Si no hay coincidencia exacta, buscar por coincidencia parcial (case-insensitive)
+      if (!primaryCostPerAction) {
+        primaryCostPerAction = insights.cost_per_action_type.find(cpa => {
+          const cpaLower = cpa.action_type.toLowerCase()
+          return cpaLower === primaryActionLower ||
+            cpaLower.includes(primaryActionLower) ||
+            primaryActionLower.includes(cpaLower) ||
+            // Para acciones con formato "onsite_conversion.xxx" o "offsite_conversion.xxx"
+            (primaryActionLower.includes('cita') && cpaLower.includes('cita')) ||
+            (primaryActionLower.includes('form1') && cpaLower.includes('form1')) ||
+            (primaryActionLower.includes('typeform') && cpaLower.includes('typeform'))
+        })
+      }
+      
+      if (primaryCostPerAction) {
+        cost_per_result = parseFloat(primaryCostPerAction.value) || 0
+        console.log(`[Meta Transform] Found cost_per_action_type for ${primaryResult.actionType}: ${cost_per_result}`)
+      } else {
+        console.log(`[Meta Transform] No cost_per_action_type found for ${primaryResult.actionType}`)
+        console.log(`[Meta Transform] Available cost_per_action_type:`, insights.cost_per_action_type.map(cpa => cpa.action_type).join(', '))
+      }
+    }
+    
+    // Si no encontramos cost_per_action_type para la acción principal, calcular
+    if (cost_per_result === 0 && primaryConversions > 0 && spend > 0) {
+      cost_per_result = spend / primaryConversions
+      console.log(`[Meta Transform] Calculated cost_per_result: ${spend} / ${primaryConversions} = ${cost_per_result}`)
+    } else if (cost_per_result === 0) {
+      console.warn(`[Meta Transform] Cannot calculate cost_per_result: primaryConversions=${primaryConversions}, spend=${spend}`)
     }
     
     const roas = spend > 0 && totalConversions > 0 ? (totalConversions * 50) / spend : 0 // Approximate ROAS
@@ -371,7 +645,7 @@ export class MetaService {
       spend,
       impressions,
       clicks,
-      conversions: totalConversions,
+      conversions: primaryConversions, // Usar el resultado principal, no la suma total
       cpm,
       cpc,
       ctr,

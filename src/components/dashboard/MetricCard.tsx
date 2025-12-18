@@ -14,6 +14,7 @@ interface MetricCardProps {
   trend?: 'up' | 'down' | 'neutral'
   subtitle?: string
   className?: string
+  simpleChange?: boolean // Si es true, muestra el cambio en gris pequeño sin badge
 }
 
 export function MetricCard({
@@ -26,6 +27,7 @@ export function MetricCard({
   trend,
   subtitle,
   className,
+  simpleChange = false,
 }: MetricCardProps) {
   const getTrendIcon = () => {
     if (trend === 'up' || (change !== undefined && change > 0)) {
@@ -56,15 +58,21 @@ export function MetricCard({
             <div className="mt-2 flex items-baseline gap-2">
               <h3 className="text-2xl font-bold tracking-tight">{value}</h3>
               {change !== undefined && (
-                <span
-                  className={cn(
-                    'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium',
-                    getTrendColor()
-                  )}
-                >
-                  {getTrendIcon()}
-                  {Math.abs(change).toFixed(1)}%
-                </span>
+                simpleChange ? (
+                  <span className="text-xs text-muted-foreground">
+                    {change > 0 ? '+' : ''}{change.toFixed(1)}%
+                  </span>
+                ) : (
+                  <span
+                    className={cn(
+                      'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium',
+                      getTrendColor()
+                    )}
+                  >
+                    {getTrendIcon()}
+                    {Math.abs(change).toFixed(1)}%
+                  </span>
+                )
               )}
             </div>
             {(changeLabel || subtitle) && (

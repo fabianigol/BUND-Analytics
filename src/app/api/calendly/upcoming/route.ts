@@ -29,7 +29,6 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const { searchParams } = new URL(request.url)
     const storeFilter = searchParams.get('store')
     const eventTypeFilter = searchParams.get('event_type')
     const roomFilter = searchParams.get('room')

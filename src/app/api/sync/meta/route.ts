@@ -6,6 +6,29 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
 
+    // Obtener parámetros de fecha opcionales del body
+    let dateRange: { since: string; until: string } | null = null
+    try {
+      const body = await request.json().catch(() => ({}))
+      if (body.startDate && body.endDate) {
+        // Validar formato de fecha (YYYY-MM-DD)
+        const startDate = new Date(body.startDate)
+        const endDate = new Date(body.endDate)
+        if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime()) && startDate <= endDate) {
+          dateRange = {
+            since: body.startDate, // Ya viene en formato YYYY-MM-DD
+            until: body.endDate,
+          }
+          console.log(`[Meta Sync] Using custom date range: ${dateRange.since} to ${dateRange.until}`)
+        } else {
+          console.warn(`[Meta Sync] Invalid date range provided: ${body.startDate} to ${body.endDate}`)
+        }
+      }
+    } catch (e) {
+      // Si no hay body o no es JSON, continuar sin filtro de fecha
+      console.log('[Meta Sync] No date range provided, using default (last_30d)')
+    }
+
     // Obtener credenciales desde Supabase
     const { data: settings, error: settingsError } = await supabase
       .from('integration_settings')
@@ -78,12 +101,14 @@ export async function POST(request: NextRequest) {
           try {
             let insights = null
             
-            // Usar last_30d primero (Meta devuelve actions mejor con este preset)
-            // Si falla, intentar con rango personalizado de 90 días
+            // Si hay un rango de fechas personalizado, usarlo; si no, usar last_30d
             try {
-              const insightsResponse = await metaService.getCampaignInsights(campaign.id, {
-                datePreset: 'last_30d',
-              })
+              const insightsResponse = await metaService.getCampaignInsights(
+                campaign.id,
+                dateRange
+                  ? { timeRange: dateRange }
+                  : { datePreset: 'last_30d' }
+              )
               insights = insightsResponse.data?.[0]
               
               // Log detallado
@@ -98,8 +123,8 @@ export async function POST(request: NextRequest) {
                 console.log(`  - Cost per action type: ${insights.cost_per_action_type?.length || 0} types`)
               }
               
-              // Si no hay actions en last_30d, intentar con rango más amplio
-              if (insights && (!insights.actions || insights.actions.length === 0)) {
+              // Si no hay actions y no se usó un rango personalizado, intentar con rango más amplio
+              if (insights && (!insights.actions || insights.actions.length === 0) && !dateRange) {
                 console.log(`[Meta Sync] Campaign ${campaign.name}: No actions in last_30d, trying wider range`)
                 const today = new Date()
                 const ninetyDaysAgo = new Date()
@@ -122,51 +147,62 @@ export async function POST(request: NextRequest) {
                   console.log(`[Meta Sync] Campaign ${campaign.name}: 90-day range also failed, keeping last_30d data`)
                 }
               }
-            } catch (last30dError) {
+            } catch (initialError) {
               // Log el error para debug
-              const errorMsg = last30dError instanceof Error ? last30dError.message : String(last30dError)
-              console.log(`[Meta Sync] Campaign ${campaign.name}: last_30d failed: ${errorMsg}`)
+              const errorMsg = initialError instanceof Error ? initialError.message : String(initialError)
+              console.log(`[Meta Sync] Campaign ${campaign.name}: Initial request failed: ${errorMsg}`)
               
-              // Si last_30d falla, intentar con rango amplio (últimos 90 días)
-              try {
-                const today = new Date()
-                const ninetyDaysAgo = new Date()
-                ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90)
-                
-                const insightsResponse = await metaService.getCampaignInsights(campaign.id, {
-                  timeRange: {
-                    since: ninetyDaysAgo.toISOString().split('T')[0],
-                    until: today.toISOString().split('T')[0],
-                  },
+              // Si se usó un rango personalizado y falla, no intentar otros rangos
+              if (dateRange) {
+                console.warn(`[Meta Sync] Campaign ${campaign.name}: Custom date range failed, skipping fallback attempts`)
+                skippedCampaigns.push({
+                  id: campaign.id,
+                  name: campaign.name,
+                  reason: `Failed to fetch insights for custom date range: ${dateRange.since} to ${dateRange.until}`,
                 })
-                insights = insightsResponse.data?.[0]
-                
-                if (insights && insights.actions && insights.actions.length > 0) {
-                  console.log(`[Meta Sync] Campaign ${campaign.name}: Found ${insights.actions.length} action types in 90-day range`)
-                }
-              } catch (rangeError) {
-                // Log el error para debug
-                const rangeErrorMsg = rangeError instanceof Error ? rangeError.message : String(rangeError)
-                console.log(`[Meta Sync] Campaign ${campaign.name}: 90-day range failed: ${rangeErrorMsg}`)
-                
-                // Si todo falla, intentar con lifetime como último recurso
+                insights = null
+              } else {
+                // Si last_30d falla y no hay rango personalizado, intentar con rango amplio (últimos 90 días)
                 try {
-                  const lifetimeResponse = await metaService.getCampaignInsights(campaign.id, {
-                    datePreset: 'lifetime',
+                  const today = new Date()
+                  const ninetyDaysAgo = new Date()
+                  ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90)
+                  
+                  const insightsResponse = await metaService.getCampaignInsights(campaign.id, {
+                    timeRange: {
+                      since: ninetyDaysAgo.toISOString().split('T')[0],
+                      until: today.toISOString().split('T')[0],
+                    },
                   })
-                  insights = lifetimeResponse.data?.[0]
-                  console.log(`[Meta Sync] Campaign ${campaign.name}: Using lifetime data`)
-                } catch (lifetimeError) {
-                  // Si todo falla, guardar la campaña sin insights (con valores en 0)
-                  // pero al menos tendremos la información básica de la campaña
-                  console.warn(`[Meta Sync] Campaign ${campaign.name}: No insights available, saving with default values`)
-                  skippedCampaigns.push({
-                    id: campaign.id,
-                    name: campaign.name,
-                    reason: 'No insights data available after all attempts',
-                  })
-                  // Continuar para guardar la campaña básica
-                  insights = null
+                  insights = insightsResponse.data?.[0]
+                  
+                  if (insights && insights.actions && insights.actions.length > 0) {
+                    console.log(`[Meta Sync] Campaign ${campaign.name}: Found ${insights.actions.length} action types in 90-day range`)
+                  }
+                } catch (rangeError) {
+                  // Log el error para debug
+                  const rangeErrorMsg = rangeError instanceof Error ? rangeError.message : String(rangeError)
+                  console.log(`[Meta Sync] Campaign ${campaign.name}: 90-day range failed: ${rangeErrorMsg}`)
+                  
+                  // Si todo falla, intentar con lifetime como último recurso
+                  try {
+                    const lifetimeResponse = await metaService.getCampaignInsights(campaign.id, {
+                      datePreset: 'lifetime',
+                    })
+                    insights = lifetimeResponse.data?.[0]
+                    console.log(`[Meta Sync] Campaign ${campaign.name}: Using lifetime data`)
+                  } catch (lifetimeError) {
+                    // Si todo falla, guardar la campaña sin insights (con valores en 0)
+                    // pero al menos tendremos la información básica de la campaña
+                    console.warn(`[Meta Sync] Campaign ${campaign.name}: No insights available, saving with default values`)
+                    skippedCampaigns.push({
+                      id: campaign.id,
+                      name: campaign.name,
+                      reason: 'No insights data available after all attempts',
+                    })
+                    // Continuar para guardar la campaña básica
+                    insights = null
+                  }
                 }
               }
             }
