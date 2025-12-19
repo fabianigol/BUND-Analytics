@@ -6,13 +6,32 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient()
     const searchParams = request.nextUrl.searchParams
     const limit = parseInt(searchParams.get('limit') || '30', 10)
-
-    // Get analytics data from database
-    const { data: analyticsData, error } = await supabase
+    
+    // Obtener parámetros de fecha opcionales
+    const startDate = searchParams.get('startDate')
+    const endDate = searchParams.get('endDate')
+    
+    // Construir query con filtros de fecha si existen
+    let query = supabase
       .from('analytics_data')
       .select('*')
       .order('date', { ascending: false })
-      .limit(limit)
+    
+    if (startDate) {
+      query = query.gte('date', startDate)
+    }
+    
+    if (endDate) {
+      query = query.lte('date', endDate)
+    }
+    
+    if (!startDate && !endDate) {
+      // Si no hay filtros, limitar a los últimos registros
+      query = query.limit(limit)
+    }
+
+    // Get analytics data from database
+    const { data: analyticsData, error } = await query
 
     if (error) {
       console.error('Error fetching analytics data:', error)
@@ -88,6 +107,120 @@ export async function GET(request: NextRequest) {
       .sort((a, b) => b.pageViews - a.pageViews)
       .slice(0, 10)
 
+    // Aggregate device breakdown from all records
+    const deviceMap = new Map<string, number>()
+    analyticsData?.forEach((item) => {
+      // Try to get device_breakdown from the item
+      const devices = (item.device_breakdown as any) || []
+      if (Array.isArray(devices) && devices.length > 0) {
+        console.log('[Analytics API] Processing device data:', devices)
+        devices.forEach((device: any) => {
+          const deviceName = device.device || 'unknown'
+          const sessions = device.sessions || 0
+          const existing = deviceMap.get(deviceName)
+          if (existing) {
+            deviceMap.set(deviceName, existing + sessions)
+          } else {
+            deviceMap.set(deviceName, sessions)
+          }
+        })
+      }
+    })
+
+    const deviceData = Array.from(deviceMap.entries())
+      .map(([device, sessions]) => ({
+        name: device,
+        value: sessions,
+        color: device === 'desktop' ? '#3b82f6' : device === 'mobile' ? '#10b981' : '#8b5cf6',
+      }))
+      .sort((a, b) => b.value - a.value)
+
+    console.log('[Analytics API] Final device data:', deviceData)
+
+    // Aggregate geographic data from all records
+    const geographicMap = new Map<string, { country: string; sessions: number; users: number }>()
+    analyticsData?.forEach((item) => {
+      const countries = (item.geographic_data as any) || []
+      countries.forEach((country: any) => {
+        const countryName = country.country || 'Unknown'
+        const existing = geographicMap.get(countryName)
+        if (existing) {
+          existing.sessions += country.sessions || 0
+          existing.users += country.users || 0
+        } else {
+          geographicMap.set(countryName, {
+            country: countryName,
+            sessions: country.sessions || 0,
+            users: country.users || 0,
+          })
+        }
+      })
+    })
+
+    const geographicData = Array.from(geographicMap.values())
+      .sort((a, b) => b.sessions - a.sessions)
+      .slice(0, 20) // Top 20 países
+
+    console.log('[Analytics API] Final geographic data:', geographicData)
+
+    // Aggregate city data from all records
+    const cityMap = new Map<string, { city: string; country: string; sessions: number; users: number }>()
+    analyticsData?.forEach((item) => {
+      const cities = (item.city_data as any) || []
+      cities.forEach((city: any) => {
+        const cityKey = `${city.city}-${city.country}` || 'Unknown'
+        const existing = cityMap.get(cityKey)
+        if (existing) {
+          existing.sessions += city.sessions || 0
+          existing.users += city.users || 0
+        } else {
+          cityMap.set(cityKey, {
+            city: city.city || 'Unknown',
+            country: city.country || 'Unknown',
+            sessions: city.sessions || 0,
+            users: city.users || 0,
+          })
+        }
+      })
+    })
+
+    const cityData = Array.from(cityMap.values())
+      .sort((a, b) => b.sessions - a.sessions)
+      .slice(0, 20) // Top 20 ciudades
+
+    console.log('[Analytics API] Final city data:', cityData)
+
+    // Aggregate hourly data from all records
+    const hourlyMap = new Map<number, { hour: number; sessions: number; users: number }>()
+    analyticsData?.forEach((item) => {
+      const hours = (item.hourly_data as any) || []
+      hours.forEach((hour: any) => {
+        const hourNum = hour.hour || 0
+        const existing = hourlyMap.get(hourNum)
+        if (existing) {
+          existing.sessions += hour.sessions || 0
+          existing.users += hour.users || 0
+        } else {
+          hourlyMap.set(hourNum, {
+            hour: hourNum,
+            sessions: hour.sessions || 0,
+            users: hour.users || 0,
+          })
+        }
+      })
+    })
+
+    // Convert to array and sort by hour (0-23)
+    const hourlyData = Array.from(hourlyMap.values())
+      .sort((a, b) => a.hour - b.hour)
+      .map(item => ({
+        hour: item.hour,
+        sessions: item.sessions,
+        users: item.users,
+      }))
+
+    console.log('[Analytics API] Final hourly data:', hourlyData)
+
     // Prepare daily data for charts
     const sessionsData = analyticsData?.map((item) => ({
       date: item.date,
@@ -130,6 +263,10 @@ export async function GET(request: NextRequest) {
         // Aggregated lists
         trafficSources,
         topPages,
+        deviceData,
+        geographicData,
+        cityData,
+        hourlyData,
         
         // Raw data
         rawData: analyticsData || [],

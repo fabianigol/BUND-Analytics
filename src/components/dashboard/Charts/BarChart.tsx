@@ -10,10 +10,11 @@ import {
   YAxis,
   Cell,
 } from 'recharts'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface BarChartProps {
   title: string
+  description?: string
   data: Array<{
     name: string
     value: number
@@ -31,6 +32,7 @@ interface BarChartProps {
 
 export function BarChart({
   title,
+  description,
   data,
   dataKey = 'value',
   xAxisKey = 'name',
@@ -44,6 +46,7 @@ export function BarChart({
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="text-base font-medium">{title}</CardTitle>
+        {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
       <CardContent className="pt-0">
         <ResponsiveContainer width="100%" height={height}>

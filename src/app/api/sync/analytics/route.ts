@@ -97,62 +97,213 @@ export async function POST(request: NextRequest) {
         throw new Error(`Error fetching top pages: ${error instanceof Error ? error.message : String(error)}`)
       }
 
-      // Transform data to internal format
-      const transformedData = analyticsService.transformOverviewData(
-        overviewMetrics,
-        trafficSources,
-        topPages,
-        dateRange.endDate
-      )
+      console.log('[Analytics Sync] Fetching device breakdown...')
+      let deviceBreakdown: Array<{ device: string; sessions: number }> = []
+      try {
+        deviceBreakdown = await analyticsService.getDeviceBreakdown(dateRange)
+        console.log('[Analytics Sync] Device breakdown fetched:', deviceBreakdown.length, 'devices')
+        console.log('[Analytics Sync] Device breakdown data:', JSON.stringify(deviceBreakdown, null, 2))
+      } catch (error) {
+        console.error('[Analytics Sync] Error fetching device breakdown:', error)
+        // No lanzar error, solo loguear - los dispositivos son opcionales
+        deviceBreakdown = []
+      }
 
-      // Check if data for this date already exists
-      const { data: existingData } = await supabase
-        .from('analytics_data')
-        .select('id')
-        .eq('date', transformedData.date)
-        .single()
+      console.log('[Analytics Sync] Fetching geographic data...')
+      let geographicData: Array<{ country: string; sessions: number; users: number }> = []
+      try {
+        geographicData = await analyticsService.getGeographicData(dateRange)
+        console.log('[Analytics Sync] Geographic data fetched:', geographicData.length, 'countries')
+        console.log('[Analytics Sync] Geographic data:', JSON.stringify(geographicData, null, 2))
+      } catch (error) {
+        console.error('[Analytics Sync] Error fetching geographic data:', error)
+        // No lanzar error, solo loguear - los datos geográficos son opcionales
+        geographicData = []
+      }
 
-      let recordId: string
+      console.log('[Analytics Sync] Fetching city data...')
+      let cityData: Array<{ city: string; country: string; sessions: number; users: number }> = []
+      try {
+        cityData = await analyticsService.getCityData(dateRange)
+        console.log('[Analytics Sync] City data fetched:', cityData.length, 'cities')
+        console.log('[Analytics Sync] City data:', JSON.stringify(cityData, null, 2))
+      } catch (error) {
+        console.error('[Analytics Sync] Error fetching city data:', error)
+        // No lanzar error, solo loguear - los datos de ciudades son opcionales
+        cityData = []
+      }
 
-      const existingDataTyped = existingData as any
+      console.log('[Analytics Sync] Fetching hourly data...')
+      let hourlyData: Array<{ hour: number; sessions: number; users: number }> = []
+      try {
+        hourlyData = await analyticsService.getHourlyData(dateRange)
+        console.log('[Analytics Sync] Hourly data fetched:', hourlyData.length, 'hours')
+        console.log('[Analytics Sync] Hourly data:', JSON.stringify(hourlyData, null, 2))
+      } catch (error) {
+        console.error('[Analytics Sync] Error fetching hourly data:', error)
+        // No lanzar error, solo loguear - los datos horarios son opcionales
+        hourlyData = []
+      }
 
-      if (existingDataTyped?.id) {
-        // Update existing record
-        const { data: updatedData, error: updateError } = await supabase
-          .from('analytics_data')
-          .update(transformedData as any)
-          .eq('id', existingDataTyped.id)
-          .select()
-          .single()
+      // Obtener datos diarios para el rango de fechas
+      console.log('[Analytics Sync] Fetching daily metrics...')
+      let dailyMetrics
+      try {
+        dailyMetrics = await analyticsService.getDailyMetrics(dateRange)
+        console.log('[Analytics Sync] Daily metrics fetched:', dailyMetrics?.rows?.length || 0, 'days')
+      } catch (error) {
+        console.error('[Analytics Sync] Error fetching daily metrics:', error)
+        // Si falla, usar los datos agregados como fallback
+        dailyMetrics = null
+      }
 
-        if (updateError) {
-          throw updateError
-        }
-
-        const updatedDataTyped = updatedData as any
-        recordId = updatedDataTyped.id
-        console.log(`[Analytics Sync] Updated existing record for date ${transformedData.date}`)
-      } else {
-        // Insert new record with generated ID
-        // Use date as ID to ensure uniqueness (one record per date)
-        const recordToInsert = {
-          id: transformedData.date, // Use date as ID
-          ...transformedData,
-        }
+      // Inicializar recordId
+      let recordId: string = dateRange.endDate
+      
+      // Si tenemos datos diarios, guardar un registro por cada día
+      if (dailyMetrics && dailyMetrics.rows && dailyMetrics.rows.length > 0) {
+        console.log('[Analytics Sync] Processing daily data for', dailyMetrics.rows.length, 'days')
         
-        const { data: insertedData, error: insertError } = await supabase
-          .from('analytics_data')
-          .insert(recordToInsert as any)
-          .select()
-          .single()
+        let recordsProcessed = 0
+        let recordsUpdated = 0
+        let recordsInserted = 0
 
-        if (insertError) {
-          throw insertError
+        for (const row of dailyMetrics.rows) {
+          const dimensionValues = row.dimensionValues || []
+          const metricValues = row.metricValues || []
+          
+          // La fecha viene en formato YYYYMMDD, necesitamos convertirla a YYYY-MM-DD
+          const dateRaw = dimensionValues[0]?.value || dateRange.endDate
+          let date = dateRaw
+          if (dateRaw.length === 8) {
+            // Convertir YYYYMMDD a YYYY-MM-DD
+            date = `${dateRaw.substring(0, 4)}-${dateRaw.substring(4, 6)}-${dateRaw.substring(6, 8)}`
+          }
+          
+          const sessions = parseInt(metricValues[0]?.value || '0', 10)
+          const users = parseInt(metricValues[1]?.value || '0', 10)
+          const newUsers = parseInt(metricValues[2]?.value || '0', 10)
+          const pageViews = parseInt(metricValues[3]?.value || '0', 10)
+          const bounceRate = parseFloat(metricValues[4]?.value || '0') * 100 // Convertir a porcentaje
+          const avgSessionDuration = parseFloat(metricValues[5]?.value || '0')
+
+          // Para cada día, guardamos los datos específicos de ese día
+          // Los datos agregados (traffic sources, top pages, etc.) se comparten para todos los días
+          const dailyData = {
+            id: date,
+            date: date,
+            sessions: sessions,
+            users: users,
+            new_users: newUsers,
+            page_views: pageViews,
+            bounce_rate: bounceRate,
+            avg_session_duration: avgSessionDuration,
+            traffic_sources: trafficSources, // Datos agregados del período
+            top_pages: topPages, // Datos agregados del período
+            device_breakdown: deviceBreakdown || [], // Datos agregados del período
+            geographic_data: geographicData || [], // Datos agregados del período
+            city_data: cityData || [], // Datos agregados del período
+            hourly_data: hourlyData || [], // Datos agregados del período
+          } as any
+
+          // Check if data for this date already exists
+          const { data: existingData } = await supabase
+            .from('analytics_data')
+            .select('id')
+            .eq('date', date)
+            .single()
+
+          const existingDataTyped = existingData as any
+
+          if (existingDataTyped?.id) {
+            // Update existing record
+            const { error: updateError } = await supabase
+              .from('analytics_data')
+              .update(dailyData as any)
+              .eq('id', date)
+
+            if (updateError) {
+              console.error(`[Analytics Sync] Error updating record for date ${date}:`, updateError)
+            } else {
+              recordsUpdated++
+            }
+          } else {
+            // Insert new record
+            const { error: insertError } = await supabase
+              .from('analytics_data')
+              .insert(dailyData as any)
+
+            if (insertError) {
+              console.error(`[Analytics Sync] Error inserting record for date ${date}:`, insertError)
+            } else {
+              recordsInserted++
+            }
+          }
+          
+          recordsProcessed++
         }
 
-        const insertedDataTyped = insertedData as any
-        recordId = insertedDataTyped.id
-        console.log(`[Analytics Sync] Created new record for date ${transformedData.date}`)
+        console.log(`[Analytics Sync] Processed ${recordsProcessed} daily records: ${recordsInserted} inserted, ${recordsUpdated} updated`)
+        recordId = dateRange.endDate // Usar la fecha de fin como ID de referencia
+      } else {
+        // Inicializar recordId para el caso de fallback
+        let recordId: string
+        // Fallback: guardar un solo registro agregado para la fecha de fin
+        console.log('[Analytics Sync] No daily data available, saving aggregated record for end date')
+        
+        const transformedData = analyticsService.transformOverviewData(
+          overviewMetrics,
+          trafficSources,
+          topPages,
+          dateRange.endDate
+        )
+
+        const transformedDataWithDevices = {
+          ...transformedData,
+          device_breakdown: deviceBreakdown || [],
+          geographic_data: geographicData || [],
+          city_data: cityData || [],
+          hourly_data: hourlyData || [],
+        } as any
+
+        // Check if data for this date already exists
+        const { data: existingData } = await supabase
+          .from('analytics_data')
+          .select('id')
+          .eq('date', transformedData.date)
+          .single()
+
+        const existingDataTyped = existingData as any
+
+        if (existingDataTyped?.id) {
+          // Update existing record
+          const { error: updateError } = await supabase
+            .from('analytics_data')
+            .update(transformedDataWithDevices as any)
+            .eq('id', existingDataTyped.id)
+
+          if (updateError) {
+            throw updateError
+          }
+          console.log(`[Analytics Sync] Updated aggregated record for date ${transformedData.date}`)
+          recordId = existingDataTyped.id
+        } else {
+          // Insert new record
+          const recordToInsert = {
+            id: transformedData.date,
+            ...transformedDataWithDevices,
+          }
+          
+          const { error: insertError } = await supabase
+            .from('analytics_data')
+            .insert(recordToInsert as any)
+
+          if (insertError) {
+            throw insertError
+          }
+          console.log(`[Analytics Sync] Inserted aggregated record for date ${transformedData.date}`)
+          recordId = transformedData.date
+        }
       }
 
       // Update sync log
@@ -176,14 +327,13 @@ export async function POST(request: NextRequest) {
         } as any)
         .eq('integration', 'analytics')
 
+      const recordsSynced = dailyMetrics && dailyMetrics.rows ? dailyMetrics.rows.length : 1
+      
       return NextResponse.json({
         success: true,
         message: 'Analytics data synced successfully',
-        records_synced: 1,
-        data: {
-          id: recordId,
-          ...transformedData,
-        },
+        records_synced: recordsSynced,
+        date_range: dateRange,
       })
     } catch (syncError) {
       console.error('[Analytics Sync] Error during sync:', syncError)

@@ -88,26 +88,36 @@ export function PieChart({
                 layout="vertical"
                 verticalAlign="middle"
                 align="right"
-                content={({ payload }) => (
-                  <div className="flex flex-col gap-2 pl-4">
-                    {payload?.map((entry, index) => {
-                      const item = data[index]
-                      const percentage = ((item.value / total) * 100).toFixed(0)
-                      return (
-                        <div key={index} className="flex items-center gap-2">
-                          <div
-                            className="h-3 w-3 rounded-full"
-                            style={{ backgroundColor: entry.color }}
-                          />
-                          <span className="text-sm text-muted-foreground">
-                            {entry.value}
-                          </span>
-                          <span className="text-sm font-medium">{percentage}%</span>
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
+                content={({ payload }) => {
+                  // Ordenar el payload por valor descendente para mostrar la leyenda ordenada
+                  const sortedPayload = [...(payload || [])].sort((a, b) => {
+                    const valueA = a.payload?.value || 0
+                    const valueB = b.payload?.value || 0
+                    return valueB - valueA
+                  })
+                  
+                  return (
+                    <div className="flex flex-col gap-2 pl-4">
+                      {sortedPayload.map((entry, index) => {
+                        const itemValue = entry.payload?.value || entry.value || 0
+                        const itemName = entry.payload?.name || entry.name || ''
+                        const percentage = ((itemValue / total) * 100).toFixed(0)
+                        return (
+                          <div key={`legend-${index}`} className="flex items-center gap-2">
+                            <div
+                              className="h-3 w-3 rounded-full flex-shrink-0"
+                              style={{ backgroundColor: entry.color }}
+                            />
+                            <span className="text-sm text-muted-foreground flex-1 truncate">
+                              {itemName}
+                            </span>
+                            <span className="text-sm font-medium">{percentage}%</span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )
+                }}
               />
             )}
           </RechartsPieChart>

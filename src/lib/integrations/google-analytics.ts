@@ -283,17 +283,29 @@ export class GoogleAnalyticsService {
       metrics: [
         { name: 'sessions' },
         { name: 'totalUsers' },
+        { name: 'newUsers' },
         { name: 'screenPageViews' },
+        { name: 'bounceRate' },
+        { name: 'averageSessionDuration' },
       ],
       dimensions: [
         { name: 'date' },
+      ],
+      orderBys: [
+        {
+          dimension: { dimensionName: 'date' },
+          desc: false,
+        },
       ],
     })
 
     return response
   }
 
-  async getDeviceBreakdown(dateRange: { startDate: string; endDate: string }) {
+  async getDeviceBreakdown(dateRange: { startDate: string; endDate: string }): Promise<Array<{
+    device: string
+    sessions: number
+  }>> {
     const client = await this.getClient()
     
     const [response] = await client.runReport({
@@ -312,10 +324,23 @@ export class GoogleAnalyticsService {
       ],
     })
 
-    return response
+    const rows = response.rows || []
+    return rows.map((row) => {
+      const dimensionValues = row.dimensionValues || []
+      const metricValues = row.metricValues || []
+      
+      return {
+        device: dimensionValues[0]?.value || 'unknown',
+        sessions: parseInt(metricValues[0]?.value || '0', 10),
+      }
+    })
   }
 
-  async getGeographicData(dateRange: { startDate: string; endDate: string }) {
+  async getGeographicData(dateRange: { startDate: string; endDate: string }): Promise<Array<{
+    country: string
+    sessions: number
+    users: number
+  }>> {
     const client = await this.getClient()
     
     const [response] = await client.runReport({
@@ -333,10 +358,125 @@ export class GoogleAnalyticsService {
       dimensions: [
         { name: 'country' },
       ],
-      limit: 10,
+      limit: 50,
+      orderBys: [
+        {
+          metric: { metricName: 'sessions' },
+          desc: true,
+        },
+      ],
     })
 
-    return response
+    if (!response.rows || response.rows.length === 0) {
+      return []
+    }
+
+    return response.rows.map((row) => {
+      const dimensionValues = row.dimensionValues || []
+      const metricValues = row.metricValues || []
+
+      return {
+        country: dimensionValues[0]?.value || 'Unknown',
+        sessions: parseInt(metricValues[0]?.value || '0', 10),
+        users: parseInt(metricValues[1]?.value || '0', 10),
+      }
+    })
+  }
+
+  async getCityData(dateRange: { startDate: string; endDate: string }): Promise<Array<{
+    city: string
+    country: string
+    sessions: number
+    users: number
+  }>> {
+    const client = await this.getClient()
+    
+    const [response] = await client.runReport({
+      property: `properties/${this.propertyId}`,
+      dateRanges: [
+        {
+          startDate: dateRange.startDate,
+          endDate: dateRange.endDate,
+        },
+      ],
+      metrics: [
+        { name: 'sessions' },
+        { name: 'totalUsers' },
+      ],
+      dimensions: [
+        { name: 'city' },
+        { name: 'country' },
+      ],
+      limit: 50,
+      orderBys: [
+        {
+          metric: { metricName: 'sessions' },
+          desc: true,
+        },
+      ],
+    })
+
+    if (!response.rows || response.rows.length === 0) {
+      return []
+    }
+
+    return response.rows.map((row) => {
+      const dimensionValues = row.dimensionValues || []
+      const metricValues = row.metricValues || []
+
+      return {
+        city: dimensionValues[0]?.value || 'Unknown',
+        country: dimensionValues[1]?.value || 'Unknown',
+        sessions: parseInt(metricValues[0]?.value || '0', 10),
+        users: parseInt(metricValues[1]?.value || '0', 10),
+      }
+    })
+  }
+
+  async getHourlyData(dateRange: { startDate: string; endDate: string }): Promise<Array<{
+    hour: number
+    sessions: number
+    users: number
+  }>> {
+    const client = await this.getClient()
+    
+    const [response] = await client.runReport({
+      property: `properties/${this.propertyId}`,
+      dateRanges: [
+        {
+          startDate: dateRange.startDate,
+          endDate: dateRange.endDate,
+        },
+      ],
+      metrics: [
+        { name: 'sessions' },
+        { name: 'totalUsers' },
+      ],
+      dimensions: [
+        { name: 'hour' },
+      ],
+      orderBys: [
+        {
+          dimension: { dimensionName: 'hour' },
+          desc: false,
+        },
+      ],
+    })
+
+    if (!response.rows || response.rows.length === 0) {
+      return []
+    }
+
+    return response.rows.map((row) => {
+      const dimensionValues = row.dimensionValues || []
+      const metricValues = row.metricValues || []
+
+      return {
+        hour: parseInt(dimensionValues[0]?.value || '0', 10),
+        sessions: parseInt(metricValues[0]?.value || '0', 10),
+        users: parseInt(metricValues[1]?.value || '0', 10),
+      }
+    })
   }
 
   // Transform GA4 API data to our internal format
