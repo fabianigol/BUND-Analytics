@@ -1,4 +1,4 @@
-import { DashboardMetrics, ChartDataPoint, MultiSeriesChartData } from '@/types'
+import { DashboardMetrics, ChartDataPoint, MultiSeriesChartData, AnalyticsData, ShopifyOrder } from '@/types'
 
 // Placeholder metrics hasta conectar APIs reales
 export const mockDashboardMetrics: DashboardMetrics = {
@@ -46,10 +46,12 @@ export function generateMultiSeriesChartData(): MultiSeriesChartData[] {
   return []
 }
 
+import { ShopifyOrder } from '@/types'
+
 export const mockCalendlyEvents: [] = []
-export const mockShopifyOrders: [] = []
+export const mockShopifyOrders: ShopifyOrder[] = []
 export const mockMetaCampaigns: [] = []
-export const mockAnalyticsData = null
-export const mockTopProducts: [] = []
+export const mockAnalyticsData: AnalyticsData | null = null
+export const mockTopProducts: Array<{ name: string; sales: number; revenue: number }> = []
 export const mockTrafficSources: [] = []
 

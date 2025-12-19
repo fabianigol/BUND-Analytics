@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Header } from '@/components/dashboard/Header'
 import { MetricCard } from '@/components/dashboard/MetricCard'
 import { AreaChart, BarChart, PieChart, LineChart } from '@/components/dashboard/Charts'
@@ -22,16 +23,102 @@ import {
   Globe,
   Smartphone,
   Monitor,
+  Loader2,
 } from 'lucide-react'
-import { mockDashboardMetrics, mockAnalyticsData, mockTrafficSources } from '@/lib/utils/mock-data'
 import { formatNumber, formatCompactNumber, formatPercentage, formatDuration } from '@/lib/utils/format'
-const sessionsData: { date: string; value: number }[] = []
-const usersData: { date: string; usuarios: number; nuevos: number }[] = []
-const deviceData: { name: string; value: number; color: string }[] = []
-const countriesData: { name: string; sessions: number; percentage: number }[] = []
+
+interface AnalyticsData {
+  totalSessions: number
+  totalUsers: number
+  totalPageViews: number
+  totalNewUsers: number
+  avgBounceRate: number
+  avgSessionDuration: number
+  latest: {
+    sessions: number
+    users: number
+    new_users: number
+    page_views: number
+    bounce_rate: number
+    avg_session_duration: number
+    traffic_sources: Array<{ source: string; medium: string; sessions: number; users: number; percentage: number }>
+    top_pages: Array<{ page_path: string; page_title: string; page_views: number; avg_time_on_page: number }>
+  } | null
+  sessionsData: Array<{ date: string; value: number }>
+  usersData: Array<{ date: string; usuarios: number; nuevos: number }>
+  trafficSources: Array<{ source: string; medium: string; sessions: number; users: number }>
+  topPages: Array<{ pagePath: string; pageTitle: string; pageViews: number; avgTimeOnPage: number }>
+}
 
 export default function AnalyticsPage() {
-  const hasAnalytics = Boolean(mockAnalyticsData)
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    loadAnalyticsData()
+  }, [])
+
+  const loadAnalyticsData = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      const response = await fetch('/api/analytics')
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to load analytics data')
+      }
+
+      setAnalyticsData(result.data)
+    } catch (err) {
+      console.error('Error loading analytics:', err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const hasAnalytics = analyticsData && analyticsData.latest !== null
+  if (loading) {
+    return (
+      <div className="flex flex-col">
+        <Header
+          title="Analytics"
+          subtitle="Datos de Google Analytics 4"
+        />
+        <div className="flex-1 flex items-center justify-center p-6">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col">
+        <Header
+          title="Analytics"
+          subtitle="Datos de Google Analytics 4"
+        />
+        <div className="flex-1 flex items-center justify-center p-6">
+          <Card>
+            <CardContent className="p-6">
+              <p className="text-red-600">Error al cargar datos: {error}</p>
+              <button
+                onClick={loadAnalyticsData}
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Reintentar
+              </button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col">
       <Header
@@ -44,30 +131,29 @@ export default function AnalyticsPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <MetricCard
             title="Sesiones"
-            value={mockDashboardMetrics.totalSessions ? formatCompactNumber(mockDashboardMetrics.totalSessions) : '—'}
-            change={mockDashboardMetrics.sessionsChange}
+            value={analyticsData?.totalSessions ? formatCompactNumber(analyticsData.totalSessions) : '—'}
+            change={0}
             icon={Eye}
             iconColor="bg-blue-100 text-blue-600"
           />
           <MetricCard
             title="Usuarios"
-            value={mockDashboardMetrics.totalUsers ? formatCompactNumber(mockDashboardMetrics.totalUsers) : '—'}
-            change={mockDashboardMetrics.usersChange}
+            value={analyticsData?.totalUsers ? formatCompactNumber(analyticsData.totalUsers) : '—'}
+            change={0}
             icon={Users}
             iconColor="bg-emerald-100 text-emerald-600"
           />
           <MetricCard
             title="Páginas Vistas"
-            value={hasAnalytics && mockAnalyticsData?.page_views ? formatCompactNumber(mockAnalyticsData.page_views) : '—'}
+            value={analyticsData?.totalPageViews ? formatCompactNumber(analyticsData.totalPageViews) : '—'}
             change={0}
             icon={Globe}
             iconColor="bg-purple-100 text-purple-600"
           />
           <MetricCard
             title="Tasa de Rebote"
-            value={mockDashboardMetrics.bounceRate ? formatPercentage(mockDashboardMetrics.bounceRate) : '—'}
-            change={mockDashboardMetrics.bounceRateChange}
-            trend={mockDashboardMetrics.bounceRateChange < 0 ? 'up' : 'down'}
+            value={analyticsData?.avgBounceRate ? formatPercentage(analyticsData.avgBounceRate) : '—'}
+            change={0}
             icon={MousePointer}
             iconColor="bg-amber-100 text-amber-600"
           />
@@ -83,8 +169,8 @@ export default function AnalyticsPage() {
               <div>
                 <p className="text-sm text-muted-foreground">Duración Media</p>
                 <p className="text-xl font-semibold">
-                  {hasAnalytics && mockAnalyticsData?.avg_session_duration
-                    ? formatDuration(mockAnalyticsData.avg_session_duration)
+                  {analyticsData?.avgSessionDuration
+                    ? formatDuration(analyticsData.avgSessionDuration)
                     : '—'}
                 </p>
               </div>
@@ -98,7 +184,7 @@ export default function AnalyticsPage() {
               <div>
                 <p className="text-sm text-muted-foreground">Nuevos Usuarios</p>
                 <p className="text-xl font-semibold">
-                  {formatNumber(mockAnalyticsData.new_users)}
+                  {analyticsData?.totalNewUsers ? formatNumber(analyticsData.totalNewUsers) : '—'}
                 </p>
               </div>
             </CardContent>
@@ -111,7 +197,9 @@ export default function AnalyticsPage() {
               <div>
                 <p className="text-sm text-muted-foreground">Páginas/Sesión</p>
                 <p className="text-xl font-semibold">
-                  {(mockAnalyticsData.page_views / mockAnalyticsData.sessions).toFixed(2)}
+                  {analyticsData?.totalPageViews && analyticsData?.totalSessions
+                    ? (analyticsData.totalPageViews / analyticsData.totalSessions).toFixed(2)
+                    : '—'}
                 </p>
               </div>
             </CardContent>
@@ -123,14 +211,45 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Sesiones - Últimos 30 días</CardTitle>
-              <CardDescription>Sin datos. Conecta GA4.</CardDescription>
+              <CardDescription>
+                {analyticsData?.sessionsData && analyticsData.sessionsData.length > 0
+                  ? `${analyticsData.sessionsData.length} días de datos`
+                  : 'Sin datos. Conecta GA4 y sincroniza.'}
+              </CardDescription>
             </CardHeader>
+            {analyticsData?.sessionsData && analyticsData.sessionsData.length > 0 ? (
+              <CardContent>
+                <AreaChart
+                  data={analyticsData.sessionsData}
+                  dataKey="value"
+                  height={300}
+                />
+              </CardContent>
+            ) : null}
           </Card>
           <Card>
             <CardHeader>
               <CardTitle>Usuarios vs Nuevos Usuarios</CardTitle>
-              <CardDescription>Sin datos. Conecta GA4.</CardDescription>
+              <CardDescription>
+                {analyticsData?.usersData && analyticsData.usersData.length > 0
+                  ? `${analyticsData.usersData.length} días de datos`
+                  : 'Sin datos. Conecta GA4 y sincroniza.'}
+              </CardDescription>
             </CardHeader>
+            {analyticsData?.usersData && analyticsData.usersData.length > 0 ? (
+              <CardContent>
+                <LineChart
+                  title="Usuarios vs Nuevos Usuarios"
+                  data={analyticsData.usersData}
+                  lines={[
+                    { dataKey: 'usuarios', name: 'Usuarios', color: '#3b82f6' },
+                    { dataKey: 'nuevos', name: 'Nuevos Usuarios', color: '#10b981', dashed: true },
+                  ]}
+                  xAxisKey="date"
+                  height={300}
+                />
+              </CardContent>
+            ) : null}
           </Card>
         </div>
 
@@ -139,13 +258,28 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Fuentes de Tráfico</CardTitle>
-              <CardDescription>Sin datos. Conecta GA4.</CardDescription>
+              <CardDescription>
+                {analyticsData?.trafficSources && analyticsData.trafficSources.length > 0
+                  ? `${analyticsData.trafficSources.length} fuentes`
+                  : 'Sin datos. Conecta GA4 y sincroniza.'}
+              </CardDescription>
             </CardHeader>
+            {analyticsData?.trafficSources && analyticsData.trafficSources.length > 0 ? (
+              <CardContent>
+                <PieChart
+                  data={analyticsData.trafficSources.map((source) => ({
+                    name: `${source.source} (${source.medium})`,
+                    value: source.sessions,
+                  }))}
+                  height={280}
+                />
+              </CardContent>
+            ) : null}
           </Card>
           <Card>
             <CardHeader>
               <CardTitle>Dispositivos</CardTitle>
-              <CardDescription>Sin datos. Conecta GA4.</CardDescription>
+              <CardDescription>Sin datos. Conecta GA4 y sincroniza.</CardDescription>
             </CardHeader>
           </Card>
 
@@ -153,20 +287,24 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-medium">Páginas Más Visitadas</CardTitle>
-              <CardDescription>Sin datos. Conecta GA4.</CardDescription>
+              <CardDescription>
+                {analyticsData?.topPages && analyticsData.topPages.length > 0
+                  ? `${analyticsData.topPages.length} páginas`
+                  : 'Sin datos. Conecta GA4 y sincroniza.'}
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {hasAnalytics && mockAnalyticsData?.top_pages
-                ? mockAnalyticsData.top_pages.map((page, index) => (
+              {analyticsData?.topPages && analyticsData.topPages.length > 0
+                ? analyticsData.topPages.map((page, index) => (
                     <div key={index} className="space-y-2">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium truncate max-w-[150px]">{page.page_title}</span>
+                        <span className="font-medium truncate max-w-[150px]">{page.pageTitle}</span>
                         <span className="text-muted-foreground">
-                          {formatCompactNumber(page.page_views)}
+                          {formatCompactNumber(page.pageViews)}
                         </span>
                       </div>
                       <Progress
-                        value={(page.page_views / (mockAnalyticsData.top_pages[0]?.page_views || 1)) * 100}
+                        value={(page.pageViews / (analyticsData.topPages[0]?.pageViews || 1)) * 100}
                         className="h-1.5"
                       />
                     </div>
@@ -182,7 +320,7 @@ export default function AnalyticsPage() {
         <Card>
           <CardHeader className="pb-4">
             <CardTitle className="text-base font-medium">Tráfico por País</CardTitle>
-            <CardDescription>Sin datos. Conecta GA4.</CardDescription>
+            <CardDescription>Sin datos. Conecta GA4 y sincroniza.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -195,27 +333,11 @@ export default function AnalyticsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {countriesData.map((country, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">{country.name}</TableCell>
-                    <TableCell className="text-right">
-                      {formatNumber(country.sessions)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {formatPercentage(country.percentage, 0)}
-                    </TableCell>
-                    <TableCell>
-                      <Progress value={country.percentage} className="h-2" />
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {!countriesData.length && (
-                  <TableRow>
-                    <TableCell colSpan={4} className="text-center text-sm text-muted-foreground">
-                      Sin países listados.
-                    </TableCell>
-                  </TableRow>
-                )}
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center text-sm text-muted-foreground">
+                    Sin países listados. Los datos geográficos se agregarán en futuras actualizaciones.
+                  </TableCell>
+                </TableRow>
               </TableBody>
             </Table>
           </CardContent>

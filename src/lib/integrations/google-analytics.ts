@@ -1,70 +1,157 @@
+import { BetaAnalyticsDataClient } from '@google-analytics/data'
+import { OAuth2Client } from 'google-auth-library'
 import { AnalyticsData, TrafficSource, TopPage } from '@/types'
-
-// Note: In production, you would use the Google Analytics Data API
-// with proper authentication via service account
-// This is a simplified implementation structure
 
 interface GAConfig {
   propertyId: string
-  credentials?: string // Path to service account JSON
+  accessToken: string
 }
 
-interface GAMetric {
-  name: string
+interface GATokenData {
+  access_token: string
+  refresh_token?: string
+  expires_at?: string
 }
 
-interface GADimension {
-  name: string
-}
-
-interface GADateRange {
-  startDate: string
-  endDate: string
-}
-
-interface GAReportRequest {
-  property: string
-  dateRanges: GADateRange[]
-  metrics: GAMetric[]
-  dimensions?: GADimension[]
-  limit?: number
+interface GAOverviewMetrics {
+  sessions: number
+  totalUsers: number
+  newUsers: number
+  screenPageViews: number
+  bounceRate: number
+  averageSessionDuration: number
 }
 
 export class GoogleAnalyticsService {
   private propertyId: string
+  private accessToken: string
+  private refreshToken?: string
+  private expiresAt?: Date
+  private clientId?: string
+  private clientSecret?: string
 
-  constructor(config: GAConfig) {
+  constructor(config: GAConfig & { refreshToken?: string; expiresAt?: string; clientId?: string; clientSecret?: string }) {
     this.propertyId = config.propertyId
-  }
-
-  // In production, this would use the actual GA4 Data API
-  // For now, we'll structure it to show the expected interface
-  async runReport(request: Omit<GAReportRequest, 'property'>) {
-    // This would be the actual API call in production:
-    // const analyticsDataClient = new BetaAnalyticsDataClient()
-    // const [response] = await analyticsDataClient.runReport({
-    //   property: `properties/${this.propertyId}`,
-    //   ...request
-    // })
-
-    console.log('GA4 Report Request:', {
-      property: `properties/${this.propertyId}`,
-      ...request,
-    })
-
-    // Return mock data structure for development
-    return {
-      rows: [],
-      metadata: {
-        currencyCode: 'EUR',
-        timeZone: 'Europe/Madrid',
-      },
+    this.accessToken = config.accessToken
+    this.refreshToken = config.refreshToken
+    this.clientId = config.clientId
+    this.clientSecret = config.clientSecret
+    
+    if (config.expiresAt) {
+      this.expiresAt = new Date(config.expiresAt)
     }
   }
 
-  async getOverviewMetrics(dateRange: { startDate: string; endDate: string }) {
-    return this.runReport({
-      dateRanges: [dateRange],
+  // Refresh access token if needed
+  private async ensureValidToken(): Promise<string> {
+    // Check if token is expired or will expire in the next 5 minutes
+    if (this.expiresAt && new Date() >= new Date(this.expiresAt.getTime() - 5 * 60 * 1000)) {
+      if (!this.refreshToken || !this.clientId || !this.clientSecret) {
+        throw new Error('Token expired and no refresh token available')
+      }
+
+      const response = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          refresh_token: this.refreshToken,
+          client_id: this.clientId,
+          client_secret: this.clientSecret,
+          grant_type: 'refresh_token',
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.text()
+        throw new Error(`Failed to refresh token: ${errorData}`)
+      }
+
+      const tokenData = await response.json()
+      this.accessToken = tokenData.access_token
+      
+      if (tokenData.expires_in) {
+        this.expiresAt = new Date(Date.now() + tokenData.expires_in * 1000)
+      }
+
+      // Note: The new token is stored in memory for this request
+      // The token will be persisted on the next sync or configuration update
+    }
+
+    return this.accessToken
+  }
+
+  // Create authenticated client
+  private async getClient(): Promise<BetaAnalyticsDataClient> {
+    const token = await this.ensureValidToken()
+    
+    console.log('[GA Service] Creating authenticated client with token')
+    console.log('[GA Service] Property ID:', this.propertyId)
+    
+    if (!this.clientId || !this.clientSecret) {
+      throw new Error('OAuth2 credentials not configured')
+    }
+    
+    // Create OAuth2Client instance for token management
+    const oauth2Client = new OAuth2Client(
+      this.clientId,
+      this.clientSecret
+    )
+    
+    // Set the credentials (access token and refresh token)
+    oauth2Client.setCredentials({
+      access_token: token,
+      refresh_token: this.refreshToken,
+    })
+    
+    // Create a wrapper that implements the GoogleAuth interface
+    // BetaAnalyticsDataClient expects a GoogleAuth-like object with all required methods
+    const authWrapper = {
+      getClient: async () => oauth2Client,
+      getAccessToken: async () => {
+        const credentials = await oauth2Client.getAccessToken()
+        return credentials.token || token
+      },
+      getUniverseDomain: () => 'googleapis.com',
+      request: async (opts: any) => {
+        return oauth2Client.request(opts)
+      },
+      // Additional methods that might be needed
+      getProjectId: async () => null,
+      getCredentials: async () => {
+        const credentials = oauth2Client.credentials
+        return {
+          access_token: credentials.access_token,
+          refresh_token: credentials.refresh_token,
+        }
+      },
+    }
+    
+    // Create client with auth wrapper
+    try {
+      const client = new BetaAnalyticsDataClient({
+        auth: authWrapper as any,
+      })
+      console.log('[GA Service] Client created successfully')
+      return client
+    } catch (error) {
+      console.error('[GA Service] Error creating client:', error)
+      throw error
+    }
+  }
+
+  async getOverviewMetrics(dateRange: { startDate: string; endDate: string }): Promise<GAOverviewMetrics> {
+    const client = await this.getClient()
+    
+    const [response] = await client.runReport({
+      property: `properties/${this.propertyId}`,
+      dateRanges: [
+        {
+          startDate: dateRange.startDate,
+          endDate: dateRange.endDate,
+        },
+      ],
       metrics: [
         { name: 'sessions' },
         { name: 'totalUsers' },
@@ -74,65 +161,187 @@ export class GoogleAnalyticsService {
         { name: 'averageSessionDuration' },
       ],
     })
+
+    const rows = response.rows || []
+    if (rows.length === 0) {
+      return {
+        sessions: 0,
+        totalUsers: 0,
+        newUsers: 0,
+        screenPageViews: 0,
+        bounceRate: 0,
+        averageSessionDuration: 0,
+      }
+    }
+
+    const row = rows[0]
+    const metricValues = row.metricValues || []
+
+    return {
+      sessions: parseInt(metricValues[0]?.value || '0', 10),
+      totalUsers: parseInt(metricValues[1]?.value || '0', 10),
+      newUsers: parseInt(metricValues[2]?.value || '0', 10),
+      screenPageViews: parseInt(metricValues[3]?.value || '0', 10),
+      bounceRate: parseFloat(metricValues[4]?.value || '0'),
+      averageSessionDuration: parseFloat(metricValues[5]?.value || '0'),
+    }
   }
 
-  async getTrafficSources(dateRange: { startDate: string; endDate: string }) {
-    return this.runReport({
-      dateRanges: [dateRange],
-      metrics: [{ name: 'sessions' }, { name: 'totalUsers' }],
-      dimensions: [{ name: 'sessionSource' }, { name: 'sessionMedium' }],
+  async getTrafficSources(dateRange: { startDate: string; endDate: string }): Promise<Array<{
+    source: string
+    medium: string
+    sessions: number
+    users: number
+  }>> {
+    const client = await this.getClient()
+    
+    const [response] = await client.runReport({
+      property: `properties/${this.propertyId}`,
+      dateRanges: [
+        {
+          startDate: dateRange.startDate,
+          endDate: dateRange.endDate,
+        },
+      ],
+      metrics: [
+        { name: 'sessions' },
+        { name: 'totalUsers' },
+      ],
+      dimensions: [
+        { name: 'sessionSource' },
+        { name: 'sessionMedium' },
+      ],
       limit: 10,
+    })
+
+    const rows = response.rows || []
+    return rows.map((row) => {
+      const dimensionValues = row.dimensionValues || []
+      const metricValues = row.metricValues || []
+      
+      return {
+        source: dimensionValues[0]?.value || '(direct)',
+        medium: dimensionValues[1]?.value || '(none)',
+        sessions: parseInt(metricValues[0]?.value || '0', 10),
+        users: parseInt(metricValues[1]?.value || '0', 10),
+      }
     })
   }
 
-  async getTopPages(dateRange: { startDate: string; endDate: string }) {
-    return this.runReport({
-      dateRanges: [dateRange],
-      metrics: [{ name: 'screenPageViews' }, { name: 'averageSessionDuration' }],
-      dimensions: [{ name: 'pagePath' }, { name: 'pageTitle' }],
+  async getTopPages(dateRange: { startDate: string; endDate: string }): Promise<Array<{
+    pagePath: string
+    pageTitle: string
+    pageViews: number
+    avgTimeOnPage: number
+  }>> {
+    const client = await this.getClient()
+    
+    const [response] = await client.runReport({
+      property: `properties/${this.propertyId}`,
+      dateRanges: [
+        {
+          startDate: dateRange.startDate,
+          endDate: dateRange.endDate,
+        },
+      ],
+      metrics: [
+        { name: 'screenPageViews' },
+        { name: 'averageSessionDuration' },
+      ],
+      dimensions: [
+        { name: 'pagePath' },
+        { name: 'pageTitle' },
+      ],
       limit: 10,
+    })
+
+    const rows = response.rows || []
+    return rows.map((row) => {
+      const dimensionValues = row.dimensionValues || []
+      const metricValues = row.metricValues || []
+      
+      return {
+        pagePath: dimensionValues[0]?.value || '/',
+        pageTitle: dimensionValues[1]?.value || 'Unknown',
+        pageViews: parseInt(metricValues[0]?.value || '0', 10),
+        avgTimeOnPage: parseFloat(metricValues[1]?.value || '0'),
+      }
     })
   }
 
   async getDailyMetrics(dateRange: { startDate: string; endDate: string }) {
-    return this.runReport({
-      dateRanges: [dateRange],
+    const client = await this.getClient()
+    
+    const [response] = await client.runReport({
+      property: `properties/${this.propertyId}`,
+      dateRanges: [
+        {
+          startDate: dateRange.startDate,
+          endDate: dateRange.endDate,
+        },
+      ],
       metrics: [
         { name: 'sessions' },
         { name: 'totalUsers' },
         { name: 'screenPageViews' },
       ],
-      dimensions: [{ name: 'date' }],
+      dimensions: [
+        { name: 'date' },
+      ],
     })
+
+    return response
   }
 
   async getDeviceBreakdown(dateRange: { startDate: string; endDate: string }) {
-    return this.runReport({
-      dateRanges: [dateRange],
-      metrics: [{ name: 'sessions' }],
-      dimensions: [{ name: 'deviceCategory' }],
+    const client = await this.getClient()
+    
+    const [response] = await client.runReport({
+      property: `properties/${this.propertyId}`,
+      dateRanges: [
+        {
+          startDate: dateRange.startDate,
+          endDate: dateRange.endDate,
+        },
+      ],
+      metrics: [
+        { name: 'sessions' },
+      ],
+      dimensions: [
+        { name: 'deviceCategory' },
+      ],
     })
+
+    return response
   }
 
   async getGeographicData(dateRange: { startDate: string; endDate: string }) {
-    return this.runReport({
-      dateRanges: [dateRange],
-      metrics: [{ name: 'sessions' }, { name: 'totalUsers' }],
-      dimensions: [{ name: 'country' }],
+    const client = await this.getClient()
+    
+    const [response] = await client.runReport({
+      property: `properties/${this.propertyId}`,
+      dateRanges: [
+        {
+          startDate: dateRange.startDate,
+          endDate: dateRange.endDate,
+        },
+      ],
+      metrics: [
+        { name: 'sessions' },
+        { name: 'totalUsers' },
+      ],
+      dimensions: [
+        { name: 'country' },
+      ],
       limit: 10,
     })
+
+    return response
   }
 
   // Transform GA4 API data to our internal format
   transformOverviewData(
-    apiData: {
-      sessions: number
-      totalUsers: number
-      newUsers: number
-      screenPageViews: number
-      bounceRate: number
-      averageSessionDuration: number
-    },
+    apiData: GAOverviewMetrics,
     trafficSources: Array<{
       source: string
       medium: string
@@ -178,13 +387,54 @@ export class GoogleAnalyticsService {
   }
 }
 
-// Factory function to create service instance
-export function createGoogleAnalyticsService(): GoogleAnalyticsService | null {
-  const propertyId = process.env.GOOGLE_ANALYTICS_PROPERTY_ID
-  if (!propertyId) return null
+// Factory function to create service instance from Supabase settings
+export async function createGoogleAnalyticsServiceFromSupabase(
+  supabase: Awaited<ReturnType<typeof import('@/lib/supabase/server').createClient>>
+): Promise<GoogleAnalyticsService | null> {
+  const { data, error } = await supabase
+    .from('integration_settings')
+    .select('settings, connected')
+    .eq('integration', 'analytics')
+    .single()
+
+  const dataTyped = data as any
+
+  if (error || !dataTyped || !dataTyped.connected) {
+    return null
+  }
+
+  const settings = dataTyped.settings as {
+    access_token?: string
+    refresh_token?: string
+    expires_at?: string
+    property_id?: string
+  }
+
+  if (!settings.access_token || !settings.property_id) {
+    return null
+  }
+
   return new GoogleAnalyticsService({
-    propertyId,
-    credentials: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    propertyId: settings.property_id,
+    accessToken: settings.access_token,
+    refreshToken: settings.refresh_token,
+    expiresAt: settings.expires_at,
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   })
 }
 
+// Legacy factory function (for backward compatibility)
+export function createGoogleAnalyticsService(): GoogleAnalyticsService | null {
+  const propertyId = process.env.GOOGLE_ANALYTICS_PROPERTY_ID
+  const accessToken = process.env.GOOGLE_ACCESS_TOKEN
+  
+  if (!propertyId || !accessToken) return null
+  
+  return new GoogleAnalyticsService({
+    propertyId,
+    accessToken,
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  })
+}

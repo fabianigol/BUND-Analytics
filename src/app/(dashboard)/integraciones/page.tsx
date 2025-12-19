@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Header } from '@/components/dashboard/Header'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -103,6 +104,7 @@ const integrations: Integration[] = [
 ]
 
 export default function IntegracionesPage() {
+  const searchParams = useSearchParams()
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null)
   const [integrations, setIntegrations] = useState<Integration[]>([])
   const [loading, setLoading] = useState(true)
@@ -111,21 +113,44 @@ export default function IntegracionesPage() {
     accessToken: '',
     adAccountId: '',
   })
+  const [analyticsPropertyId, setAnalyticsPropertyId] = useState('')
   const [connecting, setConnecting] = useState(false)
   const [openDialog, setOpenDialog] = useState<string | null>(null)
 
   // Cargar estado de integraciones
   useEffect(() => {
     loadIntegrations()
-  }, [])
+    
+    // Manejar parámetros de URL para mostrar mensajes
+    const connected = searchParams?.get('connected')
+    const error = searchParams?.get('error')
+    
+    if (connected === 'analytics') {
+      alert('Google Analytics conectado correctamente')
+      // Limpiar URL
+      window.history.replaceState({}, '', '/integraciones')
+      loadIntegrations()
+    } else if (error === 'oauth_cancelled') {
+      alert('Autorización cancelada. Por favor, intenta de nuevo.')
+      window.history.replaceState({}, '', '/integraciones')
+    } else if (error === 'oauth_failed') {
+      alert('Error al conectar Google Analytics. Por favor, intenta de nuevo.')
+      window.history.replaceState({}, '', '/integraciones')
+    }
+  }, [searchParams])
 
   const loadIntegrations = async () => {
     try {
       setLoading(true)
       
-      // Cargar estado de Meta
-      const metaResponse = await fetch('/api/integrations/meta')
+      // Cargar estado de Meta y Analytics
+      const [metaResponse, analyticsResponse] = await Promise.all([
+        fetch('/api/integrations/meta').catch(() => ({ json: async () => ({ connected: false }) })),
+        fetch('/api/integrations/analytics').catch(() => ({ json: async () => ({ connected: false }) })),
+      ])
+      
       const metaData = await metaResponse.json()
+      const analyticsData = await analyticsResponse.json()
 
       const baseIntegrations: Integration[] = [
         {
@@ -165,8 +190,9 @@ export default function IntegracionesPage() {
           description: 'Importa datos de tráfico y comportamiento web',
           icon: BarChart3,
           iconColor: 'bg-amber-100 text-amber-600',
-          connected: false,
-          status: 'disconnected',
+          connected: analyticsData.connected || false,
+          lastSync: analyticsData.lastSync || undefined,
+          status: analyticsData.connected ? 'connected' : 'disconnected',
           docsUrl: 'https://developers.google.com/analytics',
         },
         {
@@ -182,6 +208,11 @@ export default function IntegracionesPage() {
       ]
 
       setIntegrations(baseIntegrations)
+      
+      // Si Analytics está conectado, cargar Property ID si existe
+      if (analyticsData.connected && analyticsData.property_id) {
+        setAnalyticsPropertyId(analyticsData.property_id)
+      }
     } catch (error) {
       console.error('Error loading integrations:', error)
     } finally {
@@ -224,6 +255,32 @@ export default function IntegracionesPage() {
     }
   }
 
+  const handleConnectAnalytics = async () => {
+    try {
+      // Si hay Property ID, guardarlo primero
+      if (analyticsPropertyId) {
+        const response = await fetch('/api/integrations/analytics', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ propertyId: analyticsPropertyId }),
+        })
+        
+        if (!response.ok) {
+          const data = await response.json()
+          throw new Error(data.error || 'Error al guardar Property ID')
+        }
+      }
+      
+      // Redirigir a OAuth
+      window.location.href = '/api/integrations/analytics/auth'
+    } catch (error) {
+      console.error('Error connecting Analytics:', error)
+      alert(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`)
+    }
+  }
+
   const handleSyncMeta = async () => {
     try {
       setSyncing('meta')
@@ -263,6 +320,52 @@ export default function IntegracionesPage() {
       alert(message)
     } catch (error) {
       console.error('Error syncing Meta:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
+      alert(`Error al sincronizar:\n\n${errorMessage}`)
+    } finally {
+      setSyncing(null)
+    }
+  }
+
+  const handleSyncAnalytics = async () => {
+    try {
+      setSyncing('analytics')
+      console.log('[UI] Starting Analytics sync...')
+      
+      const response = await fetch('/api/sync/analytics', {
+        method: 'POST',
+      })
+
+      console.log('[UI] Response status:', response.status)
+      const data = await response.json()
+      console.log('[UI] Response data:', data)
+
+      if (!response.ok) {
+        let errorMsg = data.error || 'Error al sincronizar'
+        
+        if (data.details) {
+          // Handle different types of details
+          if (typeof data.details === 'string') {
+            errorMsg = `${errorMsg}\n\nDetalles: ${data.details}`
+          } else if (typeof data.details === 'object') {
+            // Try to extract meaningful error message from object
+            const detailsStr = data.details.message || JSON.stringify(data.details)
+            errorMsg = `${errorMsg}\n\nDetalles: ${detailsStr}`
+          } else {
+            errorMsg = `${errorMsg}\n\nDetalles: ${String(data.details)}`
+          }
+        }
+        
+        console.error('[UI] Sync error:', errorMsg)
+        throw new Error(errorMsg)
+      }
+
+      // Recargar integraciones para actualizar lastSync
+      await loadIntegrations()
+      
+      alert(`Sincronización completada:\n\n✅ ${data.records_synced} registro(s) sincronizado(s)`)
+    } catch (error) {
+      console.error('Error syncing Analytics:', error)
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
       alert(`Error al sincronizar:\n\n${errorMessage}`)
     } finally {
@@ -476,16 +579,27 @@ export default function IntegracionesPage() {
                         {integration.id === 'analytics' && (
                           <>
                             <div className="space-y-2">
-                              <Label>Property ID</Label>
-                              <Input placeholder="123456789" />
-                            </div>
-                            <div className="space-y-2">
-                              <Label>Service Account JSON</Label>
-                              <Input type="file" accept=".json" />
+                              <Label>Property ID (Opcional)</Label>
+                              <Input 
+                                placeholder="123456789" 
+                                value={analyticsPropertyId}
+                                onChange={(e) => setAnalyticsPropertyId(e.target.value)}
+                              />
                               <p className="text-xs text-muted-foreground">
-                                Sube el archivo JSON de la cuenta de servicio de Google Cloud
+                                Tu Property ID de Google Analytics 4. Si no lo proporcionas aquí, puedes configurarlo después de conectar.
+                                <br />
+                                <strong>⚠️ Importante:</strong> Necesitarás autorizar la aplicación con tu cuenta de Google.
+                                <br />
+                                La aplicación solicitará permisos de solo lectura para acceder a tus datos de Analytics.
                               </p>
                             </div>
+                            {integration.connected && (
+                              <div className="rounded-lg bg-blue-50 p-3 text-sm text-blue-800">
+                                <strong>✓ Conectado</strong>
+                                <br />
+                                Google Analytics está conectado y listo para sincronizar datos.
+                              </div>
+                            )}
                           </>
                         )}
                         {integration.id === 'airtable' && (
@@ -525,6 +639,20 @@ export default function IntegracionesPage() {
                               integration.connected ? 'Actualizar' : 'Conectar'
                             )}
                           </Button>
+                        ) : integration.id === 'analytics' ? (
+                          <Button
+                            onClick={handleConnectAnalytics}
+                            disabled={connecting}
+                          >
+                            {connecting ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Conectando...
+                              </>
+                            ) : (
+                              integration.connected ? 'Reconectar' : 'Conectar con Google'
+                            )}
+                          </Button>
                         ) : (
                           <Button disabled>Conectar</Button>
                         )}
@@ -539,6 +667,20 @@ export default function IntegracionesPage() {
                       disabled={syncing === 'meta'}
                     >
                       {syncing === 'meta' ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <RefreshCw className="h-4 w-4" />
+                      )}
+                    </Button>
+                  )}
+                  {integration.connected && integration.id === 'analytics' && (
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleSyncAnalytics}
+                      disabled={syncing === 'analytics'}
+                    >
+                      {syncing === 'analytics' ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
                         <RefreshCw className="h-4 w-4" />

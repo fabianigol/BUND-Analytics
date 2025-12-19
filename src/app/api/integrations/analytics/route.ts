@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
-// GET - Obtener configuración de Meta
+// GET - Obtener configuración de Google Analytics
 export async function GET() {
   try {
     const supabase = await createClient()
@@ -9,52 +9,65 @@ export async function GET() {
     const { data, error } = await supabase
       .from('integration_settings')
       .select('*')
-      .eq('integration', 'meta')
+      .eq('integration', 'analytics')
       .single()
 
     if (error && error.code !== 'PGRST116') {
       throw error
     }
 
-    return NextResponse.json({
+    const settings = (data as any)?.settings || {}
+    
+    // Don't expose tokens in response
+    const safeSettings = {
+      property_id: settings.property_id,
       connected: (data as any)?.connected || false,
-      settings: (data as any)?.settings || {},
       lastSync: (data as any)?.last_sync || null,
-    })
+      hasTokens: !!(settings.access_token && settings.refresh_token),
+    }
+
+    return NextResponse.json(safeSettings)
   } catch (error) {
-    console.error('Error fetching Meta settings:', error)
+    console.error('Error fetching Analytics settings:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch Meta settings', details: String(error) },
+      { error: 'Failed to fetch Analytics settings', details: String(error) },
       { status: 500 }
     )
   }
 }
 
-// POST - Guardar credenciales de Meta
+// POST - Guardar Property ID (opcional, puede venir del OAuth)
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { accessToken, adAccountId } = body
+    const { propertyId } = body
 
-    if (!accessToken || !adAccountId) {
+    if (!propertyId) {
       return NextResponse.json(
-        { error: 'Access Token y Ad Account ID son requeridos' },
+        { error: 'Property ID es requerido' },
         { status: 400 }
       )
     }
 
     const supabase = await createClient()
 
-    // Guardar credenciales encriptadas en settings
+    // Get existing settings to preserve tokens
+    const { data: existing } = await supabase
+      .from('integration_settings')
+      .select('settings')
+      .eq('integration', 'analytics')
+      .single()
+
+    const existingSettings = (existing as any)?.settings || {}
+
     const { data, error } = await supabase
       .from('integration_settings')
       .upsert({
-        integration: 'meta',
+        integration: 'analytics',
         settings: {
-          access_token: accessToken,
-          ad_account_id: adAccountId,
+          ...existingSettings,
+          property_id: propertyId,
         },
-        connected: true,
         updated_at: new Date().toISOString(),
       } as any, {
         onConflict: 'integration',
@@ -68,19 +81,19 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Credenciales de Meta guardadas correctamente',
+      message: 'Property ID guardado correctamente',
       connected: (data as any)?.connected || false,
     })
   } catch (error) {
-    console.error('Error saving Meta credentials:', error)
+    console.error('Error saving Analytics Property ID:', error)
     return NextResponse.json(
-      { error: 'Failed to save Meta credentials', details: String(error) },
+      { error: 'Failed to save Property ID', details: String(error) },
       { status: 500 }
     )
   }
 }
 
-// DELETE - Desconectar Meta
+// DELETE - Desconectar Google Analytics
 export async function DELETE() {
   try {
     const supabase = await createClient()
@@ -92,7 +105,7 @@ export async function DELETE() {
         settings: {},
         updated_at: new Date().toISOString(),
       })
-      .eq('integration', 'meta')
+      .eq('integration', 'analytics')
 
     if (error) {
       throw error
@@ -100,12 +113,12 @@ export async function DELETE() {
 
     return NextResponse.json({
       success: true,
-      message: 'Meta desconectado correctamente',
+      message: 'Google Analytics desconectado correctamente',
     })
   } catch (error) {
-    console.error('Error disconnecting Meta:', error)
+    console.error('Error disconnecting Analytics:', error)
     return NextResponse.json(
-      { error: 'Failed to disconnect Meta', details: String(error) },
+      { error: 'Failed to disconnect Analytics', details: String(error) },
       { status: 500 }
     )
   }
