@@ -114,6 +114,7 @@ export default function IntegracionesPage() {
     adAccountId: '',
   })
   const [analyticsPropertyId, setAnalyticsPropertyId] = useState('')
+  const [calendlyApiKey, setCalendlyApiKey] = useState('')
   const [connecting, setConnecting] = useState(false)
   const [openDialog, setOpenDialog] = useState<string | null>(null)
 
@@ -143,14 +144,16 @@ export default function IntegracionesPage() {
     try {
       setLoading(true)
       
-      // Cargar estado de Meta y Analytics
-      const [metaResponse, analyticsResponse] = await Promise.all([
+      // Cargar estado de Meta, Analytics y Calendly
+      const [metaResponse, analyticsResponse, calendlyResponse] = await Promise.all([
         fetch('/api/integrations/meta').catch(() => ({ json: async () => ({ connected: false }) })),
         fetch('/api/integrations/analytics').catch(() => ({ json: async () => ({ connected: false }) })),
+        fetch('/api/integrations/calendly').catch(() => ({ json: async () => ({ connected: false }) })),
       ])
       
       const metaData = await metaResponse.json()
       const analyticsData = await analyticsResponse.json()
+      const calendlyData = await calendlyResponse.json()
 
       const baseIntegrations: Integration[] = [
         {
@@ -159,8 +162,9 @@ export default function IntegracionesPage() {
           description: 'Sincroniza citas y eventos del calendario',
           icon: Calendar,
           iconColor: 'bg-blue-100 text-blue-600',
-          connected: false,
-          status: 'disconnected',
+          connected: calendlyData.connected || false,
+          lastSync: calendlyData.lastSync || undefined,
+          status: calendlyData.connected ? 'connected' : 'disconnected',
           docsUrl: 'https://developer.calendly.com/',
         },
         {
@@ -249,6 +253,41 @@ export default function IntegracionesPage() {
       alert('Meta conectado correctamente')
     } catch (error) {
       console.error('Error connecting Meta:', error)
+      alert(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`)
+    } finally {
+      setConnecting(false)
+    }
+  }
+
+  const handleConnectCalendly = async () => {
+    if (!calendlyApiKey) {
+      alert('Por favor, introduce tu API Key de Calendly')
+      return
+    }
+
+    try {
+      setConnecting(true)
+      const response = await fetch('/api/integrations/calendly', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ apiKey: calendlyApiKey }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al conectar Calendly')
+      }
+
+      // Recargar integraciones
+      await loadIntegrations()
+      setOpenDialog(null)
+      setCalendlyApiKey('')
+      alert('Calendly conectado correctamente')
+    } catch (error) {
+      console.error('Error connecting Calendly:', error)
       alert(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`)
     } finally {
       setConnecting(false)
@@ -515,7 +554,12 @@ export default function IntegracionesPage() {
                         {integration.id === 'calendly' && (
                           <div className="space-y-2">
                             <Label>API Key</Label>
-                            <Input type="password" placeholder="Tu API Key de Calendly" />
+                            <Input
+                              type="password"
+                              placeholder="Tu API Key de Calendly"
+                              value={calendlyApiKey}
+                              onChange={(e) => setCalendlyApiKey(e.target.value)}
+                            />
                             <p className="text-xs text-muted-foreground">
                               Encuentra tu API key en Calendly → Integrations → API & Webhooks
                             </p>
@@ -651,6 +695,20 @@ export default function IntegracionesPage() {
                               </>
                             ) : (
                               integration.connected ? 'Reconectar' : 'Conectar con Google'
+                            )}
+                          </Button>
+                        ) : integration.id === 'calendly' ? (
+                          <Button
+                            onClick={handleConnectCalendly}
+                            disabled={connecting || !calendlyApiKey}
+                          >
+                            {connecting ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Conectando...
+                              </>
+                            ) : (
+                              integration.connected ? 'Actualizar' : 'Conectar'
                             )}
                           </Button>
                         ) : (

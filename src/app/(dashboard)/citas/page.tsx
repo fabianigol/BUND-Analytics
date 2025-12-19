@@ -33,7 +33,6 @@ import {
   Download,
   UserCheck,
 } from 'lucide-react'
-import { mockDashboardMetrics, mockCalendlyEvents } from '@/lib/utils/mock-data'
 import { formatNumber, formatPercentage, formatDateTime, formatDate } from '@/lib/utils/format'
 import { subDays, format } from 'date-fns'
 
@@ -52,73 +51,13 @@ const MONTHS = [
   { value: 12, label: 'Diciembre' },
 ]
 
-// Generate mock appointment data for chart
-const appointmentChartData = Array.from({ length: 30 }, (_, i) => {
-  const date = subDays(new Date(), 29 - i)
-  return {
-    date: format(date, 'dd MMM'),
-    value: Math.floor(Math.random() * 8) + 2,
-    completadas: Math.floor(Math.random() * 6) + 1,
-    canceladas: Math.floor(Math.random() * 2),
-  }
-})
-
-const appointmentsByType = [
-  { name: 'Consulta Inicial', value: 45, color: 'var(--chart-1)' },
-  { name: 'Seguimiento', value: 38, color: 'var(--chart-2)' },
-  { name: 'Demo Producto', value: 28, color: 'var(--chart-3)' },
-  { name: 'Revisión', value: 22, color: 'var(--chart-4)' },
-  { name: 'Otros', value: 15, color: 'var(--chart-5)' },
-]
-
-// Extended mock events
-const extendedEvents = [
-  ...mockCalendlyEvents,
-  {
-    id: '3',
-    event_type: 'demo',
-    event_type_name: 'Demo Producto',
-    start_time: new Date(Date.now() - 86400000).toISOString(),
-    end_time: new Date(Date.now() - 86400000 + 3600000).toISOString(),
-    invitee_email: 'demo@empresa.com',
-    invitee_name: 'Ana Martínez',
-    status: 'completed' as const,
-    metadata: {},
-    created_at: new Date(Date.now() - 172800000).toISOString(),
-  },
-  {
-    id: '4',
-    event_type: 'consultation',
-    event_type_name: 'Consulta Inicial',
-    start_time: new Date(Date.now() - 172800000).toISOString(),
-    end_time: new Date(Date.now() - 172800000 + 1800000).toISOString(),
-    invitee_email: 'cancelado@test.com',
-    invitee_name: 'Pedro Sánchez',
-    status: 'canceled' as const,
-    canceled_at: new Date(Date.now() - 180000000).toISOString(),
-    cancellation_reason: 'Conflicto de horario',
-    metadata: {},
-    created_at: new Date(Date.now() - 259200000).toISOString(),
-  },
-  {
-    id: '5',
-    event_type: 'follow-up',
-    event_type_name: 'Seguimiento',
-    start_time: new Date(Date.now() + 172800000).toISOString(),
-    end_time: new Date(Date.now() + 172800000 + 1800000).toISOString(),
-    invitee_email: 'futuro@cliente.com',
-    invitee_name: 'Laura Gómez',
-    status: 'active' as const,
-    metadata: {},
-    created_at: new Date().toISOString(),
-  },
-]
-
 export default function CitasPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [loadingMetrics, setLoadingMetrics] = useState(false)
   const [loadingUpcoming, setLoadingUpcoming] = useState(false)
+  const [loadingHistory, setLoadingHistory] = useState(false)
+  const [loadingCharts, setLoadingCharts] = useState(false)
   const [monthlyMetrics, setMonthlyMetrics] = useState<{
     total_events: number
     active_events: number
@@ -142,6 +81,20 @@ export default function CitasPage() {
       room?: 'I' | 'II' | null
     }>
   >([])
+  const [historyEvents, setHistoryEvents] = useState<
+    Array<{
+      id: string
+      event_type_name: string
+      start_time: string
+      invitee_name: string
+      invitee_email: string
+      status: string
+    }>
+  >([])
+  const [chartData, setChartData] = useState<{
+    daily_data: Array<{ date: string; value: number; completadas: number; canceladas: number }>
+    by_type: Array<{ name: string; value: number; color: string }>
+  } | null>(null)
   const [apiError, setApiError] = useState<string | null>(null)
   const [storeFilter, setStoreFilter] = useState<string>('all')
   const [eventTypeFilter, setEventTypeFilter] = useState<string>('all')
@@ -152,18 +105,22 @@ export default function CitasPage() {
   const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1)
 
   useEffect(() => {
-    // Carga de métricas del mes seleccionado y próximas citas para la demo
+    // Carga de métricas del mes seleccionado, próximas citas, historial y gráficos
     const loadData = async () => {
       try {
         setApiError(null)
         setLoadingMetrics(true)
         setLoadingUpcoming(true)
+        setLoadingHistory(true)
+        setLoadingCharts(true)
 
-        const [metricsRes, upcomingRes] = await Promise.all([
+        const [metricsRes, upcomingRes, historyRes, chartsRes] = await Promise.all([
           fetch(
             `/api/calendly/metrics/monthly?year=${selectedYear}&month=${selectedMonth}`
           ),
           fetch('/api/calendly/upcoming?days=7'),
+          fetch('/api/calendly/events?limit=100&days=90'),
+          fetch('/api/calendly/charts?days=30'),
         ])
 
         if (!metricsRes.ok) {
@@ -177,6 +134,8 @@ export default function CitasPage() {
 
         const metricsJson = await metricsRes.json()
         const upcomingJson = await upcomingRes.json()
+        const historyJson = await historyRes.json().catch(() => ({ events: [] }))
+        const chartsJson = await chartsRes.json().catch(() => ({ daily_data: [], by_type: [] }))
 
         setMonthlyMetrics({
           total_events: metricsJson.total_events ?? 0,
@@ -187,14 +146,21 @@ export default function CitasPage() {
           by_room: metricsJson.by_room ?? {},
         })
         setUpcomingEvents(upcomingJson.events ?? [])
+        setHistoryEvents(historyJson.events ?? [])
+        setChartData({
+          daily_data: chartsJson.daily_data ?? [],
+          by_type: chartsJson.by_type ?? [],
+        })
       } catch (err) {
         console.error(err)
         setApiError(
-          'No se pudo cargar la información en tiempo real de Calendly. Revisa que CALENDLY_API_KEY esté configurado.'
+          'No se pudo cargar la información en tiempo real de Calendly. Revisa que Calendly esté conectado desde la página de Integraciones.'
         )
       } finally {
         setLoadingMetrics(false)
         setLoadingUpcoming(false)
+        setLoadingHistory(false)
+        setLoadingCharts(false)
       }
     }
 
@@ -232,7 +198,7 @@ export default function CitasPage() {
     loadUpcoming()
   }, [storeFilter, eventTypeFilter, roomFilter])
 
-  const filteredEvents = extendedEvents.filter((event) => {
+  const filteredEvents = historyEvents.filter((event) => {
     const matchesSearch =
       event.invitee_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.invitee_email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -379,8 +345,12 @@ export default function CitasPage() {
           />
           <MetricCard
             title="Tasa Conversión"
-            value={formatPercentage(mockDashboardMetrics.appointmentConversionRate)}
-            change={2.3}
+            value={
+              monthlyMetrics && monthlyMetrics.total_events > 0
+                ? formatPercentage(monthlyMetrics.active_events / monthlyMetrics.total_events)
+                : '0.0%'
+            }
+            change={0}
             icon={UserCheck}
             iconColor="bg-purple-100 text-purple-600"
           />
@@ -458,12 +428,20 @@ export default function CitasPage() {
         <div className="grid gap-6 lg:grid-cols-2">
           <AreaChart
             title="Citas por Día - Últimos 30 días"
-            data={appointmentChartData}
+            data={
+              loadingCharts
+                ? []
+                : chartData?.daily_data || []
+            }
             color="var(--chart-2)"
           />
           <BarChart
             title="Citas por Tipo"
-            data={appointmentsByType}
+            data={
+              loadingCharts
+                ? []
+                : chartData?.by_type || []
+            }
             horizontal
             height={280}
           />
@@ -618,11 +596,36 @@ export default function CitasPage() {
           </CardContent>
         </Card>
 
-        {/* Table mock de historial (se mantiene para diseño) */}
+        {/* Historial de Citas desde la base de datos */}
         <Card>
           <CardHeader className="pb-4">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <CardTitle className="text-base font-medium">Historial de Citas</CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  try {
+                    setLoadingHistory(true)
+                    setApiError(null)
+                    const res = await fetch('/api/calendly/events?limit=100&days=90')
+                    if (!res.ok) {
+                      const body = await res.json().catch(() => ({}))
+                      throw new Error(body.error || 'Error al recargar historial de Calendly')
+                    }
+                    const json = await res.json()
+                    setHistoryEvents(json.events ?? [])
+                  } catch (err) {
+                    console.error(err)
+                    setApiError('No se pudieron recargar el historial desde Calendly.')
+                  } finally {
+                    setLoadingHistory(false)
+                  }
+                }}
+                disabled={loadingHistory}
+              >
+                {loadingHistory ? 'Actualizando...' : 'Actualizar'}
+              </Button>
               <div className="flex flex-wrap gap-2">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -663,31 +666,45 @@ export default function CitasPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredEvents.map((event) => (
-                  <TableRow key={event.id}>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{event.invitee_name}</p>
-                        <p className="text-sm text-muted-foreground">{event.invitee_email}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>{event.event_type_name}</TableCell>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{formatDate(event.start_time, 'dd MMM yyyy')}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {formatDate(event.start_time, 'HH:mm')}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell>{getStatusBadge(event.status)}</TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="sm">
-                        Ver detalles
-                      </Button>
+                {loadingHistory ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center text-sm text-muted-foreground">
+                      Cargando historial...
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : filteredEvents.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center text-sm text-muted-foreground">
+                      No hay eventos en el historial. Sincroniza eventos de Calendly para ver el historial.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredEvents.map((event) => (
+                    <TableRow key={event.id}>
+                      <TableCell>
+                        <div>
+                          <p className="font-medium">{event.invitee_name || 'Sin nombre'}</p>
+                          <p className="text-sm text-muted-foreground">{event.invitee_email || 'Sin email'}</p>
+                        </div>
+                      </TableCell>
+                      <TableCell>{event.event_type_name || 'N/A'}</TableCell>
+                      <TableCell>
+                        <div>
+                          <p className="font-medium">{formatDate(event.start_time, 'dd MMM yyyy')}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {formatDate(event.start_time, 'HH:mm')}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>{getStatusBadge(event.status)}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="sm">
+                          Ver detalles
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </CardContent>

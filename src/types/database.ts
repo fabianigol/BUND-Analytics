@@ -113,6 +113,41 @@ export interface Database {
           updated_at?: string
         }
       }
+      calendly_appointment_counts: {
+        Row: {
+          id: string
+          year: number
+          month: number
+          total_count: number
+          active_count: number
+          canceled_count: number
+          completed_count: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          year: number
+          month: number
+          total_count?: number
+          active_count?: number
+          canceled_count?: number
+          completed_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          year?: number
+          month?: number
+          total_count?: number
+          active_count?: number
+          canceled_count?: number
+          completed_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
       shopify_orders: {
         Row: {
           id: string

@@ -70,7 +70,10 @@ export class CalendlyService {
   }
 
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
-    const response = await fetch(`${CALENDLY_API_URL}${endpoint}`, {
+    const url = `${CALENDLY_API_URL}${endpoint}`
+    console.log(`[Calendly API] Request: ${url}`)
+    
+    const response = await fetch(url, {
       ...options,
       headers: {
         Authorization: `Bearer ${this.apiKey}`,
@@ -80,16 +83,23 @@ export class CalendlyService {
     })
 
     if (!response.ok) {
-      throw new Error(`Calendly API error: ${response.statusText}`)
+      const errorText = await response.text().catch(() => response.statusText)
+      console.error(`[Calendly API] Error ${response.status}: ${errorText}`)
+      throw new Error(`Calendly API error: ${response.status} ${response.statusText} - ${errorText}`)
     }
 
     return response.json()
   }
 
   async getCurrentUser() {
-    return this.request<{ resource: { uri: string; name: string; email: string } }>(
-      '/users/me'
-    )
+    return this.request<{ 
+      resource: { 
+        uri: string
+        name: string
+        email: string
+        current_organization?: string
+      } 
+    }>('/users/me')
   }
 
   async getScheduledEvents(params: {
@@ -104,10 +114,19 @@ export class CalendlyService {
     const searchParams = new URLSearchParams()
     if (params.userUri) {
       searchParams.set('user', params.userUri)
+      console.log(`[Calendly API] Usando user URI: ${params.userUri}`)
     }
     if (params.organizationUri) {
+      // La API de Calendly espera la URI completa de la organización
       searchParams.set('organization', params.organizationUri)
+      console.log(`[Calendly API] Usando organization URI: ${params.organizationUri}`)
     }
+    
+    if (!params.userUri && !params.organizationUri) {
+      console.error('[Calendly API] Error: ni userUri ni organizationUri están definidos')
+      throw new Error('Se requiere userUri o organizationUri para obtener eventos programados')
+    }
+    
     if (params.minStartTime) {
       searchParams.set('min_start_time', params.minStartTime)
     }
@@ -122,7 +141,12 @@ export class CalendlyService {
     }
     if (params.pageToken) {
       searchParams.set('page_token', params.pageToken)
+      console.log(`[Calendly API] Usando page_token: ${params.pageToken.substring(0, 20)}...`)
     }
+    
+    const finalUrl = `/scheduled_events?${searchParams.toString()}`
+    console.log(`[Calendly API] URL final: ${finalUrl}`)
+    // No loguear parámetros completos para evitar exponer tokens
 
     return this.request<{
       collection: Array<{
@@ -266,5 +290,41 @@ export function createCalendlyService(): CalendlyService | null {
   const apiKey = process.env.CALENDLY_API_KEY
   if (!apiKey) return null
   return new CalendlyService({ apiKey })
+}
+
+// Factory function to create service instance from Supabase settings
+export async function createCalendlyServiceFromSupabase(
+  supabase: Awaited<ReturnType<typeof import('@/lib/supabase/server').createClient>>
+): Promise<CalendlyService | null> {
+  // Primero intentar desde variables de entorno
+  const envApiKey = process.env.CALENDLY_API_KEY
+  if (envApiKey) {
+    return new CalendlyService({ apiKey: envApiKey })
+  }
+
+  // Si no está en variables de entorno, buscar en la base de datos
+  try {
+    const { data, error } = await supabase
+      .from('integration_settings')
+      .select('settings')
+      .eq('integration', 'calendly')
+      .single()
+
+    if (error || !data) {
+      return null
+    }
+
+    const settings = (data as any).settings || {}
+    const apiKey = settings.api_key
+
+    if (!apiKey) {
+      return null
+    }
+
+    return new CalendlyService({ apiKey })
+  } catch (error) {
+    console.error('Error loading Calendly API key from database:', error)
+    return null
+  }
 }
 

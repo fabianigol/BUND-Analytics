@@ -1,16 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createCalendlyService, parseStoreInfo } from '@/lib/integrations/calendly'
+import { createCalendlyService, createCalendlyServiceFromSupabase, parseStoreInfo } from '@/lib/integrations/calendly'
+import { createClient } from '@/lib/supabase/server'
 
 const MAX_PAGES = 20
 
 export async function GET(request: NextRequest) {
   try {
-    const calendlyService = createCalendlyService()
+    // Intentar obtener el servicio desde variables de entorno o base de datos
+    let calendlyService = createCalendlyService()
+    
+    if (!calendlyService) {
+      // Si no está en variables de entorno, intentar desde la base de datos
+      const supabase = await createClient()
+      calendlyService = await createCalendlyServiceFromSupabase(supabase)
+    }
+    
     if (!calendlyService) {
       return NextResponse.json(
         {
           error:
-            'Integración de Calendly no configurada. Añade CALENDLY_API_KEY a las variables de entorno.',
+            'Integración de Calendly no configurada. Por favor, conecta Calendly desde la página de Integraciones o añade CALENDLY_API_KEY a las variables de entorno.',
         },
         { status: 400 }
       )
@@ -35,10 +44,46 @@ export async function GET(request: NextRequest) {
     const startDate = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0, 0))
     const endDate = new Date(Date.UTC(year, month, 0, 23, 59, 59, 999))
 
-    // Obtener organización del usuario actual
-    const currentUser = await calendlyService.getCurrentUser()
-    const orgMemberships = await calendlyService.getCurrentOrganization()
-    const organizationUri = orgMemberships.collection[0]?.organization?.uri
+    // Obtener usuario y organización según documentación oficial de Calendly
+    // El endpoint /users/me devuelve tanto el URI del usuario como current_organization
+    let currentUser
+    let userUri: string | undefined
+    let organizationUri: string | undefined
+    
+    try {
+      currentUser = await calendlyService.getCurrentUser()
+      userUri = currentUser.resource.uri
+      // Según la documentación oficial, current_organization viene directamente en /users/me
+      organizationUri = currentUser.resource.current_organization
+      
+      console.log(`[Calendly Metrics] Usuario obtenido: ${currentUser.resource.name}`)
+      console.log(`[Calendly Metrics] userUri: ${userUri}`)
+      console.log(`[Calendly Metrics] current_organization (desde /users/me): ${organizationUri || 'no disponible'}`)
+    } catch (error) {
+      console.error('[Calendly Metrics] Error obteniendo usuario:', error)
+      throw new Error('No se pudo obtener el usuario de Calendly. Verifica que tu API key sea válida.')
+    }
+    
+    if (!userUri) {
+      throw new Error('No se pudo obtener el URI del usuario de Calendly')
+    }
+    
+    // Si no hay current_organization en /users/me, intentar obtenerla de organization_memberships como fallback
+    if (!organizationUri) {
+      try {
+        console.log('[Calendly Metrics] current_organization no disponible, intentando obtener de organization_memberships...')
+        const orgMemberships = await calendlyService.getCurrentOrganization()
+        console.log(`[Calendly Metrics] Organizaciones encontradas: ${orgMemberships.collection?.length || 0}`)
+        organizationUri = orgMemberships.collection?.[0]?.organization?.uri
+        console.log(`[Calendly Metrics] organizationUri (desde organization_memberships): ${organizationUri || 'no encontrada'}`)
+      } catch (error) {
+        console.warn('[Calendly Metrics] Error obteniendo organización (usando userUri):', error)
+        organizationUri = undefined
+      }
+    }
+    
+    const useUserUri = !organizationUri
+    console.log(`[Calendly Metrics] useUserUri: ${useUserUri}`)
 
     // Cache de owners de event types para evitar llamadas repetidas
     const eventTypeOwnerCache = new Map<string, { ownerUri: string; ownerName: string }>()
@@ -73,13 +118,30 @@ export async function GET(request: NextRequest) {
 
     // Consultar eventos de toda la organización (no solo del usuario actual)
     while (pagesProcessed < MAX_PAGES) {
-      const response = await calendlyService.getScheduledEvents({
-        organizationUri,
+      const eventParams: Parameters<typeof calendlyService.getScheduledEvents>[0] = {
         minStartTime: startDate.toISOString(),
         maxStartTime: endDate.toISOString(),
         count: 100,
         pageToken,
-      })
+      }
+      
+      // Asegurarse de que siempre se pase userUri o organizationUri
+      if (useUserUri && userUri) {
+        eventParams.userUri = userUri
+        console.log(`[Calendly Metrics] Usando userUri: ${userUri}`)
+      } else if (organizationUri) {
+        eventParams.organizationUri = organizationUri
+        console.log(`[Calendly Metrics] Usando organizationUri: ${organizationUri}`)
+      } else if (userUri) {
+        // Fallback: usar userUri si organizationUri no está disponible
+        eventParams.userUri = userUri
+        console.log(`[Calendly Metrics] Fallback: usando userUri: ${userUri}`)
+      } else {
+        throw new Error('No se pudo determinar userUri ni organizationUri')
+      }
+      
+      console.log(`[Calendly Metrics] Parámetros finales:`, JSON.stringify(eventParams, null, 2))
+      const response = await calendlyService.getScheduledEvents(eventParams)
 
       for (const event of response.collection) {
         totalEvents++
@@ -231,7 +293,10 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Calendly monthly metrics error:', error)
     return NextResponse.json(
-      { error: 'No se pudieron obtener las métricas mensuales de Calendly.' },
+      { 
+        error: 'No se pudieron obtener las métricas mensuales de Calendly.',
+        details: String(error)
+      },
       { status: 500 }
     )
   }
