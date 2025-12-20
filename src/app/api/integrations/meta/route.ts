@@ -6,13 +6,38 @@ export async function GET() {
   try {
     const supabase = await createClient()
     
+    // Verificar autenticación primero
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      console.error('Auth error in Meta GET:', authError)
+      return NextResponse.json(
+        { error: 'Unauthorized', details: 'User not authenticated' },
+        { status: 401 }
+      )
+    }
+    
     const { data, error } = await supabase
       .from('integration_settings')
       .select('*')
       .eq('integration', 'meta')
       .single()
 
-    if (error && error.code !== 'PGRST116') {
+    // Si no hay datos, retornar estado desconectado
+    if (error && error.code === 'PGRST116') {
+      return NextResponse.json({
+        connected: false,
+        settings: {},
+        lastSync: null,
+      })
+    }
+
+    if (error) {
+      console.error('Supabase error in Meta GET:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+      })
       throw error
     }
 
@@ -21,10 +46,19 @@ export async function GET() {
       settings: (data as any)?.settings || {},
       lastSync: (data as any)?.last_sync || null,
     })
-  } catch (error) {
-    console.error('Error fetching Meta settings:', error)
+  } catch (error: any) {
+    console.error('Error fetching Meta settings:', {
+      message: error?.message,
+      code: error?.code,
+      details: error?.details,
+      stack: error?.stack,
+    })
     return NextResponse.json(
-      { error: 'Failed to fetch Meta settings', details: String(error) },
+      { 
+        error: 'Failed to fetch Meta settings', 
+        details: error?.message || String(error),
+        code: error?.code,
+      },
       { status: 500 }
     )
   }

@@ -8,23 +8,17 @@ const MAX_PAGES = 10
 
 export async function GET(request: NextRequest) {
   try {
-    // Intentar obtener el servicio desde variables de entorno o base de datos
-    let calendlyService = createCalendlyService()
+    // Obtener el servicio desde la base de datos (solo OAuth, API Key ya no es soportada)
+    const supabase = await createClient()
+    const calendlyService = await createCalendlyServiceFromSupabase(supabase)
     
     if (!calendlyService) {
-      // Si no está en variables de entorno, intentar desde la base de datos
-      const supabase = await createClient()
-      calendlyService = await createCalendlyServiceFromSupabase(supabase)
-    }
-    
-    if (!calendlyService) {
-      return NextResponse.json(
-        {
-          error:
-            'Integración de Calendly no configurada. Por favor, conecta Calendly desde la página de Integraciones o añade CALENDLY_API_KEY a las variables de entorno.',
-        },
-        { status: 400 }
-      )
+      // Si no hay servicio OAuth, devolver respuesta vacía
+      return NextResponse.json({
+        events: [],
+        total: 0,
+        message: 'Calendly no está conectado. Por favor, conecta Calendly desde la página de Integraciones usando OAuth 2.0.',
+      })
     }
 
     const { searchParams } = new URL(request.url)
@@ -47,7 +41,19 @@ export async function GET(request: NextRequest) {
 
     // Obtener usuario y organización según documentación oficial de Calendly
     // El endpoint /users/me devuelve tanto el URI del usuario como current_organization
-    const currentUser = await calendlyService.getCurrentUser()
+    let currentUser
+    try {
+      currentUser = await calendlyService.getCurrentUser()
+    } catch (error: any) {
+      // Si falla la autenticación (token inválido o expirado), devolver respuesta vacía
+      console.error('[Calendly Upcoming] Error de autenticación:', error)
+      return NextResponse.json({
+        events: [],
+        total: 0,
+        message: 'Error de autenticación con Calendly. Por favor, reconecta Calendly desde la página de Integraciones.',
+      })
+    }
+    
     const userUri = currentUser.resource.uri
     // Según la documentación oficial, current_organization viene directamente en /users/me
     let organizationUri = currentUser.resource.current_organization
@@ -218,15 +224,23 @@ export async function GET(request: NextRequest) {
         max_pages: MAX_PAGES,
       },
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Calendly upcoming events error:', error)
-    return NextResponse.json(
-      { 
-        error: 'No se pudieron obtener las próximas citas de Calendly.',
-        details: String(error)
-      },
-      { status: 500 }
-    )
+    // Si es un error de autenticación o token inválido, devolver respuesta vacía
+    if (error?.message?.includes('401') || error?.message?.includes('403') || 
+        error?.message?.includes('Unauthorized') || error?.message?.includes('autenticación')) {
+      return NextResponse.json({
+        events: [],
+        total: 0,
+        message: 'Error de autenticación con Calendly. Por favor, reconecta Calendly desde la página de Integraciones.',
+      })
+    }
+    // Para otros errores, devolver respuesta vacía con mensaje en lugar de 500
+    return NextResponse.json({
+      events: [],
+      total: 0,
+      message: 'No se pudieron obtener las próximas citas de Calendly. Por favor, verifica la conexión.',
+    })
   }
 }
 

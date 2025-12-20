@@ -6,9 +6,31 @@ import { Database } from '@/types/database'
 export async function createClient() {
   const cookieStore = await cookies()
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseKey) {
+    // Return a dummy client in development if env vars are not set
+    // This prevents the app from crashing while Supabase is being configured
+    return createServerClient<Database>(
+      'https://placeholder.supabase.co',
+      'placeholder-key',
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll()
+          },
+          setAll() {
+            // No-op for placeholder client
+          },
+        },
+      }
+    )
+  }
+
   return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseKey,
     {
       cookies: {
         getAll() {
@@ -35,13 +57,20 @@ export async function createClient() {
  * como sincronizaciones que no requieren autenticación de usuario
  */
 export function createServiceRoleClient() {
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!serviceRoleKey) {
     throw new Error('SUPABASE_SERVICE_ROLE_KEY no está configurada')
   }
 
+  if (!supabaseUrl) {
+    throw new Error('NEXT_PUBLIC_SUPABASE_URL no está configurada')
+  }
+
   return createSupabaseClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    supabaseUrl,
+    serviceRoleKey,
     {
       auth: {
         autoRefreshToken: false,

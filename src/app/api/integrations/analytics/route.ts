@@ -6,13 +6,39 @@ export async function GET() {
   try {
     const supabase = await createClient()
     
+    // Verificar autenticación primero
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      console.error('Auth error in Analytics GET:', authError)
+      return NextResponse.json(
+        { error: 'Unauthorized', details: 'User not authenticated' },
+        { status: 401 }
+      )
+    }
+    
     const { data, error } = await supabase
       .from('integration_settings')
       .select('*')
       .eq('integration', 'analytics')
       .single()
 
-    if (error && error.code !== 'PGRST116') {
+    // Si no hay datos, retornar estado desconectado
+    if (error && error.code === 'PGRST116') {
+      return NextResponse.json({
+        property_id: null,
+        connected: false,
+        lastSync: null,
+        hasTokens: false,
+      })
+    }
+
+    if (error) {
+      console.error('Supabase error in Analytics GET:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+      })
       throw error
     }
 
@@ -27,10 +53,19 @@ export async function GET() {
     }
 
     return NextResponse.json(safeSettings)
-  } catch (error) {
-    console.error('Error fetching Analytics settings:', error)
+  } catch (error: any) {
+    console.error('Error fetching Analytics settings:', {
+      message: error?.message,
+      code: error?.code,
+      details: error?.details,
+      stack: error?.stack,
+    })
     return NextResponse.json(
-      { error: 'Failed to fetch Analytics settings', details: String(error) },
+      { 
+        error: 'Failed to fetch Analytics settings', 
+        details: error?.message || String(error),
+        code: error?.code,
+      },
       { status: 500 }
     )
   }

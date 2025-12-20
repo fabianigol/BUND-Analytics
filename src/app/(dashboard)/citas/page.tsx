@@ -123,17 +123,19 @@ export default function CitasPage() {
           fetch('/api/calendly/charts?days=30'),
         ])
 
-        if (!metricsRes.ok) {
-          const body = await metricsRes.json().catch(() => ({}))
-          throw new Error(body.error || 'Error al cargar métricas de Calendly')
+        // Manejar respuestas - si no están ok, pero no tienen error, puede ser que no esté conectado
+        const metricsJson = await metricsRes.json().catch(() => ({ total_events: 0, active_events: 0, canceled_events: 0, by_store: {}, by_event_type_category: {}, by_room: {}, message: 'Calendly no está conectado' }))
+        const upcomingJson = await upcomingRes.json().catch(() => ({ events: [], total: 0, message: 'Calendly no está conectado' }))
+        
+        // Si hay un mensaje indicando que no está conectado, no lanzar error, solo usar valores por defecto
+        if (metricsJson.message && metricsJson.message.includes('no está conectado')) {
+          console.warn('[Citas] Calendly no está conectado:', metricsJson.message)
         }
-        if (!upcomingRes.ok) {
-          const body = await upcomingRes.json().catch(() => ({}))
-          throw new Error(body.error || 'Error al cargar próximas citas de Calendly')
+        if (upcomingJson.message && upcomingJson.message.includes('no está conectado')) {
+          console.warn('[Citas] Calendly no está conectado:', upcomingJson.message)
         }
 
-        const metricsJson = await metricsRes.json()
-        const upcomingJson = await upcomingRes.json()
+        // historyJson y chartsJson ya están manejados arriba
         const historyJson = await historyRes.json().catch(() => ({ events: [] }))
         const chartsJson = await chartsRes.json().catch(() => ({ daily_data: [], by_type: [] }))
 
@@ -181,8 +183,16 @@ export default function CitasPage() {
         if (roomFilter !== 'all') params.set('room', roomFilter)
 
         const res = await fetch(`/api/calendly/upcoming?${params.toString()}`)
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}))
+        const body = await res.json().catch(() => ({ events: [], total: 0, message: 'Error al cargar próximas citas' }))
+        
+        // Si hay un mensaje indicando que no está conectado, no lanzar error, solo usar valores por defecto
+        if (body.message && (body.message.includes('no está conectado') || body.message.includes('autenticación'))) {
+          console.warn('[Citas] Calendly no está conectado:', body.message)
+          setUpcomingEvents([])
+          return
+        }
+        
+        if (!res.ok && body.error) {
           throw new Error(body.error || 'Error al cargar próximas citas de Calendly')
         }
         const json = await res.json()

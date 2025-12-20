@@ -166,6 +166,25 @@ export default function AnalyticsPage() {
   const [dateFilterType, setDateFilterType] = useState<DateFilterType>('last28')
   const [startDate, setStartDate] = useState<string>('')
   const [endDate, setEndDate] = useState<string>('')
+  const [isMobile, setIsMobile] = useState(false)
+  const [tooltipData, setTooltipData] = useState<{
+    day: string
+    hour: number
+    sessions: number
+    users: number
+    x: number
+    y: number
+  } | null>(null)
+
+  // Detectar tamaño de pantalla
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Calcular fechas según el tipo de filtro
   const dateRange = useMemo(() => {
@@ -303,8 +322,8 @@ export default function AnalyticsPage() {
       />
       
       {/* Filtro de fechas */}
-      <Card>
-        <CardContent className="pt-6">
+      <Card className="mx-3 sm:mx-6 mt-3 sm:mt-6">
+        <CardContent className="pt-4 sm:pt-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -313,7 +332,7 @@ export default function AnalyticsPage() {
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <Select value={dateFilterType} onValueChange={(value) => setDateFilterType(value as DateFilterType)}>
-                <SelectTrigger className="w-[140px]">
+                <SelectTrigger className="w-full sm:w-[140px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -332,14 +351,14 @@ export default function AnalyticsPage() {
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-[140px]"
+                    className="w-full sm:w-[140px]"
                     placeholder="Desde"
                   />
                   <Input
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-[140px]"
+                    className="w-full sm:w-[140px]"
                     placeholder="Hasta"
                   />
                 </>
@@ -350,7 +369,7 @@ export default function AnalyticsPage() {
                   variant="outline"
                   size="sm"
                   onClick={handleResetFilter}
-                  className="gap-2"
+                  className="gap-2 w-full sm:w-auto"
                 >
                   <X className="h-4 w-4" />
                   Resetear
@@ -361,9 +380,9 @@ export default function AnalyticsPage() {
         </CardContent>
       </Card>
 
-      <div className="flex-1 space-y-6 p-6">
-        {/* KPIs - Todas en una fila compacta */}
-        <div className="grid grid-cols-7 gap-2">
+      <div className="flex-1 space-y-4 sm:space-y-6 p-3 sm:p-6">
+        {/* KPIs - Responsive grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2">
           <Card className="p-2">
             <CardContent className="flex items-center gap-2 p-0">
               <div className="rounded-lg bg-blue-100 p-1.5 text-blue-600">
@@ -462,7 +481,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Charts Row - Embudo y Heatmap */}
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
           {/* Embudo de Conversión */}
           <Card>
             <CardHeader>
@@ -550,24 +569,51 @@ export default function AnalyticsPage() {
                     const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
                     const hours = Array.from({ length: 24 }, (_, i) => i)
                     
-                    // Crear un mapa de datos por hora
-                    const hourlyMap = new Map<number, number>()
+                    // Crear un mapa de datos por hora con sesiones y usuarios
+                    const hourlyMap = new Map<number, { sessions: number; users: number }>()
                     analyticsData.hourlyData.forEach(item => {
-                      hourlyMap.set(item.hour, item.sessions)
+                      hourlyMap.set(item.hour, {
+                        sessions: item.sessions || 0,
+                        users: item.users || 0,
+                      })
                     })
                     
-                    const maxSessions = Math.max(...Array.from(hourlyMap.values()), 1)
+                    const maxSessions = Math.max(...Array.from(hourlyMap.values()).map(d => d.sessions), 1)
                     
                     // Para el heatmap, vamos a usar los datos horarios y distribuirlos por días
                     // Como no tenemos datos por día de la semana, vamos a crear un heatmap
                     // que muestre la distribución promedio por hora
                     return (
-                      <div className="space-y-2">
+                      <div className="space-y-2 overflow-x-auto relative">
+                        {/* Tooltip personalizado */}
+                        {tooltipData && (
+                          <div
+                            className="fixed z-50 rounded-lg border bg-background p-3 shadow-lg pointer-events-none"
+                            style={{
+                              left: `${tooltipData.x}px`,
+                              top: `${tooltipData.y}px`,
+                              transform: 'translate(-50%, calc(-100% - 8px))',
+                            }}
+                          >
+                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                              {tooltipData.day} {tooltipData.hour.toString().padStart(2, '0')}:00
+                            </p>
+                            <div className="space-y-1">
+                              <p className="text-sm font-semibold">
+                                {formatCompactNumber(tooltipData.sessions)} sesiones
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {formatCompactNumber(tooltipData.users)} usuarios
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                        
                         {/* Header con horas */}
-                        <div className="flex gap-1">
-                          <div className="w-12 text-xs text-muted-foreground text-center">Hora</div>
+                        <div className="flex gap-1 min-w-[600px]">
+                          <div className="w-12 flex-shrink-0 text-xs text-muted-foreground text-center">Hora</div>
                           {hours.map(hour => (
-                            <div key={hour} className="flex-1 text-xs text-muted-foreground text-center">
+                            <div key={hour} className="flex-1 text-xs text-muted-foreground text-center min-w-[20px]">
                               {hour}
                             </div>
                           ))}
@@ -578,10 +624,12 @@ export default function AnalyticsPage() {
                           // Usar los mismos datos horarios para cada día (promedio)
                           // En una implementación real, esto vendría de datos agrupados por día de semana
                           return (
-                            <div key={dayIndex} className="flex gap-1 items-center">
-                              <div className="w-12 text-xs font-medium">{day}</div>
+                            <div key={dayIndex} className="flex gap-1 items-center min-w-[600px]">
+                              <div className="w-12 flex-shrink-0 text-xs font-medium">{day}</div>
                               {hours.map(hour => {
-                                const sessions = hourlyMap.get(hour) || 0
+                                const data = hourlyMap.get(hour) || { sessions: 0, users: 0 }
+                                const sessions = data.sessions
+                                const users = data.users
                                 const intensity = (sessions / maxSessions) * 100
                                 
                                 // Calcular color basado en intensidad
@@ -597,8 +645,30 @@ export default function AnalyticsPage() {
                                 return (
                                   <div
                                     key={hour}
-                                    className={`flex-1 h-6 rounded-sm ${getColor(intensity)} border border-background`}
-                                    title={`${day} ${hour}:00 - ${formatCompactNumber(sessions)} sesiones`}
+                                    className={`flex-1 h-6 rounded-sm ${getColor(intensity)} border border-background min-w-[20px] cursor-pointer hover:opacity-80 transition-opacity`}
+                                    onMouseEnter={(e) => {
+                                      const rect = e.currentTarget.getBoundingClientRect()
+                                      setTooltipData({
+                                        day,
+                                        hour,
+                                        sessions,
+                                        users,
+                                        x: rect.left + rect.width / 2,
+                                        y: rect.top,
+                                      })
+                                    }}
+                                    onMouseLeave={() => setTooltipData(null)}
+                                    onMouseMove={(e) => {
+                                      const rect = e.currentTarget.getBoundingClientRect()
+                                      setTooltipData({
+                                        day,
+                                        hour,
+                                        sessions,
+                                        users,
+                                        x: rect.left + rect.width / 2,
+                                        y: rect.top,
+                                      })
+                                    }}
                                   />
                                 )
                               })}
@@ -607,7 +677,7 @@ export default function AnalyticsPage() {
                         })}
                         
                         {/* Leyenda */}
-                        <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-muted-foreground pt-2 border-t">
                           <span>Menos tráfico</span>
                           <div className="flex gap-1">
                             <div className="w-3 h-3 rounded-sm bg-muted" />
@@ -631,9 +701,9 @@ export default function AnalyticsPage() {
             </CardContent>
           </Card>
         </div>
-        <div className="grid gap-6 lg:grid-cols-3">
-          <Card>
-            <CardHeader>
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-stretch">
+          <Card className="flex flex-col">
+            <CardHeader className="flex-shrink-0">
               <CardTitle>Fuentes de Tráfico</CardTitle>
               <CardDescription>
                 {analyticsData?.trafficSources && analyticsData.trafficSources.length > 0
@@ -642,7 +712,7 @@ export default function AnalyticsPage() {
               </CardDescription>
             </CardHeader>
             {analyticsData?.trafficSources && analyticsData.trafficSources.length > 0 ? (
-              <CardContent>
+              <CardContent className="flex-1 flex flex-col">
                 <PieChart
                   title=""
                   data={analyticsData.trafficSources
@@ -655,13 +725,16 @@ export default function AnalyticsPage() {
                         color: colors[index % colors.length],
                       }
                     })}
-                  height={280}
+                  height={isMobile ? 220 : 250}
+                  innerRadius={40}
+                  outerRadius={80}
+                  showLegend={true}
                 />
               </CardContent>
             ) : null}
           </Card>
-          <Card>
-            <CardHeader>
+          <Card className="flex flex-col">
+            <CardHeader className="flex-shrink-0">
               <CardTitle>Dispositivos</CardTitle>
               <CardDescription>
                 {analyticsData?.deviceData && analyticsData.deviceData.length > 0
@@ -670,11 +743,14 @@ export default function AnalyticsPage() {
               </CardDescription>
             </CardHeader>
             {analyticsData?.deviceData && analyticsData.deviceData.length > 0 ? (
-              <CardContent>
+              <CardContent className="flex-1 flex flex-col">
                 <PieChart
                   title=""
                   data={[...analyticsData.deviceData].sort((a, b) => b.value - a.value)}
-                  height={280}
+                  height={isMobile ? 220 : 250}
+                  innerRadius={40}
+                  outerRadius={80}
+                  showLegend={true}
                 />
               </CardContent>
             ) : null}
@@ -682,40 +758,45 @@ export default function AnalyticsPage() {
 
           {/* Top Pages */}
           {analyticsData?.topPages && analyticsData.topPages.length > 0 ? (
-            <BarChart
-              title="Páginas Más Visitadas"
-              description={`${analyticsData.topPages.length} páginas`}
-              data={analyticsData.topPages.map((page, index) => {
-                // Paleta de colores similar a las otras gráficas
-                const colors = [
-                  '#3b82f6', // azul
-                  '#10b981', // verde
-                  '#8b5cf6', // morado
-                  '#f59e0b', // naranja
-                  '#ef4444', // rojo
-                  '#06b6d4', // cyan
-                  '#ec4899', // rosa
-                  '#84cc16', // lime
-                  '#6366f1', // indigo
-                  '#14b8a6', // teal
-                ]
-                // Truncar el título si es muy largo
-                const truncatedTitle = page.pageTitle.length > 30 
-                  ? page.pageTitle.substring(0, 27) + '...' 
-                  : page.pageTitle
-                
-                return {
-                  name: truncatedTitle,
-                  value: page.pageViews,
-                  color: colors[index % colors.length],
-                }
-              })}
-              height={350}
-              formatValue={(v) => formatCompactNumber(v)}
-            />
+            <Card className="flex flex-col">
+              <CardHeader className="flex-shrink-0">
+                <CardTitle>Páginas Más Visitadas</CardTitle>
+                <CardDescription>{`${analyticsData.topPages.length} páginas`}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex-1 flex flex-col">
+                <BarChart
+                  title=""
+                  description=""
+                  data={analyticsData.topPages.map((page, index) => {
+                    // Paleta de colores similar a las otras gráficas
+                    const colors = [
+                      '#3b82f6', // azul
+                      '#10b981', // verde
+                      '#8b5cf6', // morado
+                      '#f59e0b', // naranja
+                      '#ef4444', // rojo
+                      '#06b6d4', // cyan
+                      '#ec4899', // rosa
+                      '#84cc16', // lime
+                      '#6366f1', // indigo
+                      '#14b8a6', // teal
+                    ]
+                    
+                    return {
+                      name: page.pageTitle, // Nombre completo, se truncará en la leyenda
+                      value: page.pageViews,
+                      color: colors[index % colors.length],
+                    }
+                  })}
+                  height={isMobile ? 220 : 250}
+                  formatValue={(v) => formatCompactNumber(v)}
+                  showLegend={true}
+                />
+              </CardContent>
+            </Card>
           ) : (
-            <Card>
-              <CardHeader className="pb-3">
+            <Card className="flex flex-col">
+              <CardHeader className="pb-3 flex-shrink-0">
                 <CardTitle className="text-base font-medium">Páginas Más Visitadas</CardTitle>
                 <CardDescription>Sin datos. Conecta GA4 y sincroniza.</CardDescription>
               </CardHeader>
@@ -727,7 +808,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Geographic Data - 3 columns */}
-        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {/* Países */}
           <Card>
             <CardHeader className="pb-2">

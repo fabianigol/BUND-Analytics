@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createCalendlyService, createCalendlyServiceFromSupabase, parseStoreInfo } from '@/lib/integrations/calendly'
+import { createCalendlyServiceFromSupabase, parseStoreInfo } from '@/lib/integrations/calendly'
 import { createServiceRoleClient, createClient } from '@/lib/supabase/server'
 
 const MAX_PAGES = 300 // Para manejar 20,000+ citas (100 eventos por página = 30,000 máximo)
@@ -17,17 +17,12 @@ export async function POST(request: NextRequest) {
       supabase = await createClient()
     }
 
-    // Intentar obtener el servicio desde variables de entorno o base de datos
-    let calendlyService = createCalendlyService()
-    
-    if (!calendlyService) {
-      // Si no está en variables de entorno, intentar desde la base de datos
-      calendlyService = await createCalendlyServiceFromSupabase(supabase)
-    }
+    // Obtener el servicio desde la base de datos (solo OAuth, API Key ya no es soportada)
+    const calendlyService = await createCalendlyServiceFromSupabase(supabase)
     
     if (!calendlyService) {
       return NextResponse.json(
-        { error: 'Calendly integration not configured. Please connect Calendly from the Integrations page or add CALENDLY_API_KEY to environment variables.' },
+        { error: 'Calendly integration not configured. Please connect Calendly from the Integrations page using OAuth 2.0.' },
         { status: 400 }
       )
     }
@@ -462,12 +457,12 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   return NextResponse.json({ 
     message: 'Use POST to trigger Calendly sync',
-    configured: !!process.env.CALENDLY_API_KEY,
     endpoints: {
       sync_all_2025: 'POST /api/sync/calendly?sync_all_2025=true',
       sync_year: 'POST /api/sync/calendly?year=2025',
       get_counts: 'GET /api/calendly/counts?year=2025',
     },
-    description: 'Para sincronizar todas las citas de 2025, usa: POST /api/sync/calendly?sync_all_2025=true'
+    description: 'Para sincronizar todas las citas de 2025, usa: POST /api/sync/calendly?sync_all_2025=true',
+    note: 'OAuth 2.0 is required. API Key support has been removed.'
   })
 }

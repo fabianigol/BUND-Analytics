@@ -6,23 +6,21 @@ const MAX_PAGES = 20
 
 export async function GET(request: NextRequest) {
   try {
-    // Intentar obtener el servicio desde variables de entorno o base de datos
-    let calendlyService = createCalendlyService()
+    // Obtener el servicio desde la base de datos (solo OAuth, API Key ya no es soportada)
+    const supabase = await createClient()
+    const calendlyService = await createCalendlyServiceFromSupabase(supabase)
     
     if (!calendlyService) {
-      // Si no está en variables de entorno, intentar desde la base de datos
-      const supabase = await createClient()
-      calendlyService = await createCalendlyServiceFromSupabase(supabase)
-    }
-    
-    if (!calendlyService) {
-      return NextResponse.json(
-        {
-          error:
-            'Integración de Calendly no configurada. Por favor, conecta Calendly desde la página de Integraciones o añade CALENDLY_API_KEY a las variables de entorno.',
-        },
-        { status: 400 }
-      )
+      // Si no hay servicio OAuth, devolver respuesta vacía
+      return NextResponse.json({
+        total_events: 0,
+        active_events: 0,
+        canceled_events: 0,
+        by_store: {},
+        by_event_type_category: {},
+        by_room: {},
+        message: 'Calendly no está conectado. Por favor, conecta Calendly desde la página de Integraciones usando OAuth 2.0.',
+      })
     }
 
     const { searchParams } = new URL(request.url)
@@ -51,6 +49,7 @@ export async function GET(request: NextRequest) {
     let organizationUri: string | undefined
     
     try {
+      // Intentar obtener el usuario actual
       currentUser = await calendlyService.getCurrentUser()
       userUri = currentUser.resource.uri
       // Según la documentación oficial, current_organization viene directamente en /users/me
@@ -59,9 +58,18 @@ export async function GET(request: NextRequest) {
       console.log(`[Calendly Metrics] Usuario obtenido: ${currentUser.resource.name}`)
       console.log(`[Calendly Metrics] userUri: ${userUri}`)
       console.log(`[Calendly Metrics] current_organization (desde /users/me): ${organizationUri || 'no disponible'}`)
-    } catch (error) {
-      console.error('[Calendly Metrics] Error obteniendo usuario:', error)
-      throw new Error('No se pudo obtener el usuario de Calendly. Verifica que tu API key sea válida.')
+    } catch (error: any) {
+      // Si falla la autenticación (token inválido o expirado), devolver respuesta vacía
+      console.error('[Calendly Metrics] Error de autenticación:', error)
+      return NextResponse.json({
+        total_events: 0,
+        active_events: 0,
+        canceled_events: 0,
+        by_store: {},
+        by_event_type_category: {},
+        by_room: {},
+        message: 'Error de autenticación con Calendly. Por favor, reconecta Calendly desde la página de Integraciones.',
+      })
     }
     
     if (!userUri) {
@@ -290,15 +298,31 @@ export async function GET(request: NextRequest) {
         max_pages: MAX_PAGES,
       },
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Calendly monthly metrics error:', error)
-    return NextResponse.json(
-      { 
-        error: 'No se pudieron obtener las métricas mensuales de Calendly.',
-        details: String(error)
-      },
-      { status: 500 }
-    )
+    // Si es un error de autenticación o token inválido, devolver respuesta vacía
+    if (error?.message?.includes('401') || error?.message?.includes('403') || 
+        error?.message?.includes('Unauthorized') || error?.message?.includes('autenticación')) {
+      return NextResponse.json({
+        total_events: 0,
+        active_events: 0,
+        canceled_events: 0,
+        by_store: {},
+        by_event_type_category: {},
+        by_room: {},
+        message: 'Error de autenticación con Calendly. Por favor, reconecta Calendly desde la página de Integraciones.',
+      })
+    }
+    // Para otros errores, devolver respuesta vacía con mensaje en lugar de 500
+    return NextResponse.json({
+      total_events: 0,
+      active_events: 0,
+      canceled_events: 0,
+      by_store: {},
+      by_event_type_category: {},
+      by_room: {},
+      message: 'No se pudieron obtener las métricas mensuales de Calendly. Por favor, verifica la conexión.',
+    })
   }
 }
 

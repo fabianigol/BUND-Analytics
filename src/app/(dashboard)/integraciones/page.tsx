@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import { Header } from '@/components/dashboard/Header'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -37,7 +38,8 @@ interface Integration {
   id: string
   name: string
   description: string
-  icon: React.ElementType
+  icon?: React.ElementType
+  iconImage?: string
   iconColor: string
   connected: boolean
   lastSync?: string
@@ -65,7 +67,7 @@ const integrations: Integration[] = [
     id: 'shopify',
     name: 'Shopify',
     description: 'Importa ventas, pedidos y datos de productos',
-    icon: ShoppingBag,
+    iconImage: '/Logo Shopify.svg',
     iconColor: 'bg-green-100 text-green-600',
     connected: false,
     status: 'disconnected',
@@ -75,7 +77,7 @@ const integrations: Integration[] = [
     id: 'meta',
     name: 'Meta Marketing',
     description: 'Conecta campañas de Facebook e Instagram Ads',
-    icon: Megaphone,
+    iconImage: '/Logo Meta.png',
     iconColor: 'bg-indigo-100 text-indigo-600',
     connected: false,
     status: 'disconnected',
@@ -85,7 +87,7 @@ const integrations: Integration[] = [
     id: 'analytics',
     name: 'Google Analytics 4',
     description: 'Importa datos de tráfico y comportamiento web',
-    icon: BarChart3,
+    iconImage: '/Logo Google Analytics 4.png',
     iconColor: 'bg-amber-100 text-amber-600',
     connected: false,
     status: 'disconnected',
@@ -95,7 +97,7 @@ const integrations: Integration[] = [
     id: 'airtable',
     name: 'Airtable',
     description: 'Sincroniza bases de datos y registros',
-    icon: Database,
+    iconImage: '/Logo Airtable.webp',
     iconColor: 'bg-rose-100 text-rose-600',
     connected: false,
     status: 'disconnected',
@@ -106,7 +108,63 @@ const integrations: Integration[] = [
 export default function IntegracionesPage() {
   const searchParams = useSearchParams()
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null)
-  const [integrations, setIntegrations] = useState<Integration[]>([])
+  // Estado inicial: todas las integraciones desconectadas
+  // Esto asegura que el estado inicial sea siempre desconectado hasta que loadIntegrations() actualice
+  const [integrations, setIntegrations] = useState<Integration[]>(() => {
+    const initialIntegrations: Integration[] = [
+      {
+        id: 'calendly',
+        name: 'Calendly',
+        description: 'Sincroniza citas y eventos del calendario',
+        icon: Calendar,
+        iconColor: 'bg-blue-100 text-blue-600',
+        connected: false,
+        status: 'disconnected',
+        docsUrl: 'https://developer.calendly.com/',
+      },
+      {
+        id: 'shopify',
+        name: 'Shopify',
+        description: 'Importa ventas, pedidos y datos de productos',
+        iconImage: '/Logo Shopify.svg',
+        iconColor: 'bg-green-100 text-green-600',
+        connected: false,
+        status: 'disconnected',
+        docsUrl: 'https://shopify.dev/docs/api',
+      },
+      {
+        id: 'meta',
+        name: 'Meta Marketing',
+        description: 'Conecta campañas de Facebook e Instagram Ads',
+        iconImage: '/Logo Meta.png',
+        iconColor: 'bg-indigo-100 text-indigo-600',
+        connected: false,
+        status: 'disconnected',
+        docsUrl: 'https://developers.facebook.com/docs/marketing-apis',
+      },
+      {
+        id: 'analytics',
+        name: 'Google Analytics 4',
+        description: 'Importa datos de tráfico y comportamiento web',
+        iconImage: '/Logo Google Analytics 4.png',
+        iconColor: 'bg-amber-100 text-amber-600',
+        connected: false,
+        status: 'disconnected',
+        docsUrl: 'https://developers.google.com/analytics',
+      },
+      {
+        id: 'airtable',
+        name: 'Airtable',
+        description: 'Sincroniza bases de datos y registros',
+        iconImage: '/Logo Airtable.webp',
+        iconColor: 'bg-rose-100 text-rose-600',
+        connected: false,
+        status: 'disconnected',
+        docsUrl: 'https://airtable.com/developers/web/api',
+      },
+    ]
+    return initialIntegrations
+  })
   const [loading, setLoading] = useState(true)
   const [syncing, setSyncing] = useState<string | null>(null)
   const [metaCredentials, setMetaCredentials] = useState<MetaCredentials>({
@@ -114,7 +172,7 @@ export default function IntegracionesPage() {
     adAccountId: '',
   })
   const [analyticsPropertyId, setAnalyticsPropertyId] = useState('')
-  const [calendlyApiKey, setCalendlyApiKey] = useState('')
+  // Removed calendlyApiKey state - now using OAuth
   const [connecting, setConnecting] = useState(false)
   const [openDialog, setOpenDialog] = useState<string | null>(null)
 
@@ -131,11 +189,18 @@ export default function IntegracionesPage() {
       // Limpiar URL
       window.history.replaceState({}, '', '/integraciones')
       loadIntegrations()
+    } else if (connected === 'calendly') {
+      // Solo limpiar la URL, NO recargar integraciones automáticamente
+      // El estado debe venir SOLO de loadIntegrations() cuando se llama explícitamente
+      console.log('[UI] Parámetro connected=calendly detectado en URL - limpiando URL solamente')
+      window.history.replaceState({}, '', '/integraciones')
+      // NO llamar a loadIntegrations() aquí para evitar estados incorrectos
     } else if (error === 'oauth_cancelled') {
       alert('Autorización cancelada. Por favor, intenta de nuevo.')
       window.history.replaceState({}, '', '/integraciones')
     } else if (error === 'oauth_failed') {
-      alert('Error al conectar Google Analytics. Por favor, intenta de nuevo.')
+      // Puede ser para Analytics o Calendly
+      alert('Error al conectar. Por favor, intenta de nuevo.')
       window.history.replaceState({}, '', '/integraciones')
     }
   }, [searchParams])
@@ -145,15 +210,64 @@ export default function IntegracionesPage() {
       setLoading(true)
       
       // Cargar estado de Meta, Analytics y Calendly
-      const [metaResponse, analyticsResponse, calendlyResponse] = await Promise.all([
-        fetch('/api/integrations/meta').catch(() => ({ json: async () => ({ connected: false }) })),
-        fetch('/api/integrations/analytics').catch(() => ({ json: async () => ({ connected: false }) })),
-        fetch('/api/integrations/calendly').catch(() => ({ json: async () => ({ connected: false }) })),
+      // Agregar timestamp único y cache: 'no-store' para evitar caché del navegador
+      const timestamp = Date.now()
+      const fetchOptions = { cache: 'no-store' as RequestCache }
+      
+      const fetchWithErrorHandling = async (url: string) => {
+        try {
+          const response = await fetch(url, fetchOptions)
+          if (!response.ok) {
+            console.error(`Error fetching ${url}:`, response.status, response.statusText)
+            return { connected: false }
+          }
+          const contentType = response.headers.get('content-type')
+          if (!contentType || !contentType.includes('application/json')) {
+            console.error(`Response from ${url} is not JSON:`, contentType)
+            return { connected: false }
+          }
+          return await response.json()
+        } catch (error) {
+          console.error(`Error fetching ${url}:`, error)
+          return { connected: false }
+        }
+      }
+      
+      const [metaData, analyticsData, calendlyData] = await Promise.all([
+        fetchWithErrorHandling(`/api/integrations/meta?t=${timestamp}&_=${Math.random()}`),
+        fetchWithErrorHandling(`/api/integrations/analytics?t=${timestamp}&_=${Math.random()}`),
+        fetchWithErrorHandling(`/api/integrations/calendly?t=${timestamp}&_=${Math.random()}`),
       ])
       
-      const metaData = await metaResponse.json()
-      const analyticsData = await analyticsResponse.json()
-      const calendlyData = await calendlyResponse.json()
+      // Debug: Ver qué está devolviendo el endpoint
+      console.log('[Load Integrations] Calendly data:', calendlyData)
+      
+      // IMPORTANTE: Si el API dice connected: false, SIEMPRE establecer isCalendlyConnected = false
+      // No confiar en ningún otro valor si connected === false
+      let isCalendlyConnected = false
+      
+      if (calendlyData.connected === false) {
+        // Si el API dice que NO está conectado, forzar desconectado sin excepciones
+        console.log('[UI] API dice connected: false - forzando estado desconectado')
+        isCalendlyConnected = false
+      } else if (calendlyData.connected === true && 
+                 calendlyData.hasOAuth === true &&
+                 calendlyData.authMethod === 'oauth') {
+        // Solo considerar conectado si TODOS estos valores son true
+        isCalendlyConnected = true
+      } else {
+        // Cualquier otro caso = desconectado
+        console.log('[UI] Calendly no cumple todos los requisitos para estar conectado')
+        isCalendlyConnected = false
+      }
+      
+      console.log('[UI] Calendly estado procesado:', {
+        raw_connected: calendlyData.connected,
+        raw_hasOAuth: calendlyData.hasOAuth,
+        raw_hasApiKey: calendlyData.hasApiKey,
+        raw_authMethod: calendlyData.authMethod,
+        final_isCalendlyConnected: isCalendlyConnected
+      })
 
       const baseIntegrations: Integration[] = [
         {
@@ -162,16 +276,16 @@ export default function IntegracionesPage() {
           description: 'Sincroniza citas y eventos del calendario',
           icon: Calendar,
           iconColor: 'bg-blue-100 text-blue-600',
-          connected: calendlyData.connected || false,
+          connected: isCalendlyConnected,
           lastSync: calendlyData.lastSync || undefined,
-          status: calendlyData.connected ? 'connected' : 'disconnected',
+          status: isCalendlyConnected ? 'connected' : 'disconnected',
           docsUrl: 'https://developer.calendly.com/',
         },
         {
           id: 'shopify',
           name: 'Shopify',
           description: 'Importa ventas, pedidos y datos de productos',
-          icon: ShoppingBag,
+          iconImage: '/Logo Shopify.svg',
           iconColor: 'bg-green-100 text-green-600',
           connected: false,
           status: 'disconnected',
@@ -181,7 +295,7 @@ export default function IntegracionesPage() {
           id: 'meta',
           name: 'Meta Marketing',
           description: 'Conecta campañas de Facebook e Instagram Ads',
-          icon: Megaphone,
+          iconImage: '/Logo Meta.png',
           iconColor: 'bg-indigo-100 text-indigo-600',
           connected: metaData.connected || false,
           lastSync: metaData.lastSync || undefined,
@@ -192,7 +306,7 @@ export default function IntegracionesPage() {
           id: 'analytics',
           name: 'Google Analytics 4',
           description: 'Importa datos de tráfico y comportamiento web',
-          icon: BarChart3,
+          iconImage: '/Logo Google Analytics 4.png',
           iconColor: 'bg-amber-100 text-amber-600',
           connected: analyticsData.connected || false,
           lastSync: analyticsData.lastSync || undefined,
@@ -203,7 +317,7 @@ export default function IntegracionesPage() {
           id: 'airtable',
           name: 'Airtable',
           description: 'Sincroniza bases de datos y registros',
-          icon: Database,
+          iconImage: '/Logo Airtable.webp',
           iconColor: 'bg-rose-100 text-rose-600',
           connected: false,
           status: 'disconnected',
@@ -211,7 +325,21 @@ export default function IntegracionesPage() {
         },
       ]
 
-      setIntegrations(baseIntegrations)
+      // IMPORTANTE: Asegurar que Calendly siempre refleje el estado correcto
+      // Si isCalendlyConnected es false, forzar desconectado sin excepciones
+      const finalIntegrations: Integration[] = baseIntegrations.map(int => {
+        if (int.id === 'calendly') {
+          // Forzar el estado basado en isCalendlyConnected
+          return { 
+            ...int, 
+            connected: isCalendlyConnected, 
+            status: isCalendlyConnected ? 'connected' as const : 'disconnected' as const 
+          }
+        }
+        return int
+      })
+      
+      setIntegrations(finalIntegrations)
       
       // Si Analytics está conectado, cargar Property ID si existe
       if (analyticsData.connected && analyticsData.property_id) {
@@ -240,6 +368,16 @@ export default function IntegracionesPage() {
         body: JSON.stringify(metaCredentials),
       })
 
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Error ${response.status}: ${errorText}`)
+      }
+
+      const contentType = response.headers.get('content-type')
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('La respuesta no es JSON válido')
+      }
+
       const data = await response.json()
 
       if (!response.ok) {
@@ -259,35 +397,84 @@ export default function IntegracionesPage() {
     }
   }
 
-  const handleConnectCalendly = async () => {
-    if (!calendlyApiKey) {
-      alert('Por favor, introduce tu API Key de Calendly')
-      return
-    }
+  const handleConnectCalendly = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    setConnecting(true)
+    
+    // Cerrar el Dialog primero para evitar problemas con el redirect
+    setOpenDialog(null)
+    
+    console.log('[Calendly Connect] Limpiando conexión anterior y redirigiendo...')
+    
+    // PRIMERO: Desconectar y limpiar (sin esperar, en background)
+    fetch('/api/integrations/calendly', {
+      method: 'DELETE',
+      cache: 'no-store',
+    }).catch(() => {
+      // Ignorar errores, continuar con el redirect
+    })
+    
+    // Forzar actualización del estado local a desconectado
+    setIntegrations(prev => prev.map(int => 
+      int.id === 'calendly' 
+        ? { ...int, connected: false, status: 'disconnected' as const }
+        : int
+    ))
+    
+    // Redirigir inmediatamente sin esperar
+    const authUrl = '/api/integrations/calendly/auth'
+    console.log('[Calendly Connect] Redirigiendo a:', authUrl)
+    
+    // Usar href para redirección inmediata que siempre funciona
+    window.location.href = authUrl
+  }
 
+  const handleDisconnectCalendly = async () => {
     try {
       setConnecting(true)
       const response = await fetch('/api/integrations/calendly', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ apiKey: calendlyApiKey }),
+        method: 'DELETE',
+        cache: 'no-store',
       })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Error ${response.status}: ${errorText}`)
+      }
+
+      const contentType = response.headers.get('content-type')
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('La respuesta no es JSON válido')
+      }
 
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Error al conectar Calendly')
+        throw new Error(data.error || 'Error al desconectar Calendly')
       }
 
-      // Recargar integraciones
+      // PRIMERO: Forzar estado local a desconectado INMEDIATAMENTE
+      // Esto asegura que el UI se actualice de inmediato
+      setIntegrations(prev => prev.map(int => 
+        int.id === 'calendly' 
+          ? { ...int, connected: false, status: 'disconnected' as const }
+          : int
+      ))
+      
+      // LUEGO: Recargar integraciones para sincronizar con el backend
       await loadIntegrations()
-      setOpenDialog(null)
-      setCalendlyApiKey('')
-      alert('Calendly conectado correctamente')
+      
+      alert('Calendly desconectado correctamente')
     } catch (error) {
-      console.error('Error connecting Calendly:', error)
+      console.error('Error disconnecting Calendly:', error)
+      // Incluso si hay error, forzar estado desconectado
+      setIntegrations(prev => prev.map(int => 
+        int.id === 'calendly' 
+          ? { ...int, connected: false, status: 'disconnected' as const }
+          : int
+      ))
       alert(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`)
     } finally {
       setConnecting(false)
@@ -307,8 +494,14 @@ export default function IntegracionesPage() {
         })
         
         if (!response.ok) {
-          const data = await response.json()
-          throw new Error(data.error || 'Error al guardar Property ID')
+          const contentType = response.headers.get('content-type')
+          if (contentType && contentType.includes('application/json')) {
+            const data = await response.json()
+            throw new Error(data.error || 'Error al guardar Property ID')
+          } else {
+            const errorText = await response.text()
+            throw new Error(`Error ${response.status}: ${errorText}`)
+          }
         }
       }
       
@@ -326,6 +519,16 @@ export default function IntegracionesPage() {
       const response = await fetch('/api/sync/meta', {
         method: 'POST',
       })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Error ${response.status}: ${errorText}`)
+      }
+
+      const contentType = response.headers.get('content-type')
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('La respuesta no es JSON válido')
+      }
 
       const data = await response.json()
 
@@ -376,6 +579,20 @@ export default function IntegracionesPage() {
       })
 
       console.log('[UI] Response status:', response.status)
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('[UI] Error response:', errorText)
+        throw new Error(`Error ${response.status}: ${errorText}`)
+      }
+
+      const contentType = response.headers.get('content-type')
+      if (!contentType || !contentType.includes('application/json')) {
+        const errorText = await response.text()
+        console.error('[UI] Response is not JSON:', contentType, errorText)
+        throw new Error('La respuesta no es JSON válido')
+      }
+
       const data = await response.json()
       console.log('[UI] Response data:', data)
 
@@ -482,8 +699,19 @@ export default function IntegracionesPage() {
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className={`rounded-lg p-2 ${integration.iconColor}`}>
-                      <integration.icon className="h-5 w-5" />
+                    <div className={`rounded-lg p-2 ${integration.iconColor} flex items-center justify-center`}>
+                      {integration.iconImage ? (
+                        <div className="relative h-5 w-5">
+                          <Image
+                            src={integration.iconImage}
+                            alt={integration.name}
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
+                      ) : integration.icon ? (
+                        <integration.icon className="h-5 w-5" />
+                      ) : null}
                     </div>
                     <div>
                       <CardTitle className="text-base">{integration.name}</CardTitle>
@@ -552,18 +780,35 @@ export default function IntegracionesPage() {
                       </DialogHeader>
                       <div className="space-y-4 py-4">
                         {integration.id === 'calendly' && (
-                          <div className="space-y-2">
-                            <Label>API Key</Label>
-                            <Input
-                              type="password"
-                              placeholder="Tu API Key de Calendly"
-                              value={calendlyApiKey}
-                              onChange={(e) => setCalendlyApiKey(e.target.value)}
-                            />
-                            <p className="text-xs text-muted-foreground">
-                              Encuentra tu API key en Calendly → Integrations → API & Webhooks
-                            </p>
-                          </div>
+                          <>
+                            <div className="space-y-2">
+                              <p className="text-sm text-muted-foreground">
+                                Conecta tu cuenta de Calendly usando OAuth 2.0 para sincronizar citas y eventos.
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                <strong>⚠️ Importante:</strong> Necesitarás autorizar la aplicación con tu cuenta de Calendly.
+                                <br />
+                                La aplicación solicitará permisos para acceder a tus datos de Calendly de forma segura.
+                                <br />
+                                Si aún no tienes una aplicación OAuth configurada, créala en{' '}
+                                <a 
+                                  href="https://developer.calendly.com/create-a-developer-account" 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:underline"
+                                >
+                                  Calendly Developers Portal
+                                </a>
+                              </p>
+                            </div>
+                            {integration.connected && (
+                              <div className="rounded-lg bg-blue-50 p-3 text-sm text-blue-800">
+                                <strong>✓ Conectado</strong>
+                                <br />
+                                Calendly está conectado y listo para sincronizar datos.
+                              </div>
+                            )}
+                          </>
                         )}
                         {integration.id === 'shopify' && (
                           <>
@@ -698,19 +943,43 @@ export default function IntegracionesPage() {
                             )}
                           </Button>
                         ) : integration.id === 'calendly' ? (
-                          <Button
-                            onClick={handleConnectCalendly}
-                            disabled={connecting || !calendlyApiKey}
-                          >
-                            {connecting ? (
-                              <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Conectando...
-                              </>
-                            ) : (
-                              integration.connected ? 'Actualizar' : 'Conectar'
+                          <>
+                            {integration.connected && (
+                              <Button
+                                variant="outline"
+                                onClick={handleDisconnectCalendly}
+                                disabled={connecting}
+                                className="mr-2"
+                              >
+                                {connecting ? (
+                                  <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Desconectando...
+                                  </>
+                                ) : (
+                                  'Desconectar'
+                                )}
+                              </Button>
                             )}
-                          </Button>
+                            <Button
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                handleConnectCalendly(e)
+                              }}
+                              disabled={connecting}
+                              type="button"
+                            >
+                              {connecting ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  {integration.connected ? 'Reconectando...' : 'Conectando...'}
+                                </>
+                              ) : (
+                                integration.connected ? 'Reconectar' : 'Conectar con Calendly'
+                              )}
+                            </Button>
+                          </>
                         ) : (
                           <Button disabled>Conectar</Button>
                         )}

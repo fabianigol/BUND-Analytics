@@ -148,6 +148,53 @@ export interface Database {
           updated_at?: string
         }
       }
+      calendly_historical_stats: {
+        Row: {
+          id: string
+          user_name: string
+          user_store: string | null
+          event_type_category: 'Medición' | 'Fitting' | null
+          room: 'I' | 'II' | null
+          year: number
+          month: number
+          status: 'active' | 'canceled' | 'rescheduled'
+          count: number
+          has_utm: boolean
+          utm_params: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          user_name: string
+          user_store?: string | null
+          event_type_category?: 'Medición' | 'Fitting' | null
+          room?: 'I' | 'II' | null
+          year: number
+          month: number
+          status: 'active' | 'canceled' | 'rescheduled'
+          count?: number
+          has_utm?: boolean
+          utm_params?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_name?: string
+          user_store?: string | null
+          event_type_category?: 'Medición' | 'Fitting' | null
+          room?: 'I' | 'II' | null
+          year?: number
+          month?: number
+          status?: 'active' | 'canceled' | 'rescheduled'
+          count?: number
+          has_utm?: boolean
+          utm_params?: Json
+          created_at?: string
+          updated_at?: string
+        }
+      }
       shopify_orders: {
         Row: {
           id: string
@@ -355,6 +402,79 @@ export interface Database {
           settings?: Json
           connected?: boolean
           last_sync?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      passwords: {
+        Row: {
+          id: string
+          user_id: string
+          platform: string
+          username: string
+          password: string
+          notes: string | null
+          is_shared: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          platform: string
+          username: string
+          password: string
+          notes?: string | null
+          is_shared?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          platform?: string
+          username?: string
+          password?: string
+          notes?: string | null
+          is_shared?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      prompts: {
+        Row: {
+          id: string
+          user_id: string
+          title: string
+          prompt_text: string
+          emoji: string | null
+          color: string | null
+          category: string | null
+          is_shared: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          title: string
+          prompt_text: string
+          emoji?: string | null
+          color?: string | null
+          category?: string | null
+          is_shared?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          title?: string
+          prompt_text?: string
+          emoji?: string | null
+          color?: string | null
+          category?: string | null
+          is_shared?: boolean
           created_at?: string
           updated_at?: string
         }

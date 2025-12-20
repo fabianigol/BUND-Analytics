@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -10,24 +11,17 @@ import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { createClient } from '@/lib/supabase/client'
 import {
-  LayoutDashboard,
-  Calendar,
-  ShoppingCart,
-  Megaphone,
-  BarChart3,
-  FileText,
-  Settings,
   ChevronLeft,
   ChevronRight,
   LogOut,
-  Users,
-  Database,
 } from 'lucide-react'
 
 interface NavItem {
   title: string
   href: string
-  icon: React.ElementType
+  icon?: React.ElementType
+  iconImage?: string
+  emoji?: string
   badge?: number
 }
 
@@ -35,32 +29,37 @@ const mainNavItems: NavItem[] = [
   {
     title: 'Dashboard',
     href: '/',
-    icon: LayoutDashboard,
+    emoji: '📊',
   },
   {
     title: 'Citas',
     href: '/citas',
-    icon: Calendar,
+    iconImage: '/Logo Acuity Scheduling.png',
   },
   {
     title: 'Ventas',
     href: '/ventas',
-    icon: ShoppingCart,
+    iconImage: '/Logo Shopify.svg',
   },
   {
     title: 'Paid Media',
     href: '/ads',
-    icon: Megaphone,
+    iconImage: '/Logo Meta.png',
   },
   {
     title: 'Analytics',
     href: '/analytics',
-    icon: BarChart3,
+    iconImage: '/Logo Google Analytics 4.png',
   },
   {
     title: 'Reportes',
     href: '/reportes',
-    icon: FileText,
+    emoji: '📄',
+  },
+  {
+    title: 'Recursos',
+    href: '/recursos',
+    emoji: '📚',
   },
 ]
 
@@ -68,17 +67,17 @@ const adminNavItems: NavItem[] = [
   {
     title: 'Usuarios',
     href: '/usuarios',
-    icon: Users,
+    emoji: '👥',
   },
   {
     title: 'Integraciones',
     href: '/integraciones',
-    icon: Database,
+    emoji: '🔌',
   },
   {
     title: 'Configuración',
     href: '/settings',
-    icon: Settings,
+    emoji: '⚙️',
   },
 ]
 
@@ -105,13 +104,27 @@ export function Sidebar() {
         {/* Logo */}
         <div className="flex h-16 items-center justify-between px-4">
           <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-              <span className="text-lg font-bold text-primary-foreground">B</span>
-            </div>
-            {!collapsed && (
-              <span className="text-lg font-semibold tracking-tight text-sidebar-foreground">
-                BUND
-              </span>
+            {collapsed ? (
+              <div className="relative h-9 w-9">
+                <Image
+                  src="/BURDEOS.png"
+                  alt="BUND Logo"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            ) : (
+              <div className="relative h-8 w-auto max-w-[120px]">
+                <Image
+                  src="/BURDEOS.png"
+                  alt="BUND"
+                  width={120}
+                  height={32}
+                  className="object-contain"
+                  priority
+                />
+              </div>
             )}
           </Link>
           <Button
@@ -195,28 +208,41 @@ function NavLink({
   collapsed: boolean
 }) {
   const content = (
-    <Link
-      href={item.href}
-      className={cn(
-        'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-        isActive
-          ? 'bg-sidebar-primary text-sidebar-primary-foreground'
-          : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-        collapsed && 'justify-center px-0'
-      )}
-    >
-      <item.icon className="h-4 w-4 flex-shrink-0" />
-      {!collapsed && (
-        <>
-          <span className="flex-1">{item.title}</span>
-          {item.badge !== undefined && (
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] font-medium text-white">
-              {item.badge}
-            </span>
-          )}
-        </>
-      )}
-    </Link>
+      <Link
+        href={item.href}
+        className={cn(
+          'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+          isActive
+            ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+            : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+          collapsed && 'justify-center px-0'
+        )}
+      >
+        {item.iconImage ? (
+          <div className="relative h-4 w-4 flex-shrink-0">
+            <Image
+              src={item.iconImage}
+              alt={item.title}
+              fill
+              className="object-contain"
+            />
+          </div>
+        ) : item.emoji ? (
+          <span className="text-base flex-shrink-0">{item.emoji}</span>
+        ) : item.icon ? (
+          <item.icon className="h-4 w-4 flex-shrink-0" />
+        ) : null}
+        {!collapsed && (
+          <>
+            <span className="flex-1">{item.title}</span>
+            {item.badge !== undefined && (
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] font-medium text-white">
+                {item.badge}
+              </span>
+            )}
+          </>
+        )}
+      </Link>
   )
 
   if (collapsed) {
