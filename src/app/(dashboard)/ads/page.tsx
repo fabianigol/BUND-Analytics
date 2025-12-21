@@ -1,17 +1,19 @@
 'use client'
 
 import { useMemo, useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { Header } from '@/components/dashboard/Header'
-import { MetricCard } from '@/components/dashboard/MetricCard'
-import { AreaChart, BarChart, LineChart, PieChart, FunnelChart } from '@/components/dashboard/Charts'
-import {
-  PieChart as RechartsPieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  Legend,
-} from 'recharts'
+import { AreaChart, BarChart, LineChart, PieChart } from '@/components/dashboard/Charts'
+
+// Cargar SankeyChart dinámicamente para evitar problemas de SSR
+const SankeyChart = dynamic(() => import('@/components/dashboard/Charts').then(mod => ({ default: mod.SankeyChart })), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center h-[500px]">
+      <p className="text-sm text-muted-foreground">Cargando diagrama...</p>
+    </div>
+  ),
+})
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -48,7 +50,6 @@ import {
   Loader2,
   Calendar,
   ShoppingBag,
-  XCircle,
 } from 'lucide-react'
 import { MetaCampaign } from '@/types'
 import { formatCurrency, formatNumber, formatCompactNumber, formatPercentage } from '@/lib/utils/format'
@@ -143,7 +144,6 @@ export default function AdsPage() {
   const [loading, setLoading] = useState(true)
   const [syncing, setSyncing] = useState(false)
   const [lastSync, setLastSync] = useState<string | null>(null)
-  const [selectedCampaignsForFunnel, setSelectedCampaignsForFunnel] = useState<string[]>([])
 
   useEffect(() => {
     loadCampaigns()
@@ -462,119 +462,137 @@ export default function AdsPage() {
 
   const totalConversions = conversionsByType.citas + conversionsByType.leads + conversionsByType.ventas
 
-  // Evolución mensual del Cost per Result para campañas TheBundClub (una línea por campaña)
-  const theBundClubMonthlyData = useMemo(() => {
-    // Filtrar campañas que contengan "TheBundClub" en el nombre (case insensitive)
-    // Usar todas las campañas, no solo las filtradas, para mostrar todo el año
-    const theBundClubCampaigns = campaigns.filter((c) => {
-      const nameUpper = c.campaign_name.toUpperCase()
-      return nameUpper.includes('THEBUNDCLUB') || nameUpper.includes('THE BUNDCLUB')
-    })
-
-    // Obtener lista única de campañas
-    const uniqueCampaigns = Array.from(
-      new Map(theBundClubCampaigns.map(c => [c.campaign_id, c])).values()
-    )
-
-    // Agrupar por campaña y mes
-    // Estructura: Map<campaign_id, Map<monthKey, { spend, conversions }>>
-    const campaignMonthlyData = new Map<string, Map<string, { spend: number; conversions: number }>>()
+  // Calcular datos para el diagrama de Sankey
+  const sankeyData = useMemo(() => {
+    const totalSpend = filteredCampaigns.reduce((sum, c) => sum + c.spend, 0)
     
-    theBundClubCampaigns.forEach((campaign) => {
-      const date = new Date(campaign.date)
-      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+    // Agrupar campañas por conjunto (case insensitive)
+    const citasCampaigns: Array<{ name: string; spend: number }> = []
+    const leadsCampaigns: Array<{ name: string; spend: number }> = []
+    const onlineCampaigns: Array<{ name: string; spend: number }> = []
+    
+    filteredCampaigns.forEach((campaign) => {
+      const nameUpper = campaign.campaign_name.toUpperCase()
       
-      if (!campaignMonthlyData.has(campaign.campaign_id)) {
-        campaignMonthlyData.set(campaign.campaign_id, new Map())
-      }
-      
-      const campaignData = campaignMonthlyData.get(campaign.campaign_id)!
-      if (!campaignData.has(monthKey)) {
-        campaignData.set(monthKey, { spend: 0, conversions: 0 })
-      }
-      
-      const monthData = campaignData.get(monthKey)!
-      monthData.spend += campaign.spend || 0
-      monthData.conversions += campaign.conversions || 0
-    })
-
-    // Generar todos los meses del año actual
-    const currentYear = new Date().getFullYear()
-    const allMonths: string[] = []
-    for (let month = 1; month <= 12; month++) {
-      const monthKey = `${currentYear}-${String(month).padStart(2, '0')}`
-      allMonths.push(monthKey)
-    }
-
-    // Crear estructura de datos para el gráfico
-    // Cada objeto representa un mes y tiene un campo por cada campaña
-    const chartData = allMonths.map((monthKey) => {
-      const date = new Date(monthKey + '-01')
-      const monthLabel = date.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })
-      
-      const monthData: Record<string, string | number> = {
-        month: monthLabel,
-        monthKey,
-      }
-      
-      // Para cada campaña, calcular su Cost per Result en este mes
-      uniqueCampaigns.forEach((campaign) => {
-        const campaignData = campaignMonthlyData.get(campaign.campaign_id)
-        const monthDataForCampaign = campaignData?.get(monthKey) || { spend: 0, conversions: 0 }
-        
-        let costPerResult = 0
-        if (monthDataForCampaign.conversions > 0 && monthDataForCampaign.spend > 0) {
-          costPerResult = monthDataForCampaign.spend / monthDataForCampaign.conversions
-        }
-        
-        // Usar el campaign_id como clave (sanitizado para ser válido como key de objeto)
-        const safeKey = `campaign_${campaign.campaign_id.replace(/[^a-zA-Z0-9]/g, '_')}`
-        monthData[safeKey] = costPerResult
-      })
-      
-      return monthData
-    })
-
-    // Crear array de líneas para el LineChart
-    const lines = uniqueCampaigns.map((campaign, index) => {
-      // Paleta de colores burdeos
-      const colors = [
-        '#7C2D12', '#991B1B', '#B91C1C', '#DC2626', '#EF4444',
-        '#F87171', '#722F37', '#5C2E37', '#4A1F1F', '#6B1F1F',
-      ]
-      const safeKey = `campaign_${campaign.campaign_id.replace(/[^a-zA-Z0-9]/g, '_')}`
-      
-      return {
-        dataKey: safeKey,
-        name: campaign.campaign_name.length > 30 
-          ? `${campaign.campaign_name.substring(0, 30)}...` 
-          : campaign.campaign_name,
-        color: colors[index % colors.length],
-        strokeWidth: 2,
+      if (nameUpper.includes('BUNDCLUB') || nameUpper.includes('THEBUNDCLUB')) {
+        citasCampaigns.push({ name: campaign.campaign_name, spend: campaign.spend })
+      } else if (nameUpper.includes('LEAD')) {
+        leadsCampaigns.push({ name: campaign.campaign_name, spend: campaign.spend })
+      } else if (nameUpper.includes('ECOM')) {
+        onlineCampaigns.push({ name: campaign.campaign_name, spend: campaign.spend })
       }
     })
-
-    return {
-      data: chartData,
-      lines,
-      campaigns: uniqueCampaigns,
-    }
-  }, [campaigns])
-
-  // Campañas activas ordenadas por presupuesto (mayor a menor)
-  // Usar todas las campañas, no solo las filtradas, para la distribución del presupuesto
-  const activeCampaignsBySpend = useMemo(() => {
-    return campaigns
-      .filter((c) => c.status === 'ACTIVE')
-      .sort((a, b) => b.spend - a.spend)
-  }, [campaigns])
-  
-  // También crear una versión que muestre las campañas con más gasto independientemente del estado
-  const topCampaignsBySpend = useMemo(() => {
-    return campaigns
-      .sort((a, b) => b.spend - a.spend)
-      .slice(0, 20) // Top 20 campañas por gasto
-  }, [campaigns])
+    
+    // Ordenar campañas de mayor a menor gasto dentro de cada conjunto
+    const sortedCitasCampaigns = [...citasCampaigns].sort((a, b) => b.spend - a.spend)
+    const sortedLeadsCampaigns = [...leadsCampaigns].sort((a, b) => b.spend - a.spend)
+    const sortedOnlineCampaigns = [...onlineCampaigns].sort((a, b) => b.spend - a.spend)
+    
+    // Calcular gasto por conjunto
+    const citasSpend = citasCampaigns.reduce((sum, c) => sum + c.spend, 0)
+    const leadsSpend = leadsCampaigns.reduce((sum, c) => sum + c.spend, 0)
+    const onlineSpend = onlineCampaigns.reduce((sum, c) => sum + c.spend, 0)
+    
+    // Crear nodos
+    const nodes = [
+      // Nivel 0: Gasto Total
+      {
+        id: 'total',
+        name: 'Gasto Total',
+        value: totalSpend,
+        level: 0,
+        color: '#DC2626', // Rojo
+      },
+      // Nivel 1: Conjuntos
+      {
+        id: 'citas',
+        name: 'Citas',
+        value: citasSpend,
+        level: 1,
+        color: '#3b82f6',
+      },
+      {
+        id: 'leads',
+        name: 'Leads',
+        value: leadsSpend,
+        level: 1,
+        color: '#f59e0b',
+      },
+      {
+        id: 'online',
+        name: 'Online',
+        value: onlineSpend,
+        level: 1,
+        color: '#10b981',
+      },
+      // Nivel 2: Campañas específicas (ordenadas de mayor a menor)
+      ...sortedCitasCampaigns.map((campaign, index) => ({
+        id: `citas-${index}`,
+        name: campaign.name,
+        value: campaign.spend,
+        level: 2,
+        color: '#60a5fa',
+      })),
+      ...sortedLeadsCampaigns.map((campaign, index) => ({
+        id: `leads-${index}`,
+        name: campaign.name,
+        value: campaign.spend,
+        level: 2,
+        color: '#fbbf24',
+      })),
+      ...sortedOnlineCampaigns.map((campaign, index) => ({
+        id: `online-${index}`,
+        name: campaign.name,
+        value: campaign.spend,
+        level: 2,
+        color: '#34d399',
+      })),
+    ]
+    
+    // Crear links
+    const links = [
+      // Links desde Gasto Total a Conjuntos
+      {
+        source: 'total',
+        target: 'citas',
+        value: citasSpend,
+        color: '#3b82f6',
+      },
+      {
+        source: 'total',
+        target: 'leads',
+        value: leadsSpend,
+        color: '#f59e0b',
+      },
+      {
+        source: 'total',
+        target: 'online',
+        value: onlineSpend,
+        color: '#10b981',
+      },
+      // Links desde Conjuntos a Campañas (usando campañas ordenadas)
+      ...sortedCitasCampaigns.map((campaign, index) => ({
+        source: 'citas',
+        target: `citas-${index}`,
+        value: campaign.spend,
+        color: '#60a5fa',
+      })),
+      ...sortedLeadsCampaigns.map((campaign, index) => ({
+        source: 'leads',
+        target: `leads-${index}`,
+        value: campaign.spend,
+        color: '#fbbf24',
+      })),
+      ...sortedOnlineCampaigns.map((campaign, index) => ({
+        source: 'online',
+        target: `online-${index}`,
+        value: campaign.spend,
+        color: '#34d399',
+      })),
+    ]
+    
+    return { nodes, links }
+  }, [filteredCampaigns])
 
   // Calcular métricas de cambio (comparar con período anterior)
   const spendChange = useMemo(() => {
@@ -721,416 +739,111 @@ export default function AdsPage() {
           </div>
         </div>
 
-        {/* KPIs */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <MetricCard
-            title="Gasto Total"
-            value={totalSpend ? formatCurrency(totalSpend) : '—'}
-            change={spendChange}
-            icon={DollarSign}
-            iconColor="bg-rose-100 text-rose-600"
-          />
-          <MetricCard
-            title="ROAS Promedio"
-            value={avgRoas ? `${avgRoas.toFixed(2)}x` : '—'}
-            change={0}
-            icon={Target}
-            iconColor="bg-emerald-100 text-emerald-600"
-          />
-          <MetricCard
-            title="Conversiones"
-            value={totalConversions > 0 ? formatNumber(totalConversions) : '—'}
-            change={0}
-            icon={TrendingUp}
-            iconColor="bg-blue-100 text-blue-600"
-          />
-          <MetricCard
-            title="Impresiones"
-            value={totalImpressions ? formatCompactNumber(totalImpressions) : '—'}
-            change={impressionsChange}
-            icon={Eye}
-            iconColor="bg-purple-100 text-purple-600"
-          />
+        {/* KPIs y Quick Stats */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2">
+          <Card className="p-2">
+            <CardContent className="flex items-center gap-2 p-0">
+              <div className="rounded-lg bg-rose-100 p-1.5 text-rose-600">
+                <DollarSign className="h-3.5 w-3.5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-muted-foreground truncate">Gasto Total</p>
+                <p className="text-sm font-semibold truncate">
+                  {totalSpend ? formatCurrency(totalSpend) : '—'}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="p-2">
+            <CardContent className="flex items-center gap-2 p-0">
+              <div className="rounded-lg bg-emerald-100 p-1.5 text-emerald-600">
+                <Target className="h-3.5 w-3.5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-muted-foreground truncate">ROAS Promedio</p>
+                <p className="text-sm font-semibold truncate">
+                  {avgRoas ? `${avgRoas.toFixed(2)}x` : '—'}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="p-2">
+            <CardContent className="flex items-center gap-2 p-0">
+              <div className="rounded-lg bg-blue-100 p-1.5 text-blue-600">
+                <TrendingUp className="h-3.5 w-3.5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-muted-foreground truncate">Conversiones</p>
+                <p className="text-sm font-semibold truncate">
+                  {totalConversions > 0 ? formatNumber(totalConversions) : '—'}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="p-2">
+            <CardContent className="flex items-center gap-2 p-0">
+              <div className="rounded-lg bg-purple-100 p-1.5 text-purple-600">
+                <Eye className="h-3.5 w-3.5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-muted-foreground truncate">Impresiones</p>
+                <p className="text-sm font-semibold truncate">
+                  {totalImpressions ? formatCompactNumber(totalImpressions) : '—'}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="p-2">
+            <CardContent className="flex items-center gap-2 p-0">
+              <div className="rounded-lg bg-blue-100 p-1.5 text-blue-600">
+                <Calendar className="h-3.5 w-3.5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-muted-foreground truncate">Citas Confirmadas</p>
+                <p className="text-sm font-semibold truncate">
+                  {formatNumber(conversionsByType.citas)}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="p-2">
+            <CardContent className="flex items-center gap-2 p-0">
+              <div className="rounded-lg bg-amber-100 p-1.5 text-amber-600">
+                <Target className="h-3.5 w-3.5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-muted-foreground truncate">Leads</p>
+                <p className="text-sm font-semibold truncate">
+                  {formatNumber(conversionsByType.leads)}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="p-2">
+            <CardContent className="flex items-center gap-2 p-0">
+              <div className="rounded-lg bg-emerald-100 p-1.5 text-emerald-600">
+                <ShoppingBag className="h-3.5 w-3.5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-muted-foreground truncate">Ventas Online</p>
+                <p className="text-sm font-semibold truncate">
+                  {formatNumber(conversionsByType.ventas)}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Quick Stats de Conversiones por Tipo */}
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card>
-            <CardContent className="flex items-center gap-4 p-4">
-              <div className="rounded-lg bg-blue-100 p-2">
-                <Calendar className="h-5 w-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{formatNumber(conversionsByType.citas)}</p>
-                <p className="text-sm text-muted-foreground">Citas Confirmadas</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="flex items-center gap-4 p-4">
-              <div className="rounded-lg bg-amber-100 p-2">
-                <Target className="h-5 w-5 text-amber-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{formatNumber(conversionsByType.leads)}</p>
-                <p className="text-sm text-muted-foreground">Leads</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="flex items-center gap-4 p-4">
-              <div className="rounded-lg bg-emerald-100 p-2">
-                <ShoppingBag className="h-5 w-5 text-emerald-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{formatNumber(conversionsByType.ventas)}</p>
-                <p className="text-sm text-muted-foreground">Ventas Online</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Charts */}
-        <div className="grid gap-6 lg:grid-cols-2 lg:items-stretch">
-          {/* Columna izquierda: Embudo de Conversión (altura completa) */}
-          <Card className="flex flex-col">
-            <CardHeader className="pb-4">
-              <div className="flex flex-col gap-4">
-                <div>
-                  <CardTitle className="text-base font-medium">Embudo de Conversión</CardTitle>
-                  <CardDescription>
-                    Comparación de flujo de impresiones a resultados por campaña
-                  </CardDescription>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Selecciona campañas para comparar:</label>
-                  <Select
-                    value=""
-                    onValueChange={(value) => {
-                      if (!selectedCampaignsForFunnel.includes(value)) {
-                        setSelectedCampaignsForFunnel([...selectedCampaignsForFunnel, value])
-                      }
-                    }}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder={`${selectedCampaignsForFunnel.length > 0 ? `${selectedCampaignsForFunnel.length} campaña(s) seleccionada(s)` : 'Selecciona campañas'}`} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {filteredCampaigns
-                        .filter(c => c && c.spend > 0 && !selectedCampaignsForFunnel.includes(c.id))
-                        .sort((a, b) => a.campaign_name.localeCompare(b.campaign_name))
-                        .map((campaign) => (
-                          <SelectItem key={campaign.id} value={campaign.id}>
-                            {campaign.campaign_name}
-                          </SelectItem>
-                        ))}
-                      {filteredCampaigns.filter(c => c && c.spend > 0 && !selectedCampaignsForFunnel.includes(c.id)).length === 0 && (
-                        <SelectItem value="" disabled>Todas las campañas están seleccionadas</SelectItem>
-                      )}
-                    </SelectContent>
-                  </Select>
-                  {selectedCampaignsForFunnel.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {selectedCampaignsForFunnel.map((campaignId) => {
-                        const campaign = filteredCampaigns.find(c => c.id === campaignId)
-                        if (!campaign) return null
-                        return (
-                          <Badge
-                            key={campaignId}
-                            variant="secondary"
-                            className="flex items-center gap-1 pr-1"
-                          >
-                            <span className="text-xs">{campaign.campaign_name.length > 25 ? `${campaign.campaign_name.substring(0, 25)}...` : campaign.campaign_name}</span>
-                            <button
-                              onClick={() => {
-                                setSelectedCampaignsForFunnel(selectedCampaignsForFunnel.filter(id => id !== campaignId))
-                              }}
-                              className="ml-1 rounded-full hover:bg-muted p-0.5"
-                            >
-                              <XCircle className="h-3 w-3" />
-                            </button>
-                          </Badge>
-                        )
-                      })}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setSelectedCampaignsForFunnel([])}
-                        className="h-6 text-xs"
-                      >
-                        Limpiar todo
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="flex-1 flex flex-col">
-              {selectedCampaignsForFunnel.length > 0 ? (
-                (() => {
-                  const selectedCampaigns = filteredCampaigns.filter(c => 
-                    selectedCampaignsForFunnel.includes(c.id)
-                  )
-
-                  if (selectedCampaigns.length === 0) {
-                    return (
-                      <div className="flex h-[400px] items-center justify-center">
-                        <p className="text-sm text-muted-foreground">Campañas no encontradas</p>
-                      </div>
-                    )
-                  }
-
-                  // Paleta de colores basada en la imagen proporcionada
-                  // Colores más vibrantes y diferenciados para mejor visualización
-                  // Paleta de colores burdeos para cada campaña
-                  // Cada campaña tiene un gradiente de burdeos a través de las etapas
-                  const campaignColorPalettes = [
-                    // Paleta 1: Burdeos oscuro a claro
-                    ['#7C2D12', '#991B1B', '#B91C1C', '#DC2626'],
-                    // Paleta 2: Burdeos medio oscuro
-                    ['#991B1B', '#B91C1C', '#DC2626', '#EF4444'],
-                    // Paleta 3: Burdeos rojizo
-                    ['#B91C1C', '#DC2626', '#EF4444', '#F87171'],
-                    // Paleta 4: Burdeos vino
-                    ['#6B1F1F', '#8B2A2A', '#A83A3A', '#C94A4A'],
-                    // Paleta 5: Burdeos granate
-                    ['#722F37', '#8B3A42', '#A44A52', '#BD5A62'],
-                    // Paleta 6: Burdeos terroso
-                    ['#5C2E37', '#6D3E47', '#7E4E57', '#8F5E67'],
-                    // Paleta 7: Burdeos profundo
-                    ['#4A1F1F', '#5A2F2F', '#6A3F3F', '#7A4F4F'],
-                  ]
-
-                  // Preparar datos para FunnelGraph.js con formato 2D para comparación
-                  // Para múltiples campañas, necesitamos un array de colores por etapa
-                  const numStages = 4
-                  const colors: string[][] = []
-                  
-                  // Para cada etapa, crear un array de colores (uno por campaña)
-                  for (let stage = 0; stage < numStages; stage++) {
-                    const stageColors: string[] = []
-                    selectedCampaigns.forEach((_, campaignIndex) => {
-                      const palette = campaignColorPalettes[campaignIndex % campaignColorPalettes.length]
-                      stageColors.push(palette[stage % palette.length])
-                    })
-                    colors.push(stageColors)
-                  }
-
-                  const funnelData = {
-                    labels: ['Impresiones', 'Alcance (Reach)', 'Link Clicks', 'Results'],
-                    subLabels: selectedCampaigns.map(c => c.campaign_name.length > 20 
-                      ? `${c.campaign_name.substring(0, 20)}...` 
-                      : c.campaign_name),
-                    colors: colors,
-                    values: [
-                      // Impresiones (valores de cada campaña)
-                      selectedCampaigns.map(c => c.impressions || 0),
-                      // Alcance (Reach) (valores de cada campaña)
-                      selectedCampaigns.map(c => c.reach || 0),
-                      // Link Clicks (valores de cada campaña)
-                      selectedCampaigns.map(c => c.link_clicks || c.clicks || 0),
-                      // Results (valores de cada campaña)
-                      selectedCampaigns.map(c => c.conversions || 0),
-                    ],
-                  }
-
-                  return (
-                    <FunnelChart
-                      title=""
-                      data={funnelData}
-                      direction="horizontal"
-                      displayPercent={true}
-                      height={600}
-                      campaignNames={selectedCampaigns.map(c => c.campaign_name)}
-                    />
-                  )
-                })()
-              ) : (
-                <div className="flex h-[400px] items-center justify-center">
-                  <p className="text-sm text-muted-foreground">Selecciona al menos una campaña para ver el embudo comparativo</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-          
-          {/* Columna derecha: Presupuesto y Cost per Result */}
-          <div className="flex flex-col gap-6">
-            {/* Presupuesto (mitad superior) */}
-            <Card className="flex-1">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base font-medium">Distribución del Presupuesto</CardTitle>
-              <CardDescription>
-                {filteredCampaigns.length > 0
-                  ? `${filteredCampaigns.length} campañas en el período seleccionado`
-                  : 'Sin datos para el período seleccionado.'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {filteredCampaigns.length > 0 ? (
-                <div className="space-y-6">
-                  {/* Gráfico Circular */}
-                  <div className="h-[300px]">
-                    <ResponsiveContainer width="100%" height={300}>
-                      <RechartsPieChart>
-                        <Pie
-                          data={filteredCampaigns
-                            .filter(c => c && c.spend > 0)
-                            .sort((a, b) => (b?.spend || 0) - (a?.spend || 0))
-                            .map((campaign, index) => {
-                            if (!campaign) return null
-                            
-                            const totalFilteredSpend = filteredCampaigns
-                              .filter(c => c && c.spend > 0)
-                              .reduce((sum, c) => sum + (c?.spend || 0), 0)
-                            const percentage = totalFilteredSpend > 0 ? ((campaign.spend || 0) / totalFilteredSpend) * 100 : 0
-                            
-                            // Colores alternados para mejor visualización
-                            const colors = [
-                              '#7C2D12', '#991B1B', '#B91C1C', '#DC2626', '#EF4444',
-                              '#F87171', '#FCA5A5', '#FECACA', '#FEE2E2', '#FEF2F2',
-                              '#DC143C', '#C41E3A', '#8B0000', '#800020', '#722F37',
-                              '#5C2E37', '#4A2C2A', '#3D1E1E', '#2D1B1B', '#1A0F0F',
-                            ]
-                            const color = colors[index % colors.length]
-                            
-                            return {
-                              name: (campaign.campaign_name || 'Sin nombre').length > 25 
-                                ? `${(campaign.campaign_name || 'Sin nombre').substring(0, 25)}...` 
-                                : (campaign.campaign_name || 'Sin nombre'),
-                              value: campaign.spend || 0,
-                              color,
-                              fullName: campaign.campaign_name || 'Sin nombre',
-                              percentage: percentage.toFixed(1),
-                            }
-                          })
-                          .filter(item => item !== null)}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={80}
-                          outerRadius={140}
-                          paddingAngle={2}
-                          dataKey="value"
-                          strokeWidth={0}
-                        >
-                          {filteredCampaigns
-                            .filter(c => c && c.spend > 0)
-                            .sort((a, b) => (b?.spend || 0) - (a?.spend || 0))
-                            .map((_, index) => {
-                            const colors = [
-                              '#7C2D12', '#991B1B', '#B91C1C', '#DC2626', '#EF4444',
-                              '#F87171', '#FCA5A5', '#FECACA', '#FEE2E2', '#FEF2F2',
-                              '#DC143C', '#C41E3A', '#8B0000', '#800020', '#722F37',
-                              '#5C2E37', '#4A2C2A', '#3D1E1E', '#2D1B1B', '#1A0F0F',
-                            ]
-                            return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-                          })}
-                        </Pie>
-                        <Tooltip
-                          content={({ active, payload }) => {
-                            if (active && payload && payload.length && payload[0]?.payload) {
-                              const item = payload[0].payload
-                              const total = filteredCampaigns
-                                .filter(c => c && c.spend > 0)
-                                .reduce((sum, c) => sum + (c?.spend || 0), 0)
-                              const percentage = total > 0 ? ((item.value || 0) / total) * 100 : 0
-                              return (
-                                <div className="rounded-lg border bg-background p-3 shadow-lg">
-                                  <div className="flex items-center gap-2">
-                                    <div
-                                      className="h-3 w-3 rounded-full"
-                                      style={{ backgroundColor: item.color || '#7C2D12' }}
-                                    />
-                                    <span className="font-medium text-sm">{item.fullName || 'Sin nombre'}</span>
-                                  </div>
-                                  <p className="mt-1 text-lg font-semibold">
-                                    {formatCurrency(item.value || 0)}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground">
-                                    {percentage.toFixed(1)}% del total
-                                  </p>
-                                </div>
-                              )
-                            }
-                            return null
-                          }}
-                        />
-                        <Legend
-                          layout="vertical"
-                          verticalAlign="middle"
-                          align="right"
-                          content={({ payload }) => {
-                            if (!payload || payload.length === 0) return null
-                            
-                            const sortedCampaigns = [...filteredCampaigns].sort((a, b) => b.spend - a.spend)
-                            const total = sortedCampaigns.reduce((sum, c) => sum + (c?.spend || 0), 0)
-                            
-                            return (
-                              <div className="flex flex-col gap-2 pl-4 max-h-[350px] overflow-y-auto">
-                                {payload.map((entry, index) => {
-                                  if (!entry || !entry.payload) return null
-                                  
-                                  const item = entry.payload
-                                  const campaign = sortedCampaigns.find(c => c?.campaign_name === item.fullName) || sortedCampaigns[index]
-                                  
-                                  if (!campaign) return null
-                                  
-                                  const percentage = total > 0 ? ((campaign.spend / total) * 100).toFixed(1) : '0'
-                                  return (
-                                    <div key={index} className="flex items-center gap-2 text-xs">
-                                      <div
-                                        className="h-3 w-3 rounded-full flex-shrink-0"
-                                        style={{ backgroundColor: entry.color || '#7C2D12' }}
-                                      />
-                                      <span className="text-muted-foreground truncate flex-1">
-                                        {campaign.campaign_name && campaign.campaign_name.length > 20 
-                                          ? `${campaign.campaign_name.substring(0, 20)}...` 
-                                          : campaign.campaign_name || 'Sin nombre'}
-                                      </span>
-                                      <span className="font-medium whitespace-nowrap">{percentage}%</span>
-                                    </div>
-                                  )
-                                })}
-                              </div>
-                            )
-                          }}
-                        />
-                      </RechartsPieChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">No hay campañas en el período seleccionado.</p>
-              )}
-            </CardContent>
-            </Card>
-            
-            {/* Cost per Result (mitad inferior) */}
-            {theBundClubMonthlyData.lines && theBundClubMonthlyData.lines.length > 0 ? (
-              <LineChart
-                title="Evolución Cost per Result - TheBundClub"
-                data={theBundClubMonthlyData.data}
-                lines={theBundClubMonthlyData.lines}
-                xAxisKey="month"
-                height={300}
-                formatValue={(v) => formatCurrency(v)}
-              />
-            ) : (
-              <Card className="flex-1">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base font-medium">Evolución Cost per Result - TheBundClub</CardTitle>
-                  <CardDescription>
-                    Evolución mensual del Cost per Result de las campañas TheBundClub durante el año
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">
-                    No hay datos de campañas TheBundClub para mostrar.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </div>
+        {/* Diagrama de Sankey - Distribución del Gasto */}
+        {sankeyData.nodes.length > 0 && sankeyData.links.length > 0 && (
+          <SankeyChart
+            title="Distribución del Gasto"
+            description="Flujo de gasto desde el total hacia conjuntos y campañas específicas"
+            nodes={sankeyData.nodes}
+            links={sankeyData.links}
+            height={500}
+          />
+        )}
 
         {/* Campaigns Table */}
         <Card>

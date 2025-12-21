@@ -7,7 +7,7 @@ export default function AuthLayout({
     <div 
       className="relative flex min-h-screen items-center justify-center bg-cover bg-center bg-no-repeat px-4 py-8 md:justify-end md:px-8 md:py-12"
       style={{
-        backgroundImage: 'url(/312a39fd8e869a7520cfa7c0f74b9c0d72798a03dc398bae640484142010e0cb.png)'
+        backgroundImage: 'url(/ASD.jpg)'
       }}
     >
       {/* Eslogan en la parte inferior izquierda - oculto en móviles */}

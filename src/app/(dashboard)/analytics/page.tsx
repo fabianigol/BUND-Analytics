@@ -956,10 +956,12 @@ export default function AnalyticsPage() {
                         const totalSessions = analyticsData.hourlyData.reduce((sum, item) => sum + item.sessions, 0)
                         // Ordenar por sesiones de mayor a menor
                         const sortedHourlyData = [...analyticsData.hourlyData].sort((a, b) => b.sessions - a.sessions)
+                        // Quitar las últimas 4 horas para igualar la altura de las tablas
+                        const filteredHourlyData = sortedHourlyData.slice(0, -4)
                         // Obtener el máximo de sesiones para la barra de progreso
-                        const maxSessions = sortedHourlyData[0]?.sessions || 1
+                        const maxSessions = filteredHourlyData[0]?.sessions || 1
                         
-                        return sortedHourlyData.map((hourData, index) => {
+                        return filteredHourlyData.map((hourData, index) => {
                           const percentage = totalSessions > 0 ? (hourData.sessions / totalSessions) * 100 : 0
                           // La barra debe ser proporcional al máximo, no al porcentaje del total
                           const barWidth = (hourData.sessions / maxSessions) * 100

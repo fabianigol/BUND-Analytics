@@ -42,7 +42,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="w-full rounded-3xl bg-white p-6 shadow-2xl md:rounded-[2rem] md:p-8 lg:p-10">
+    <div className="w-full rounded-3xl bg-white/80 backdrop-blur-sm p-6 shadow-2xl md:rounded-[2rem] md:p-8 lg:p-10">
       {/* Cabecera del formulario */}
       <div className="mb-6 space-y-3 md:mb-8 md:space-y-4">
         <h1 className="text-2xl font-bold text-gray-900 md:text-3xl lg:text-4xl">
@@ -66,7 +66,7 @@ export default function LoginPage() {
             <div className="w-full border-t border-gray-200"></div>
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-gray-500">OR</span>
+            <span className="bg-white/80 backdrop-blur-sm px-2 text-gray-500">OR</span>
           </div>
         </div>
       </div>
