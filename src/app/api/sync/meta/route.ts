@@ -11,15 +11,24 @@ export async function POST(request: NextRequest) {
     try {
       const body = await request.json().catch(() => ({}))
       if (body.startDate && body.endDate) {
-        // Validar formato de fecha (YYYY-MM-DD)
-        const startDate = new Date(body.startDate)
-        const endDate = new Date(body.endDate)
+        // Validar y normalizar formato de fecha (YYYY-MM-DD)
+        // La API de Meta usa timezone PST/PDT, pero acepta fechas en formato YYYY-MM-DD
+        const startDateStr = body.startDate.match(/^\d{4}-\d{2}-\d{2}$/) 
+          ? body.startDate 
+          : new Date(body.startDate).toISOString().split('T')[0]
+        const endDateStr = body.endDate.match(/^\d{4}-\d{2}-\d{2}$/) 
+          ? body.endDate 
+          : new Date(body.endDate).toISOString().split('T')[0]
+        
+        // Validar que las fechas sean válidas y que startDate <= endDate
+        const startDate = new Date(startDateStr)
+        const endDate = new Date(endDateStr)
         if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime()) && startDate <= endDate) {
           dateRange = {
-            since: body.startDate, // Ya viene en formato YYYY-MM-DD
-            until: body.endDate,
+            since: startDateStr, // Formato YYYY-MM-DD
+            until: endDateStr,   // Formato YYYY-MM-DD
           }
-          console.log(`[Meta Sync] Using custom date range: ${dateRange.since} to ${dateRange.until}`)
+          console.log(`[Meta Sync] Using custom date range: ${dateRange.since} to ${dateRange.until} (timezone: PST/PDT)`)
         } else {
           console.warn(`[Meta Sync] Invalid date range provided: ${body.startDate} to ${body.endDate}`)
         }

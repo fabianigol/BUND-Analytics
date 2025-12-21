@@ -51,11 +51,108 @@ import {
   Calendar,
   ShoppingBag,
 } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { MetaCampaign } from '@/types'
 import { formatCurrency, formatNumber, formatCompactNumber, formatPercentage } from '@/lib/utils/format'
 import { createClient } from '@/lib/supabase/client'
 
 type DateFilterType = 'custom' | 'month' | 'year' | 'all'
+
+// Helper function to identify city from campaign name
+function getCityFromCampaignName(campaignName: string): string | null {
+  const nameUpper = campaignName.toUpperCase()
+  
+  if (nameUpper.includes('MADRID')) {
+    return 'MADRID'
+  }
+  if (nameUpper.includes('SEVILLA') || nameUpper.includes('SEVILLE')) {
+    return 'SEVILLA'
+  }
+  if (nameUpper.includes('MÁLAGA') || nameUpper.includes('MALAGA')) {
+    return 'MALAGA'
+  }
+  if (nameUpper.includes('MURCIA')) {
+    return 'MURCIA'
+  }
+  if (nameUpper.includes('BARCELONA')) {
+    return 'BARCELONA'
+  }
+  
+  return null
+}
+
+// Thresholds for city CPR colors
+const CITY_THRESHOLDS = {
+  MADRID: { green: 24.65, red: 77 },
+  SEVILLA: { green: 24.69, red: 50 },
+  MALAGA: { green: 18.56, red: 28.67 },
+  MURCIA: { green: 48.63, red: 79 },
+  BARCELONA: { green: 30.76, red: 56.67 },
+} as const
+
+// Helper function to get city card style based on CPR
+function getCityCardStyle(cpr: number, city: string): { bgColor: string; textColor: string; emoji: string; status: 'green' | 'red' | 'gray' } {
+  const thresholds = CITY_THRESHOLDS[city as keyof typeof CITY_THRESHOLDS]
+  
+  if (!thresholds) {
+    return { bgColor: 'bg-gray-800', textColor: 'text-gray-200', emoji: '', status: 'gray' }
+  }
+  
+  if (cpr < thresholds.green) {
+    return { bgColor: 'bg-green-100', textColor: 'text-green-700', emoji: '🚀', status: 'green' }
+  }
+  
+  if (cpr > thresholds.red) {
+    return { bgColor: 'bg-red-100', textColor: 'text-red-700', emoji: '👋🏻', status: 'red' }
+  }
+  
+  return { bgColor: 'bg-gray-800', textColor: 'text-gray-200', emoji: '', status: 'gray' }
+}
+
+// Helper function to get tooltip content for city CPR
+function getCityTooltipContent(cpr: number, city: string, style: ReturnType<typeof getCityCardStyle>): string {
+  const thresholds = CITY_THRESHOLDS[city as keyof typeof CITY_THRESHOLDS]
+  
+  if (!thresholds) {
+    return `CPR: ${formatCurrency(cpr)}\nNo hay umbrales definidos para esta ciudad.`
+  }
+  
+  let explanation = `CPR actual: ${formatCurrency(cpr)}\n\n`
+  explanation += `Umbrales de referencia:\n`
+  explanation += `• Verde: < ${formatCurrency(thresholds.green)}\n`
+  explanation += `• Rojo: > ${formatCurrency(thresholds.red)}\n\n`
+  
+  if (style.status === 'green') {
+    explanation += `✅ Estado: VERDE\n`
+    explanation += `El CPR está siendo un éxito! (${formatCurrency(thresholds.green)}).\n`
+    // Mostrar valores de referencia según la ciudad
+    const greenValues: Record<string, string> = {
+      MADRID: '19,09€, 27,07€, 27,79€ (media: 24,65€)',
+      SEVILLA: '17,61€, 27,79€, 28,67€ (media: 24,69€)',
+      MALAGA: '18,52€, 18,58€, 18,59€ (media: 18,56€)',
+      MURCIA: '47,20€, 45,68€, 53,02€ (media: 48,63€)',
+      BARCELONA: '28,96€, 30,56€, 32,76€ (media: 30,76€)',
+    }
+    explanation += `Valores de referencia: ${greenValues[city] || 'N/A'}`
+  } else if (style.status === 'red') {
+    explanation += `⚠️ Estado: ROJO\n`
+    explanation += `El CPR está peor de lo esperado ¡Revisalo! (${formatCurrency(thresholds.red)}).\n`
+    // Mostrar valores de referencia según la ciudad
+    const redValues: Record<string, string> = {
+      MADRID: '83, 68, 80 (media: 77€)',
+      SEVILLA: '50, 49, 51 (media: 50€)',
+      MALAGA: '27, 30, 29 (media: 28,67€)',
+      MURCIA: '82, 75, 80 (media: 79€)',
+      BARCELONA: '65, 55, 50 (media: 56,67€)',
+    }
+    explanation += `Valores de referencia: ${redValues[city] || 'N/A'}`
+  } else {
+    explanation += `⚪ Estado: GRIS\n`
+    explanation += `El CPR está entre en la media (${formatCurrency(thresholds.green)}) y rojo (${formatCurrency(thresholds.red)}).`
+  }
+  
+  return explanation
+}
 
 // Helper function to categorize Meta action types
 function categorizeActionType(actionType: string): 'citas' | 'leads' | 'ventas' | null {
@@ -137,7 +234,7 @@ function categorizeActionType(actionType: string): 'citas' | 'leads' | 'ventas' 
 export default function AdsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all') // 'all' mostrará solo activas por defecto
-  const [dateFilterType, setDateFilterType] = useState<DateFilterType>('all')
+  const [dateFilterType, setDateFilterType] = useState<DateFilterType>('month')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [campaigns, setCampaigns] = useState<MetaCampaign[]>([])
@@ -327,18 +424,14 @@ export default function AdsPage() {
 
   // Agrupar y filtrar campañas
   const filteredCampaigns = useMemo(() => {
-    // Primero filtrar por búsqueda y estado
+    // Primero filtrar por búsqueda
     let filtered = campaigns.filter((campaign) => {
       const matchesSearch = campaign.campaign_name.toLowerCase().includes(searchTerm.toLowerCase())
-      // Por defecto mostrar solo activas, pero respetar el filtro del usuario
-      const matchesStatus = statusFilter === 'all' 
-        ? campaign.status === 'ACTIVE' // Si es 'all', mostrar solo activas
-        : campaign.status === statusFilter
-      
-      return matchesSearch && matchesStatus
+      return matchesSearch
     })
 
-    // Si hay filtro de fecha, filtrar por fecha
+    // Si hay filtro de fecha, filtrar por fecha PRIMERO
+    // Esto permite mostrar campañas inactivas que tuvieron gasto en el período
     if (getDateRange) {
       filtered = filtered.filter((campaign) => {
         const campaignDate = new Date(campaign.date)
@@ -346,7 +439,23 @@ export default function AdsPage() {
         start.setHours(0, 0, 0, 0)
         const end = new Date(getDateRange.end)
         end.setHours(23, 59, 59, 999)
-        return campaignDate >= start && campaignDate <= end
+        const inDateRange = campaignDate >= start && campaignDate <= end
+        
+        // Si está en el rango de fechas Y tiene gasto, incluirla (sin importar estado)
+        // Si no está en el rango, aplicar filtro de estado normal
+        if (inDateRange && campaign.spend > 0) {
+          return true // Incluir todas las campañas con gasto en el período
+        }
+        
+        return false // Si no está en el rango, no incluir
+      })
+    } else {
+      // Si NO hay filtro de fecha, aplicar filtro de estado normal
+      filtered = filtered.filter((campaign) => {
+        const matchesStatus = statusFilter === 'all' 
+          ? campaign.status === 'ACTIVE' // Si es 'all', mostrar solo activas
+          : campaign.status === statusFilter
+        return matchesStatus
       })
     }
 
@@ -413,6 +522,64 @@ export default function AdsPage() {
     
     return Array.from(grouped.values())
   }, [campaigns, searchTerm, statusFilter, getDateRange])
+
+  // Separar campañas en tres categorías: Citas, Leads, Ecom
+  const campaignsByCategory = useMemo(() => {
+    const citas: MetaCampaign[] = []
+    const leads: MetaCampaign[] = []
+    const ecom: MetaCampaign[] = []
+
+    filteredCampaigns.forEach((campaign) => {
+      const campaignNameUpper = campaign.campaign_name.toUpperCase()
+      
+      // Citas: campañas con "Thebundclub" o "BundClub" en el nombre
+      if (campaignNameUpper.includes('THEBUNDCLUB') || campaignNameUpper.includes('THE BUNDCLUB') || campaignNameUpper.includes('BUNDCLUB')) {
+        citas.push(campaign)
+      }
+      // Ecom: campañas con "Ecom" o "Sales" en el nombre, o OUTCOME_SALES
+      else if (campaignNameUpper.includes('ECOM') || campaignNameUpper.includes('SALES') || campaign.objective.includes('SALES')) {
+        ecom.push(campaign)
+      }
+      // Leads: todas las demás (campañas con "Leads" en el nombre o OUTCOME_LEADS)
+      else {
+        leads.push(campaign)
+      }
+    })
+
+    return { citas, leads, ecom }
+  }, [filteredCampaigns])
+
+  // Calcular CPR por ciudad (usando la campaña principal = mayor gasto)
+  const cityCPRData = useMemo(() => {
+    const cityMap = new Map<string, { campaign: MetaCampaign; cpr: number }>()
+    
+    campaignsByCategory.citas.forEach((campaign) => {
+      const city = getCityFromCampaignName(campaign.campaign_name)
+      if (!city) return
+      
+      // Calcular CPR: usar cost_per_result si está disponible, sino calcularlo
+      let cpr = campaign.cost_per_result || 0
+      if (cpr === 0 && campaign.conversions > 0 && campaign.spend > 0) {
+        cpr = campaign.spend / campaign.conversions
+      }
+      
+      // Si no hay CPR válido, saltar esta campaña
+      if (cpr === 0 || !isFinite(cpr)) return
+      
+      // Si ya existe una campaña para esta ciudad, comparar por gasto
+      const existing = cityMap.get(city)
+      if (!existing || campaign.spend > existing.campaign.spend) {
+        cityMap.set(city, { campaign, cpr })
+      }
+    })
+    
+    // Convertir a array de objetos
+    return Array.from(cityMap.entries()).map(([city, data]) => ({
+      city,
+      cpr: data.cpr,
+      campaignName: data.campaign.campaign_name,
+    }))
+  }, [campaignsByCategory.citas])
 
   // Calcular métricas basadas en campañas filtradas
   const totalSpend = filteredCampaigns.reduce((sum, c) => sum + c.spend, 0)
@@ -845,7 +1012,7 @@ export default function AdsPage() {
           />
         )}
 
-        {/* Campaigns Table */}
+        {/* Filters and Actions */}
         <Card>
           <CardHeader className="pb-4">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -884,67 +1051,131 @@ export default function AdsPage() {
               </div>
             </div>
           </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Campaña</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead className="text-right">Amount Spent</TableHead>
-                  <TableHead className="text-right">Reach</TableHead>
-                  <TableHead className="text-right">Impressions</TableHead>
-                  <TableHead className="text-right">Link Clicks</TableHead>
-                  <TableHead className="text-right">Cost per Result</TableHead>
-                  <TableHead className="text-right">Results</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredCampaigns.map((campaign) => {
-                  return (
-                    <TableRow key={campaign.id}>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">{campaign.campaign_name}</p>
-                          <p className="text-xs text-muted-foreground">{campaign.objective}</p>
-                        </div>
-                      </TableCell>
-                      <TableCell>{getStatusBadge(campaign.status)}</TableCell>
-                      <TableCell className="text-right font-medium">
-                        {formatCurrency(campaign.spend)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {campaign.reach ? formatCompactNumber(campaign.reach) : '—'}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {formatCompactNumber(campaign.impressions)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {campaign.link_clicks ? formatCompactNumber(campaign.link_clicks) : formatCompactNumber(campaign.clicks)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {campaign.cost_per_result && campaign.cost_per_result > 0
-                          ? formatCurrency(campaign.cost_per_result)
-                          : campaign.conversions > 0 && campaign.spend > 0
-                          ? formatCurrency(campaign.spend / campaign.conversions)
-                          : '—'}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {formatNumber(campaign.conversions)}
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
-                {!hasCampaigns && (
-                  <TableRow>
-                    <TableCell colSpan={8} className="text-center text-sm text-muted-foreground">
-                      Sin campañas aún. Conecta la API de Meta Ads para ver datos reales.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
         </Card>
+
+        {/* Helper function to render a campaign table */}
+        {(() => {
+          const renderCampaignTable = (title: string, campaigns: MetaCampaign[], category: 'citas' | 'leads' | 'ecom') => {
+            if (campaigns.length === 0) return null
+
+            return (
+              <Card key={category}>
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-base font-medium">{title} ({campaigns.length})</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {/* City CPR Cards - Solo para Citas */}
+                  {category === 'citas' && cityCPRData.length > 0 && (
+                    <div className="mb-6">
+                      <TooltipProvider>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                          {cityCPRData.map((cityData) => {
+                            const style = getCityCardStyle(cityData.cpr, cityData.city)
+                            const tooltipContent = getCityTooltipContent(cityData.cpr, cityData.city, style)
+                            return (
+                              <Tooltip key={cityData.city}>
+                                <TooltipTrigger asChild>
+                                  <Card className={`p-2 ${style.bgColor} cursor-help`}>
+                                    <CardContent className="flex items-center gap-2 p-0">
+                                      {style.emoji && (
+                                        <div className="flex items-center justify-center">
+                                          <span className="text-lg leading-none">{style.emoji}</span>
+                                        </div>
+                                      )}
+                                      <div className="flex-1 min-w-0">
+                                        <p className={`text-xs truncate ${style.textColor}`}>
+                                          {cityData.city}
+                                        </p>
+                                        <p className={`text-sm font-semibold truncate ${style.textColor}`}>
+                                          {formatCurrency(cityData.cpr)}
+                                        </p>
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+                                </TooltipTrigger>
+                                <TooltipContent side="top" className="max-w-xs whitespace-pre-line">
+                                  {tooltipContent}
+                                </TooltipContent>
+                              </Tooltip>
+                            )
+                          })}
+                        </div>
+                      </TooltipProvider>
+                    </div>
+                  )}
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Campaña</TableHead>
+                        <TableHead>Estado</TableHead>
+                        <TableHead className="text-right">Amount Spent</TableHead>
+                        <TableHead className="text-right">Reach</TableHead>
+                        <TableHead className="text-right">Impressions</TableHead>
+                        <TableHead className="text-right">Link Clicks</TableHead>
+                        <TableHead className="text-right">Cost per Result</TableHead>
+                        <TableHead className="text-right">Results</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {campaigns.map((campaign) => {
+                        return (
+                          <TableRow key={campaign.id}>
+                            <TableCell>
+                              <div>
+                                <p className="font-medium">{campaign.campaign_name}</p>
+                                <p className="text-xs text-muted-foreground">{campaign.objective}</p>
+                              </div>
+                            </TableCell>
+                            <TableCell>{getStatusBadge(campaign.status)}</TableCell>
+                            <TableCell className="text-right font-medium">
+                              {formatCurrency(campaign.spend)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {campaign.reach ? formatCompactNumber(campaign.reach) : '—'}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {formatCompactNumber(campaign.impressions)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {campaign.link_clicks ? formatCompactNumber(campaign.link_clicks) : formatCompactNumber(campaign.clicks)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {campaign.cost_per_result && campaign.cost_per_result > 0
+                                ? formatCurrency(campaign.cost_per_result)
+                                : campaign.conversions > 0 && campaign.spend > 0
+                                ? formatCurrency(campaign.spend / campaign.conversions)
+                                : '—'}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {formatNumber(campaign.conversions)}
+                            </TableCell>
+                          </TableRow>
+                        )
+                      })}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            )
+          }
+
+          return (
+            <>
+              {renderCampaignTable('Citas', campaignsByCategory.citas, 'citas')}
+              {renderCampaignTable('Leads', campaignsByCategory.leads, 'leads')}
+              {renderCampaignTable('Ecom', campaignsByCategory.ecom, 'ecom')}
+              {!hasCampaigns && (
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="text-center text-sm text-muted-foreground">
+                      Sin campañas aún. Conecta la API de Meta Ads para ver datos reales.
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </>
+          )
+        })()}
       </div>
     </div>
   )
