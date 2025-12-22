@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -42,11 +43,22 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="w-full rounded-3xl bg-white/80 backdrop-blur-sm p-6 shadow-2xl md:rounded-[2rem] md:p-8 lg:p-10">
+    <div className="w-full p-6 md:p-8 lg:p-10">
       {/* Cabecera del formulario */}
       <div className="mb-6 space-y-3 md:mb-8 md:space-y-4">
-        <h1 className="text-2xl font-bold text-gray-900 md:text-3xl lg:text-4xl">
-          ¡Hola! 👋
+        {/* Logo */}
+        <div className="mb-4 flex justify-start">
+          <Image
+            src="/LOG.png"
+            alt="Logo"
+            width={150}
+            height={60}
+            className="object-contain"
+            priority
+          />
+        </div>
+        <h1 className="text-lg font-semibold text-gray-900">
+          Bienvenido al futuro de la moda a medida
         </h1>
         <div className="space-y-2">
           <p className="text-xs text-gray-600 md:text-sm">
@@ -66,7 +78,7 @@ export default function LoginPage() {
             <div className="w-full border-t border-gray-200"></div>
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white/80 backdrop-blur-sm px-2 text-gray-500">OR</span>
+            <span className="bg-white px-2 text-gray-500">O</span>
           </div>
         </div>
       </div>
@@ -74,7 +86,7 @@ export default function LoginPage() {
       {/* Formulario */}
       <form onSubmit={handleLogin} className="space-y-6">
         {error && (
-          <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+          <div className="rounded-none bg-red-50 p-3 text-sm text-red-600">
             {error}
           </div>
         )}
@@ -89,7 +101,7 @@ export default function LoginPage() {
             placeholder="tu@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="h-12 rounded-lg border-gray-300 bg-gray-50 focus:border-gray-400 focus:ring-gray-400"
+            className="h-12 rounded-none border-gray-300 bg-gray-50 focus:border-gray-400 focus:ring-gray-400"
             required
           />
         </div>
@@ -104,7 +116,7 @@ export default function LoginPage() {
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="h-12 rounded-lg border-gray-300 bg-gray-50 focus:border-gray-400 focus:ring-gray-400"
+            className="h-12 rounded-none border-gray-300 bg-gray-50 focus:border-gray-400 focus:ring-gray-400"
             required
           />
         </div>
@@ -112,7 +124,7 @@ export default function LoginPage() {
         {/* Botón de envío */}
         <Button
           type="submit"
-          className="h-12 w-full rounded-2xl bg-black text-white hover:bg-gray-800 disabled:opacity-50"
+          className="h-12 w-full rounded-none bg-black text-white hover:bg-gray-800 disabled:opacity-50"
           disabled={isLoading}
         >
           {isLoading ? (
@@ -131,7 +143,7 @@ export default function LoginPage() {
             href="mailto:supporte@bundcompany.com" 
             className="text-blue-600 hover:underline"
           >
-            Contacta con soporte
+            Contacta con Juan
           </a>
         </p>
       </form>
