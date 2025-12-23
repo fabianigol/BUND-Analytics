@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'BUND Dashboard | Marketing Analytics',
-  description: 'Dashboard de marketing para el equipo de BUND. Integra Calendly, Shopify, Meta Ads y Google Analytics.',
+  description: 'Dashboard de marketing para el equipo de BUND. Integra Shopify, Meta Ads y Google Analytics.',
   icons: {
     icon: '/favicon.ico',
   },

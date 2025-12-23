@@ -26,8 +26,6 @@ export async function GET(request: NextRequest) {
           return generateSalesReport(supabase, startDate, endDate)
         case 'campaigns':
           return generateCampaignsReport(supabase, startDate, endDate)
-        case 'appointments':
-          return generateAppointmentsReport(supabase, startDate, endDate)
         default:
           return NextResponse.json({ error: 'Unknown report type' }, { status: 400 })
       }
@@ -39,7 +37,6 @@ export async function GET(request: NextRequest) {
         { id: 'overview', name: 'Resumen General', description: 'Métricas principales de todas las fuentes' },
         { id: 'sales', name: 'Informe de Ventas', description: 'Detalle de ventas y pedidos de Shopify' },
         { id: 'campaigns', name: 'Rendimiento de Campañas', description: 'Métricas de Meta Ads' },
-        { id: 'appointments', name: 'Citas y Conversiones', description: 'Análisis de citas de Calendly' },
       ]
     })
   } catch (error) {
@@ -54,16 +51,14 @@ async function generateOverviewReport(
   endDate: string | null
 ) {
   // Fetch aggregated data from all sources
-  const [ordersRes, campaignsRes, eventsRes, analyticsRes] = await Promise.all([
+  const [ordersRes, campaignsRes, analyticsRes] = await Promise.all([
     supabase.from('shopify_orders').select('*').order('created_at', { ascending: false }).limit(100),
     supabase.from('meta_campaigns').select('*').order('date', { ascending: false }).limit(100),
-    supabase.from('calendly_events').select('*').order('start_time', { ascending: false }).limit(100),
     supabase.from('analytics_data').select('*').order('date', { ascending: false }).limit(30),
   ])
 
   const orders = ordersRes.data as Array<{ total_price: number; [key: string]: unknown }> | null
   const campaigns = campaignsRes.data as Array<{ spend: number; conversions: number; [key: string]: unknown }> | null
-  const events = eventsRes.data as Array<{ status: string; [key: string]: unknown }> | null
   const analytics = analyticsRes.data as Array<{ sessions: number; [key: string]: unknown }> | null
 
   // Calculate metrics
@@ -71,8 +66,6 @@ async function generateOverviewReport(
   const totalOrders = orders?.length || 0
   const totalSpend = campaigns?.reduce((sum, c) => sum + (c.spend || 0), 0) || 0
   const totalConversions = campaigns?.reduce((sum, c) => sum + (c.conversions || 0), 0) || 0
-  const totalAppointments = events?.length || 0
-  const completedAppointments = events?.filter(e => e.status === 'completed').length || 0
   const totalSessions = analytics?.reduce((sum, a) => sum + (a.sessions || 0), 0) || 0
 
   return NextResponse.json({
@@ -90,11 +83,6 @@ async function generateOverviewReport(
           ad_spend: totalSpend,
           conversions: totalConversions,
           roas: totalSpend > 0 ? totalRevenue / totalSpend : 0,
-        },
-        appointments: {
-          total: totalAppointments,
-          completed: completedAppointments,
-          conversion_rate: totalAppointments > 0 ? (completedAppointments / totalAppointments) * 100 : 0,
         },
         traffic: {
           sessions: totalSessions,
@@ -181,49 +169,6 @@ async function generateCampaignsReport(
           : 0,
       },
       campaigns: campaigns,
-    },
-  })
-}
-
-async function generateAppointmentsReport(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  startDate: string | null,
-  endDate: string | null
-) {
-  let query = supabase.from('calendly_events').select('*').order('start_time', { ascending: false })
-
-  if (startDate) query = query.gte('start_time', startDate)
-  if (endDate) query = query.lte('start_time', endDate)
-
-  const { data, error } = await query
-  const events = data as Array<{ status: string; [key: string]: unknown }> | null
-
-  if (error) {
-    return NextResponse.json({ error: 'Failed to fetch events' }, { status: 500 })
-  }
-
-  const activeEvents = events?.filter(e => e.status === 'active') || []
-  const completedEvents = events?.filter(e => e.status === 'completed') || []
-  const canceledEvents = events?.filter(e => e.status === 'canceled') || []
-
-  return NextResponse.json({
-    report: {
-      type: 'appointments',
-      generated_at: new Date().toISOString(),
-      period: { start: startDate, end: endDate },
-      summary: {
-        total: events?.length || 0,
-        scheduled: activeEvents.length,
-        completed: completedEvents.length,
-        canceled: canceledEvents.length,
-        completion_rate: events && events.length > 0
-          ? (completedEvents.length / events.length) * 100
-          : 0,
-        cancellation_rate: events && events.length > 0
-          ? (canceledEvents.length / events.length) * 100
-          : 0,
-      },
-      events: events?.slice(0, 50),
     },
   })
 }

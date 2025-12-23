@@ -27,22 +27,6 @@ export interface RolePermissions {
   can_manage_integrations: boolean;
 }
 
-// Calendly Types
-export interface CalendlyEvent {
-  id: string;
-  event_type: string;
-  event_type_name: string;
-  start_time: string;
-  end_time: string;
-  invitee_email: string;
-  invitee_name: string;
-  status: 'active' | 'canceled' | 'completed';
-  canceled_at?: string;
-  cancellation_reason?: string;
-  metadata: Record<string, unknown>;
-  created_at: string;
-}
-
 // Shopify Types
 export interface ShopifyOrder {
   id: string;
@@ -161,7 +145,7 @@ export interface AirtableRecord {
 // Sync Types
 export interface SyncLog {
   id: string;
-  integration: 'calendly' | 'shopify' | 'meta' | 'analytics' | 'airtable';
+  integration: 'shopify' | 'meta' | 'analytics' | 'airtable';
   status: 'success' | 'error' | 'running';
   records_synced: number;
   started_at: string;
@@ -172,14 +156,6 @@ export interface SyncLog {
 
 // Dashboard Metrics
 export interface DashboardMetrics {
-  // Calendly
-  totalAppointments: number;
-  appointmentsChange: number;
-  completedAppointments: number;
-  canceledAppointments: number;
-  noShowAppointments: number;
-  appointmentConversionRate: number;
-
   // Shopify
   totalRevenue: number;
   revenueChange: number;
@@ -253,12 +229,6 @@ export interface ApiResponse<T> {
 
 // Settings Types
 export interface IntegrationSettings {
-  calendly: {
-    api_key?: string;
-    webhook_url?: string;
-    connected: boolean;
-    last_sync?: string;
-  };
   shopify: {
     shop_domain?: string;
     access_token?: string;

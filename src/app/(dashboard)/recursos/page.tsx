@@ -14,13 +14,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -242,7 +235,7 @@ const toolResources: ResourceItem[] = [
   {
     id: 'calendar-tools',
     title: 'Herramientas de Calendario',
-    description: 'Calendly, Acuity, y otras herramientas de citas',
+    description: 'Herramientas de gestión de citas y calendarios',
     icon: Calendar,
     color: 'text-teal-600',
     bgColor: 'bg-teal-100',
@@ -347,10 +340,11 @@ export default function RecursosPage() {
   const [loading, setLoading] = useState(false)
   const [accountCounts, setAccountCounts] = useState<{ [key: string]: number }>({})
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null)
-  const [isPromptSheetOpen, setIsPromptSheetOpen] = useState(false)
+  const [isPromptDialogOpen, setIsPromptDialogOpen] = useState(false)
   const [prompts, setPrompts] = useState<Prompt[]>(promptResources)
   const [loadingPrompts, setLoadingPrompts] = useState(false)
-  const [isPromptDialogOpen, setIsPromptDialogOpen] = useState(false)
+  const [isPromptViewDialogOpen, setIsPromptViewDialogOpen] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<string>('todas')
   const [editingPrompt, setEditingPrompt] = useState<Prompt | null>(null)
   const [promptForm, setPromptForm] = useState({
     title: '',
@@ -734,7 +728,7 @@ export default function RecursosPage() {
       category: prompt.category || '',
       isShared: prompt.isShared || false,
     })
-    setIsPromptSheetOpen(false)
+    setIsPromptViewDialogOpen(false)
     setIsPromptDialogOpen(true)
   }
 
@@ -761,7 +755,7 @@ export default function RecursosPage() {
 
       // Actualizar la lista de prompts
       setPrompts(prompts.filter((p) => p.id !== promptId))
-      setIsPromptSheetOpen(false)
+      setIsPromptViewDialogOpen(false)
       setSelectedPrompt(null)
     } catch (error) {
       console.error('Error deleting prompt:', error)
@@ -978,19 +972,41 @@ export default function RecursosPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="flex justify-end">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="category-filter" className="text-sm font-medium">
+                      Filtrar por categoría:
+                    </Label>
+                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                      <SelectTrigger id="category-filter" className="w-[200px]">
+                        <SelectValue placeholder="Todas las categorías" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="todas">Todas las categorías</SelectItem>
+                        {categoryOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <Button onClick={handleAddPrompt} className="gap-2">
                     <Plus className="h-4 w-4" />
                     Añadir Prompt
                   </Button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {prompts.map((prompt) => (
+                  {prompts
+                    .filter((prompt) => 
+                      selectedCategory === 'todas' || prompt.category === selectedCategory
+                    )
+                    .map((prompt) => (
                     <div key={prompt.id} className="relative">
                       <button
                         onClick={() => {
                           setSelectedPrompt(prompt)
-                          setIsPromptSheetOpen(true)
+                          setIsPromptViewDialogOpen(true)
                         }}
                         className={`font-mono text-sm px-3 py-1.5 rounded-md border transition-colors cursor-pointer ${
                           prompt.color || 'bg-background border-border hover:bg-accent hover:text-accent-foreground'
@@ -1149,64 +1165,86 @@ export default function RecursosPage() {
         </DialogContent>
           </Dialog>
 
-      {/* Sheet para mostrar prompts */}
-      <Sheet open={isPromptSheetOpen} onOpenChange={setIsPromptSheetOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
-          <SheetHeader>
-            <div className="flex items-center gap-2">
-              <SheetTitle>{selectedPrompt?.title}</SheetTitle>
-              {selectedPrompt?.isShared && (
-                <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded">Compartido</span>
-              )}
+      {/* Dialog para mostrar prompts */}
+      <Dialog open={isPromptViewDialogOpen} onOpenChange={setIsPromptViewDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b flex-shrink-0">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {selectedPrompt?.emoji && (
+                  <span className="text-2xl">{selectedPrompt.emoji}</span>
+                )}
+                <div>
+                  <DialogTitle className="text-xl font-semibold">
+                    {selectedPrompt?.title}
+                  </DialogTitle>
+                  {selectedPrompt?.isShared && (
+                    <span className="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">
+                      Compartido
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
-            <SheetDescription>
+            <DialogDescription className="mt-2">
               Prompt completo en formato código
-            </SheetDescription>
-          </SheetHeader>
-          <div className="mt-6">
-            <div className="rounded-lg bg-muted p-4 overflow-x-auto">
-              <pre className="font-mono text-sm whitespace-pre-wrap">
-                <code>{selectedPrompt?.promptText}</code>
-              </pre>
-            </div>
-            <div className="mt-4 flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  if (selectedPrompt?.promptText) {
-                    copyToClipboard(selectedPrompt.promptText)
-                  }
-                }}
-              >
-                <Copy className="mr-2 h-4 w-4" />
-                Copiar prompt
-              </Button>
-              {selectedPrompt && (
-                <>
-                  <Button
-                    variant="outline"
-                    onClick={() => handleEditPrompt(selectedPrompt)}
-                  >
-                    <Edit className="mr-2 h-4 w-4" />
-                    Editar
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={() => {
-                      if (selectedPrompt.id) {
-                        handleDeletePrompt(selectedPrompt.id)
-                      }
-                    }}
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Eliminar
-                  </Button>
-                </>
-              )}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {/* Contenedor del texto con scroll */}
+          <div className="flex-1 overflow-hidden px-6 py-4 min-h-0 flex flex-col">
+            <div className="flex-1 rounded-lg bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 border border-slate-200 dark:border-slate-700 shadow-inner overflow-hidden flex flex-col">
+              <div className="flex-1 overflow-auto p-6 min-h-0">
+                <pre className="font-mono text-sm leading-relaxed whitespace-pre-wrap break-words">
+                  <code className="text-slate-800 dark:text-slate-200">
+                    {selectedPrompt?.promptText}
+                  </code>
+                </pre>
+              </div>
             </div>
           </div>
-        </SheetContent>
-      </Sheet>
+
+          {/* Botones siempre visibles */}
+          <div className="px-6 py-4 border-t bg-slate-50 dark:bg-slate-900 flex-shrink-0 flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                if (selectedPrompt?.promptText) {
+                  copyToClipboard(selectedPrompt.promptText)
+                }
+              }}
+              className="flex-1"
+            >
+              <Copy className="mr-2 h-4 w-4" />
+              Copiar prompt
+            </Button>
+            {selectedPrompt && (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => handleEditPrompt(selectedPrompt)}
+                  className="flex-1"
+                >
+                  <Edit className="mr-2 h-4 w-4" />
+                  Editar
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => {
+                    if (selectedPrompt.id) {
+                      handleDeletePrompt(selectedPrompt.id)
+                    }
+                  }}
+                  className="flex-1"
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Eliminar
+                </Button>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Dialog para añadir/editar prompts */}
       <Dialog open={isPromptDialogOpen} onOpenChange={setIsPromptDialogOpen}>
