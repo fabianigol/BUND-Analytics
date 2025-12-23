@@ -313,6 +313,10 @@ export interface Database {
           avg_session_duration: number
           traffic_sources: Json
           top_pages: Json
+          device_breakdown?: Json | null
+          geographic_data?: Json | null
+          city_data?: Json | null
+          hourly_data?: Json | null
           created_at: string
           updated_at: string
         }
@@ -327,6 +331,10 @@ export interface Database {
           avg_session_duration: number
           traffic_sources?: Json
           top_pages?: Json
+          device_breakdown?: Json | null
+          geographic_data?: Json | null
+          city_data?: Json | null
+          hourly_data?: Json | null
           created_at?: string
           updated_at?: string
         }
@@ -341,6 +349,10 @@ export interface Database {
           avg_session_duration?: number
           traffic_sources?: Json
           top_pages?: Json
+          device_breakdown?: Json | null
+          geographic_data?: Json | null
+          city_data?: Json | null
+          hourly_data?: Json | null
           created_at?: string
           updated_at?: string
         }
