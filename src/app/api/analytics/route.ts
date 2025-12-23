@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { Database } from '@/types/database'
 
 export async function GET(request: NextRequest) {
   try {
@@ -31,7 +32,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Get analytics data from database
-    const { data: analyticsData, error } = await query
+    const { data, error } = await query
+    const analyticsData: Database['public']['Tables']['analytics_data']['Row'][] | null = data
 
     if (error) {
       console.error('Error fetching analytics data:', error)
