@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceRoleClient, createClient } from '@/lib/supabase/server'
 import { subDays, format, eachDayOfInterval, startOfDay } from 'date-fns'
+import { Database } from '@/types/database'
 
 export async function GET(request: NextRequest) {
   try {
@@ -26,11 +27,12 @@ export async function GET(request: NextRequest) {
 
     // Obtener eventos de los últimos N días
     const startDate = subDays(new Date(), days - 1)
-    const { data: events, error } = await supabase
+    const { data, error } = await supabase
       .from('calendly_events')
       .select('*')
       .gte('start_time', startDate.toISOString())
       .order('start_time', { ascending: true })
+    const events: Database['public']['Tables']['calendly_events']['Row'][] | null = data
 
     if (error) {
       throw error
