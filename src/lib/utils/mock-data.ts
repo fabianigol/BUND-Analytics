@@ -39,8 +39,6 @@ export function generateMultiSeriesChartData(): MultiSeriesChartData[] {
   return []
 }
 
-import { ShopifyOrder } from '@/types'
-
 export const mockShopifyOrders: ShopifyOrder[] = []
 export const mockMetaCampaigns: [] = []
 export const mockAnalyticsData: AnalyticsData | null = null

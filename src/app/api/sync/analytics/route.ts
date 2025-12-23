@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createGoogleAnalyticsServiceFromSupabase } from '@/lib/integrations/google-analytics'
 import { createClient } from '@/lib/supabase/server'
 import { subDays, format } from 'date-fns'
+import { Database } from '@/types/database'
 
 export async function POST(request: NextRequest) {
   try {
@@ -189,7 +190,7 @@ export async function POST(request: NextRequest) {
 
           // Para cada día, guardamos los datos específicos de ese día
           // Los datos agregados (traffic sources, top pages, etc.) se comparten para todos los días
-          const dailyData = {
+          const dailyData: Database['public']['Tables']['analytics_data']['Update'] = {
             id: date,
             date: date,
             sessions: sessions,
@@ -204,7 +205,7 @@ export async function POST(request: NextRequest) {
             geographic_data: geographicData || [], // Datos agregados del período
             city_data: cityData || [], // Datos agregados del período
             hourly_data: hourlyData || [], // Datos agregados del período
-          } as any
+          }
 
           // Check if data for this date already exists
           const { data: existingData } = await supabase
@@ -219,6 +220,7 @@ export async function POST(request: NextRequest) {
             // Update existing record
             const { error: updateError } = await supabase
               .from('analytics_data')
+              // @ts-ignore - TypeScript can't infer the correct type for chained Supabase queries
               .update(dailyData as any)
               .eq('id', date)
 
@@ -229,9 +231,26 @@ export async function POST(request: NextRequest) {
             }
           } else {
             // Insert new record
+            const insertData: Database['public']['Tables']['analytics_data']['Insert'] = {
+              id: date,
+              date: date,
+              sessions: sessions,
+              users: users,
+              new_users: newUsers,
+              page_views: pageViews,
+              bounce_rate: bounceRate,
+              avg_session_duration: avgSessionDuration,
+              traffic_sources: trafficSources,
+              top_pages: topPages,
+              device_breakdown: deviceBreakdown || [],
+              geographic_data: geographicData || [],
+              city_data: cityData || [],
+              hourly_data: hourlyData || [],
+            }
             const { error: insertError } = await supabase
               .from('analytics_data')
-              .insert(dailyData as any)
+              // @ts-ignore - TypeScript can't infer the correct type for chained Supabase queries
+              .insert(insertData as any)
 
             if (insertError) {
               console.error(`[Analytics Sync] Error inserting record for date ${date}:`, insertError)
@@ -279,6 +298,7 @@ export async function POST(request: NextRequest) {
           // Update existing record
           const { error: updateError } = await supabase
             .from('analytics_data')
+            // @ts-ignore - TypeScript can't infer the correct type for chained Supabase queries
             .update(transformedDataWithDevices as any)
             .eq('id', existingDataTyped.id)
 
@@ -311,6 +331,7 @@ export async function POST(request: NextRequest) {
       if (syncLogTyped?.id) {
         await supabase
           .from('sync_logs')
+          // @ts-ignore - TypeScript can't infer the correct type for chained Supabase queries
           .update({
             status: 'completed',
             records_synced: 1,
@@ -322,6 +343,7 @@ export async function POST(request: NextRequest) {
       // Update last_sync timestamp
       await supabase
         .from('integration_settings')
+        // @ts-ignore - TypeScript can't infer the correct type for chained Supabase queries
         .update({
           last_sync: new Date().toISOString(),
         } as any)
@@ -349,6 +371,7 @@ export async function POST(request: NextRequest) {
         
         await supabase
           .from('sync_logs')
+          // @ts-ignore - TypeScript can't infer the correct type for chained Supabase queries
           .update({
             status: 'failed',
             error_message: errorMessage,

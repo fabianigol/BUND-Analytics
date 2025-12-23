@@ -108,7 +108,7 @@ export function SankeyChart({
             },
             colorMode: 'gradient',
             priority: {
-              mode: 'value',
+              mode: 'value' as any,
             },
           },
         ],
@@ -129,7 +129,9 @@ export function SankeyChart({
             right: 20,
           },
         },
+        // @ts-ignore - Chart.js sankey plugin options
         nodeGap: 30, // Espaciado entre nodos en la misma columna
+        // @ts-ignore - Chart.js sankey plugin options
         nodePadding: 20, // Espaciado interno de los nodos
         plugins: {
           legend: {

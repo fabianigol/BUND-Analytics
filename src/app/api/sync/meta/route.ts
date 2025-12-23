@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { MetaService } from '@/lib/integrations/meta'
 import { createClient } from '@/lib/supabase/server'
+import { Database } from '@/types/database'
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,13 +40,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Obtener credenciales desde Supabase
-    const { data: settings, error: settingsError } = await supabase
+    const { data, error: settingsError } = await supabase
       .from('integration_settings')
       .select('settings, connected')
       .eq('integration', 'meta')
       .single()
+    const settings = data as Database['public']['Tables']['integration_settings']['Row'] | null
 
-    if (settingsError || !settings || !settings.connected) {
+    if (settingsError || !settings || !(settings as any).connected) {
       return NextResponse.json(
         { error: 'Meta no está conectado. Por favor, configura las credenciales primero.' },
         { status: 400 }
@@ -71,15 +73,17 @@ export async function POST(request: NextRequest) {
     })
 
     // Crear log de sincronización
-    const { data: syncLog, error: logError } = await supabase
+    const { data: syncLogData, error: logError } = await supabase
       .from('sync_logs')
+      // @ts-ignore - TypeScript can't infer the correct type for chained Supabase queries
       .insert({
         integration: 'meta',
         status: 'running',
         records_synced: 0,
-      })
+      } as any)
       .select()
       .single()
+    const syncLog = syncLogData as Database['public']['Tables']['sync_logs']['Row'] | null
 
     if (logError) {
       console.error('Error creating sync log:', logError)
@@ -217,7 +221,7 @@ export async function POST(request: NextRequest) {
             }
 
             // Transformar campaña (incluso si insights es null, para guardar la campaña básica)
-            const transformedCampaign = metaService.transformCampaign(campaign, insights)
+            const transformedCampaign = metaService.transformCampaign(campaign, insights || undefined)
 
             // Log para debug: ver qué actions tenemos
             if (transformedCampaign.actions && transformedCampaign.actions.length > 0) {
@@ -319,7 +323,8 @@ export async function POST(request: NextRequest) {
 
         const { error: insertError } = await supabase
           .from('meta_campaigns')
-          .upsert(campaignsToSave, {
+          // @ts-ignore - TypeScript can't infer the correct type for chained Supabase queries
+          .upsert(campaignsToSave as any, {
             onConflict: 'id',
           })
 
@@ -332,20 +337,22 @@ export async function POST(request: NextRequest) {
       if (syncLog) {
         await supabase
           .from('sync_logs')
+          // @ts-ignore - TypeScript can't infer the correct type for chained Supabase queries
           .update({
             status: 'success',
             records_synced: transformedCampaigns.length,
             completed_at: new Date().toISOString(),
-          })
+          } as any)
           .eq('id', syncLog.id)
       }
 
       // Actualizar última sincronización
       await supabase
         .from('integration_settings')
+        // @ts-ignore - TypeScript can't infer the correct type for chained Supabase queries
         .update({
           last_sync: new Date().toISOString(),
-        })
+        } as any)
         .eq('integration', 'meta')
 
       // Calcular estadísticas
@@ -373,11 +380,12 @@ export async function POST(request: NextRequest) {
       if (syncLog) {
         await supabase
           .from('sync_logs')
+          // @ts-ignore - TypeScript can't infer the correct type for chained Supabase queries
           .update({
             status: 'error',
             error_message: String(syncError),
             completed_at: new Date().toISOString(),
-          })
+          } as any)
           .eq('id', syncLog.id)
       }
 
@@ -424,10 +432,11 @@ export async function GET() {
       .eq('integration', 'meta')
       .single()
 
+    const settingsData = data as Database['public']['Tables']['integration_settings']['Row'] | null
     return NextResponse.json({ 
       message: 'Use POST to trigger Meta sync',
-      configured: data?.connected || false,
-      lastSync: data?.last_sync || null,
+      configured: settingsData?.connected || false,
+      lastSync: settingsData?.last_sync || null,
     })
   } catch (error) {
     return NextResponse.json({ 

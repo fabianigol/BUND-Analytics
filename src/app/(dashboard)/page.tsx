@@ -6,7 +6,6 @@ import { AreaChart, BarChart, LineChart, PieChart } from '@/components/dashboard
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
-  Calendar,
   ShoppingCart,
   TrendingUp,
   Users,
@@ -50,14 +49,6 @@ export default function DashboardPage() {
             changeLabel="vs. mes anterior"
             icon={DollarSign}
             iconColor="bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400"
-          />
-          <MetricCard
-            title="Citas del Mes"
-            value={mockDashboardMetrics.totalAppointments ? formatNumber(mockDashboardMetrics.totalAppointments) : '—'}
-            change={mockDashboardMetrics.appointmentsChange}
-            changeLabel="vs. mes anterior"
-            icon={Calendar}
-            iconColor="bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-400"
           />
           <MetricCard
             title="ROAS General"
