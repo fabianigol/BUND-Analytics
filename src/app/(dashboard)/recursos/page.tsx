@@ -54,6 +54,7 @@ import {
   Trash2,
   Save,
   X,
+  Upload as UploadIcon,
 } from 'lucide-react'
 
 interface ResourceItem {
@@ -146,6 +147,7 @@ interface Prompt {
   color?: string
   category?: string
   isShared?: boolean
+  imageUrl?: string
 }
 
 const promptResources: Prompt[] = []
@@ -353,7 +355,11 @@ export default function RecursosPage() {
     color: '',
     category: '',
     isShared: false,
+    imageUrl: '',
   })
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false)
   const [editingAccount, setEditingAccount] = useState<Account | null>(null)
@@ -480,7 +486,7 @@ export default function RecursosPage() {
 
         const { data, error } = await supabase
           .from('prompts')
-          .select('id, title, prompt_text, emoji, color, category, is_shared')
+          .select('id, title, prompt_text, emoji, color, category, is_shared, image_url')
           .or(`user_id.eq.${user.id},is_shared.eq.true`)
           .order('is_shared', { ascending: true })
           .order('created_at', { ascending: false })
@@ -499,6 +505,7 @@ export default function RecursosPage() {
             color: item.color,
             category: item.category,
             isShared: item.is_shared || false,
+            imageUrl: item.image_url || undefined,
           }))
           setPrompts(loadedPrompts)
         } else {
@@ -714,7 +721,10 @@ export default function RecursosPage() {
       color: '',
       category: '',
       isShared: false,
+      imageUrl: '',
     })
+    setImageFile(null)
+    setImagePreview(null)
     setIsPromptDialogOpen(true)
   }
 
@@ -727,7 +737,10 @@ export default function RecursosPage() {
       color: prompt.color || '',
       category: prompt.category || '',
       isShared: prompt.isShared || false,
+      imageUrl: prompt.imageUrl || '',
     })
+    setImageFile(null)
+    setImagePreview(prompt.imageUrl || null)
     setIsPromptViewDialogOpen(false)
     setIsPromptDialogOpen(true)
   }
@@ -763,6 +776,55 @@ export default function RecursosPage() {
     }
   }
 
+  const uploadImage = async (file: File): Promise<string | null> => {
+    try {
+      setUploadingImage(true)
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return null
+
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${Date.now()}.${fileExt}`
+      const filePath = `${user.id}/${fileName}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('prompts')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        })
+
+      if (uploadError) {
+        console.error('Error uploading image:', uploadError)
+        alert('Error al subir la imagen: ' + uploadError.message)
+        return null
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('prompts')
+        .getPublicUrl(filePath)
+
+      return publicUrl
+    } catch (error) {
+      console.error('Error uploading image:', error)
+      alert('Error al subir la imagen')
+      return null
+    } finally {
+      setUploadingImage(false)
+    }
+  }
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setImageFile(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   const handleSavePrompt = async () => {
     if (!promptForm.title || !promptForm.promptText) {
       alert('Por favor, completa el título y el texto del prompt')
@@ -776,6 +838,15 @@ export default function RecursosPage() {
         return
       }
 
+      // Subir imagen si hay una nueva
+      let imageUrl = promptForm.imageUrl
+      if (imageFile) {
+        const uploadedUrl = await uploadImage(imageFile)
+        if (uploadedUrl) {
+          imageUrl = uploadedUrl
+        }
+      }
+
       if (editingPrompt) {
         // Actualizar prompt existente
         const updateData = {
@@ -785,6 +856,7 @@ export default function RecursosPage() {
           color: promptForm.color || null,
           category: promptForm.category || null,
           is_shared: isAdmin ? promptForm.isShared : false,
+          image_url: imageUrl || null,
         }
         const { error } = await (supabase as any)
           .from('prompts')
@@ -809,6 +881,7 @@ export default function RecursosPage() {
                   emoji: promptForm.emoji || undefined,
                   color: promptForm.color || undefined,
                   category: promptForm.category || undefined,
+                  imageUrl: imageUrl || undefined,
                 }
               : p
           )
@@ -825,6 +898,7 @@ export default function RecursosPage() {
             color: promptForm.color || null,
             category: promptForm.category || null,
             is_shared: isAdmin ? promptForm.isShared : false,
+            image_url: imageUrl || null,
           } as any)
           .select()
           .single() as { data: any; error: any }
@@ -846,6 +920,7 @@ export default function RecursosPage() {
               color: (data as any).color || undefined,
               category: (data as any).category || undefined,
               isShared: (data as any).is_shared || false,
+              imageUrl: (data as any).image_url || undefined,
             },
             ...prompts,
           ])
@@ -860,7 +935,10 @@ export default function RecursosPage() {
         color: '',
         category: '',
         isShared: false,
+        imageUrl: '',
       })
+      setImageFile(null)
+      setImagePreview(null)
       setEditingPrompt(null)
       // Recargar prompts para mostrar los cambios
       const loadPromptsAgain = async () => {
@@ -870,7 +948,7 @@ export default function RecursosPage() {
 
           const { data, error } = await supabase
             .from('prompts')
-            .select('id, title, prompt_text, emoji, color, category, is_shared')
+            .select('id, title, prompt_text, emoji, color, category, is_shared, image_url')
             .or(`user_id.eq.${user.id},is_shared.eq.true`)
             .order('is_shared', { ascending: true })
             .order('created_at', { ascending: false })
@@ -884,6 +962,7 @@ export default function RecursosPage() {
               color: item.color,
               category: item.category,
               isShared: item.is_shared || false,
+              imageUrl: item.image_url || undefined,
             }))
             setPrompts(loadedPrompts)
           }
@@ -1003,20 +1082,48 @@ export default function RecursosPage() {
                     )
                     .map((prompt) => (
                     <div key={prompt.id} className="relative">
-                      <button
-                        onClick={() => {
-                          setSelectedPrompt(prompt)
-                          setIsPromptViewDialogOpen(true)
-                        }}
-                        className={`font-mono text-sm px-3 py-1.5 rounded-md border transition-colors cursor-pointer ${
-                          prompt.color || 'bg-background border-border hover:bg-accent hover:text-accent-foreground'
-                        }`}
-                      >
-                        {prompt.emoji && <span className="mr-2">{prompt.emoji}</span>}
-                        {prompt.title}
-                      </button>
+                      {prompt.imageUrl ? (
+                        <button
+                          onClick={() => {
+                            setSelectedPrompt(prompt)
+                            setIsPromptViewDialogOpen(true)
+                          }}
+                          className="flex flex-col w-[200px] rounded-md border border-border overflow-hidden transition-all hover:shadow-lg cursor-pointer bg-white dark:bg-slate-900"
+                        >
+                          <div className="relative w-full aspect-[3/4] overflow-hidden">
+                            <Image
+                              src={prompt.imageUrl}
+                              alt={prompt.title}
+                              fill
+                              className="object-cover"
+                              sizes="200px"
+                            />
+                          </div>
+                          <div className={`p-3 ${prompt.color || 'bg-background border-border'}`}>
+                            <div className="flex items-center gap-2">
+                              {prompt.emoji && <span>{prompt.emoji}</span>}
+                              <span className="font-mono text-sm font-medium truncate">
+                                {prompt.title}
+                              </span>
+                            </div>
+                          </div>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setSelectedPrompt(prompt)
+                            setIsPromptViewDialogOpen(true)
+                          }}
+                          className={`font-mono text-sm px-3 py-1.5 rounded-md border transition-colors cursor-pointer ${
+                            prompt.color || 'bg-background border-border hover:bg-accent hover:text-accent-foreground'
+                          }`}
+                        >
+                          {prompt.emoji && <span className="mr-2">{prompt.emoji}</span>}
+                          {prompt.title}
+                        </button>
+                      )}
                       {prompt.isShared && (
-                        <span className="absolute -top-1 -right-1 h-3 w-3 bg-blue-500 rounded-full border-2 border-white" title="Compartido con todos los usuarios" />
+                        <span className="absolute -top-1 -right-1 h-3 w-3 bg-blue-500 rounded-full border-2 border-white z-10" title="Compartido con todos los usuarios" />
                       )}
                     </div>
                   ))}
@@ -1283,6 +1390,58 @@ export default function RecursosPage() {
                 rows={10}
               />
             </div>
+            <div>
+              <Label htmlFor="image">Imagen de referencia (opcional)</Label>
+              <div className="mt-1 space-y-2">
+                <div className="flex items-center gap-4">
+                  <label
+                    htmlFor="image-upload"
+                    className="flex items-center gap-2 px-4 py-2 border border-input rounded-md cursor-pointer hover:bg-accent transition-colors"
+                  >
+                    <UploadIcon className="h-4 w-4" />
+                    <span className="text-sm">
+                      {imageFile ? 'Cambiar imagen' : imagePreview ? 'Cambiar imagen' : 'Seleccionar imagen'}
+                    </span>
+                  </label>
+                  <input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                  {imagePreview && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setImageFile(null)
+                        setImagePreview(null)
+                        setPromptForm({ ...promptForm, imageUrl: '' })
+                      }}
+                    >
+                      <X className="h-4 w-4 mr-2" />
+                      Eliminar
+                    </Button>
+                  )}
+                </div>
+                {imagePreview && (
+                  <div className="relative w-full max-w-xs aspect-[3/4] rounded-md overflow-hidden border border-input">
+                    <Image
+                      src={imagePreview}
+                      alt="Preview"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 320px) 100vw, 320px"
+                    />
+                  </div>
+                )}
+                {uploadingImage && (
+                  <p className="text-sm text-muted-foreground">Subiendo imagen...</p>
+                )}
+              </div>
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="emoji">Emoji</Label>
@@ -1377,7 +1536,10 @@ export default function RecursosPage() {
                   color: '',
                   category: '',
                   isShared: false,
+                  imageUrl: '',
                 })
+                setImageFile(null)
+                setImagePreview(null)
                 setEditingPrompt(null)
               }}
             >
