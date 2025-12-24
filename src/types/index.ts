@@ -130,6 +130,35 @@ export interface MetaAd {
   thumbnail_url?: string;
 }
 
+// Tipo para comparación de campañas (usado en pestaña Comparativas)
+export interface CampaignComparison {
+  campaign_id: string;
+  campaign_name: string;
+  current: {
+    spend: number;
+    impressions: number;
+    clicks: number;
+    ctr: number;
+    cost_per_result: number;
+    results: number;
+  };
+  comparative: {
+    spend: number;
+    impressions: number;
+    clicks: number;
+    ctr: number;
+    cost_per_result: number;
+    results: number;
+  };
+  change: {
+    spend: { value: number; percent: number; isBetter: boolean };
+    ctr: { value: number; percent: number; isBetter: boolean };
+    cost_per_result: { value: number; percent: number; isBetter: boolean };
+    results: { value: number; percent: number; isBetter: boolean };
+  };
+  hasData: boolean;
+}
+
 // Google Analytics Types
 export interface AnalyticsData {
   id: string;

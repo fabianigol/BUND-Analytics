@@ -56,6 +56,7 @@ import { MetaCampaign } from '@/types'
 import { formatCurrency, formatNumber, formatCompactNumber, formatPercentage } from '@/lib/utils/format'
 import { createClient } from '@/lib/supabase/client'
 import { AdsView } from './ads-view'
+import { ComparativesView } from './comparatives-view'
 
 type DateFilterType = 'custom' | 'month' | 'year' | 'all'
 
@@ -1009,7 +1010,6 @@ export default function AdsPage() {
             variant={activeTab === 'comparatives' ? 'default' : 'ghost'}
             onClick={() => setActiveTab('comparatives')}
             className="rounded-b-none border-b-2 border-transparent data-[state=active]:border-primary"
-            disabled
           >
             Comparativas
           </Button>
@@ -1358,9 +1358,7 @@ export default function AdsPage() {
         )}
 
         {activeTab === 'comparatives' && (
-          <div className="text-center text-sm text-muted-foreground py-8">
-            Vista Comparativas - Próximamente
-          </div>
+          <ComparativesView dateRange={getDateRange} />
         )}
       </div>
     </div>

@@ -168,7 +168,8 @@ export async function POST(request: NextRequest) {
           const campaignName = campaignsMap.get(ad.campaign_id) || ad.campaign_id
 
           // Transformar usando transformAd (reutiliza toda la lógica de transformCampaign)
-          const transformedAd = metaService.transformAd(ad, insights, campaignName)
+          // insights puede ser null, pero transformAd acepta undefined
+          const transformedAd = metaService.transformAd(ad, insights || undefined, campaignName)
 
           // Generar ID único para el registro
           const recordId = `${ad.id}_${transformedAd.date}`
