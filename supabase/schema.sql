@@ -137,6 +137,42 @@ CREATE INDEX IF NOT EXISTS idx_meta_campaigns_campaign_id ON public.meta_campaig
 CREATE INDEX IF NOT EXISTS idx_meta_campaigns_status ON public.meta_campaigns(status);
 
 -- =============================================
+-- META ADS
+-- =============================================
+
+CREATE TABLE IF NOT EXISTS public.meta_ads (
+  id TEXT PRIMARY KEY,
+  ad_id TEXT NOT NULL,
+  ad_name TEXT NOT NULL,
+  campaign_id TEXT NOT NULL,
+  campaign_name TEXT NOT NULL,
+  adset_id TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('ACTIVE', 'PAUSED', 'DELETED', 'ARCHIVED')),
+  spend DECIMAL(10, 2) NOT NULL DEFAULT 0,
+  impressions INTEGER NOT NULL DEFAULT 0,
+  clicks INTEGER NOT NULL DEFAULT 0,
+  conversions INTEGER NOT NULL DEFAULT 0,
+  cpm DECIMAL(10, 4) NOT NULL DEFAULT 0,
+  cpc DECIMAL(10, 4) NOT NULL DEFAULT 0,
+  ctr DECIMAL(10, 4) NOT NULL DEFAULT 0,
+  roas DECIMAL(10, 4) NOT NULL DEFAULT 0,
+  reach INTEGER DEFAULT 0,
+  link_clicks INTEGER DEFAULT 0,
+  actions JSONB DEFAULT '[]'::jsonb,
+  cost_per_result DECIMAL(10, 4) DEFAULT 0,
+  thumbnail_url TEXT,
+  date DATE NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_meta_ads_campaign_id ON public.meta_ads(campaign_id);
+CREATE INDEX IF NOT EXISTS idx_meta_ads_date ON public.meta_ads(date);
+CREATE INDEX IF NOT EXISTS idx_meta_ads_ctr ON public.meta_ads(ctr DESC);
+CREATE INDEX IF NOT EXISTS idx_meta_ads_cost_per_result ON public.meta_ads(cost_per_result DESC);
+CREATE INDEX IF NOT EXISTS idx_meta_ads_status ON public.meta_ads(status);
+
+-- =============================================
 -- ANALYTICS DATA
 -- =============================================
 
@@ -293,6 +329,10 @@ CREATE TRIGGER update_shopify_orders_updated_at
 
 CREATE TRIGGER update_meta_campaigns_updated_at
   BEFORE UPDATE ON public.meta_campaigns
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_meta_ads_updated_at
+  BEFORE UPDATE ON public.meta_ads
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_analytics_data_updated_at

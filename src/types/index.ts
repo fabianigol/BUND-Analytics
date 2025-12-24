@@ -105,6 +105,31 @@ export interface MetaAdSet {
   date: string;
 }
 
+export interface MetaAd {
+  id: string;
+  ad_id: string;
+  ad_name: string;
+  campaign_id: string;
+  campaign_name: string;
+  adset_id: string;
+  status: 'ACTIVE' | 'PAUSED' | 'DELETED' | 'ARCHIVED';
+  spend: number;
+  impressions: number;
+  clicks: number;
+  conversions: number;
+  cpm: number;
+  cpc: number;
+  ctr: number;
+  roas: number;
+  date: string;
+  created_at: string;
+  reach?: number;
+  link_clicks?: number;
+  actions?: Array<{ action_type: string; value: string }>;
+  cost_per_result?: number;
+  thumbnail_url?: string;
+}
+
 // Google Analytics Types
 export interface AnalyticsData {
   id: string;

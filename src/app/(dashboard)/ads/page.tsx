@@ -55,6 +55,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { MetaCampaign } from '@/types'
 import { formatCurrency, formatNumber, formatCompactNumber, formatPercentage } from '@/lib/utils/format'
 import { createClient } from '@/lib/supabase/client'
+import { AdsView } from './ads-view'
 
 type DateFilterType = 'custom' | 'month' | 'year' | 'all'
 
@@ -234,13 +235,60 @@ function categorizeActionType(actionType: string): 'citas' | 'leads' | 'ventas' 
 export default function AdsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all') // 'all' mostrará solo activas por defecto
-  const [dateFilterType, setDateFilterType] = useState<DateFilterType>('month')
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
+  
+  // Cargar filtros desde localStorage al inicializar
+  const [dateFilterType, setDateFilterType] = useState<DateFilterType>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('ads_dateFilterType')
+      return (saved as DateFilterType) || 'month'
+    }
+    return 'month'
+  })
+  const [startDate, setStartDate] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('ads_startDate') || ''
+    }
+    return ''
+  })
+  const [endDate, setEndDate] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('ads_endDate') || ''
+    }
+    return ''
+  })
+  
   const [campaigns, setCampaigns] = useState<MetaCampaign[]>([])
   const [loading, setLoading] = useState(true)
   const [syncing, setSyncing] = useState(false)
   const [lastSync, setLastSync] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<'campaigns' | 'ads' | 'comparatives'>('campaigns')
+
+  // Guardar filtros en localStorage cuando cambien
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('ads_dateFilterType', dateFilterType)
+    }
+  }, [dateFilterType])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (startDate) {
+        localStorage.setItem('ads_startDate', startDate)
+      } else {
+        localStorage.removeItem('ads_startDate')
+      }
+    }
+  }, [startDate])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (endDate) {
+        localStorage.setItem('ads_endDate', endDate)
+      } else {
+        localStorage.removeItem('ads_endDate')
+      }
+    }
+  }, [endDate])
 
   useEffect(() => {
     loadCampaigns()
@@ -304,8 +352,15 @@ export default function AdsPage() {
 
   const checkIntegrationStatus = async () => {
     try {
-      const response = await fetch('/api/integrations/meta')
+      const response = await fetch('/api/integrations/meta', {
+        cache: 'no-store',
+      })
       if (!response.ok) {
+        // Si es 401, el usuario no está autenticado - esto es normal si la sesión expiró
+        if (response.status === 401) {
+          console.warn('User not authenticated, skipping integration status check')
+          return
+        }
         console.error('Error checking integration status:', response.status, response.statusText)
         return
       }
@@ -315,7 +370,12 @@ export default function AdsPage() {
         setLastSync(data.lastSync || null)
       }
     } catch (error) {
-      console.error('Error checking integration status:', error)
+      // No mostrar error si es un error de red normal (puede ser timeout o cancelación)
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        console.warn('Network error checking integration status (this is usually harmless)')
+      } else {
+        console.error('Error checking integration status:', error)
+      }
     }
   }
 
@@ -332,6 +392,77 @@ export default function AdsPage() {
         console.log(`[Ads Page] Syncing with date range: ${body.startDate} to ${body.endDate}`)
       }
       
+      // Si estamos en la pestaña de anuncios, sincronizar anuncios
+      if (activeTab === 'ads') {
+        // Crear un AbortController con timeout de 5 minutos
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 5 * 60 * 1000) // 5 minutos
+        
+        try {
+          const response = await fetch('/api/sync/meta/ads', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: Object.keys(body).length > 0 ? JSON.stringify(body) : undefined,
+            signal: controller.signal,
+          })
+          
+          clearTimeout(timeoutId)
+
+          if (!response.ok) {
+            const contentType = response.headers.get('content-type')
+            if (contentType && contentType.includes('application/json')) {
+              const data = await response.json()
+              throw new Error(data.error || data.details || 'Error al sincronizar anuncios')
+            } else {
+              const text = await response.text()
+              throw new Error(`Error del servidor (${response.status}): ${text.substring(0, 200)}`)
+            }
+          }
+
+          const data = await response.json()
+          
+          // Verificar estado de integración en segundo plano (no bloquear)
+          checkIntegrationStatus().catch(() => {
+            // Ignorar errores de verificación de estado
+          })
+          
+          let message = `Sincronización de anuncios completada:\n\n`
+          message += `✅ ${data.records_synced || 0} anuncios sincronizados`
+          if (data.total_ads) {
+            message += ` de ${data.total_ads} totales`
+          }
+          if (data.failed_count > 0) {
+            message += `\n⚠️ ${data.failed_count} anuncios fallaron`
+          }
+          if (data.skipped_count > 0) {
+            message += `\n⏭️ ${data.skipped_count} anuncios sin datos en el rango de fechas`
+          }
+          
+          alert(message)
+          
+          // Forzar recarga de AdsView pasando un timestamp único
+          // Esto hará que el useEffect se ejecute de nuevo
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('ads-sync-complete'))
+          }
+        } catch (error: any) {
+          clearTimeout(timeoutId)
+          
+          // Si el error es por abort (timeout), mostrar mensaje específico
+          if (error.name === 'AbortError' || controller.signal.aborted) {
+            throw new Error('La sincronización está tardando demasiado. Por favor, intenta con un rango de fechas más pequeño o intenta de nuevo más tarde.')
+          }
+          
+          // Re-lanzar otros errores
+          throw error
+        }
+        
+        return
+      }
+      
+      // Si estamos en la pestaña de campañas, sincronizar campañas
       const response = await fetch('/api/sync/meta', {
         method: 'POST',
         headers: {
@@ -386,9 +517,17 @@ export default function AdsPage() {
       }
       
       alert(message)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error syncing:', error)
-      const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
+      let errorMessage = error instanceof Error ? error.message : 'Error desconocido'
+      
+      // Mejorar mensajes de error comunes
+      if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
+        errorMessage = 'Error de conexión. La sincronización puede estar tardando demasiado. Por favor, verifica tu conexión a internet e intenta de nuevo. Si el problema persiste, intenta con un rango de fechas más pequeño.'
+      } else if (errorMessage.includes('timeout') || errorMessage.includes('AbortError')) {
+        errorMessage = 'La sincronización está tardando demasiado. Por favor, intenta con un rango de fechas más pequeño o intenta de nuevo más tarde.'
+      }
+      
       alert(`Error al sincronizar:\n\n${errorMessage}`)
     } finally {
       setSyncing(false)
@@ -850,6 +989,32 @@ export default function AdsPage() {
       />
 
       <div className="flex-1 space-y-6 p-6">
+        {/* Navegación por pestañas */}
+        <div className="flex gap-2 border-b">
+          <Button
+            variant={activeTab === 'campaigns' ? 'default' : 'ghost'}
+            onClick={() => setActiveTab('campaigns')}
+            className="rounded-b-none border-b-2 border-transparent data-[state=active]:border-primary"
+          >
+            Campañas
+          </Button>
+          <Button
+            variant={activeTab === 'ads' ? 'default' : 'ghost'}
+            onClick={() => setActiveTab('ads')}
+            className="rounded-b-none border-b-2 border-transparent data-[state=active]:border-primary"
+          >
+            Anuncios
+          </Button>
+          <Button
+            variant={activeTab === 'comparatives' ? 'default' : 'ghost'}
+            onClick={() => setActiveTab('comparatives')}
+            className="rounded-b-none border-b-2 border-transparent data-[state=active]:border-primary"
+            disabled
+          >
+            Comparativas
+          </Button>
+        </div>
+
         {/* Sync Button y Filtros de Fecha */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
@@ -906,156 +1071,165 @@ export default function AdsPage() {
           </div>
         </div>
 
-        {/* KPIs y Quick Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2">
-          <Card className="p-2">
-            <CardContent className="flex items-center gap-2 p-0">
-              <div className="rounded-lg bg-rose-100 p-1.5 text-rose-600">
-                <DollarSign className="h-3.5 w-3.5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-muted-foreground truncate">Gasto Total</p>
-                <p className="text-sm font-semibold truncate">
-                  {totalSpend ? formatCurrency(totalSpend) : '—'}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="p-2">
-            <CardContent className="flex items-center gap-2 p-0">
-              <div className="rounded-lg bg-emerald-100 p-1.5 text-emerald-600">
-                <Target className="h-3.5 w-3.5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-muted-foreground truncate">ROAS Promedio</p>
-                <p className="text-sm font-semibold truncate">
-                  {avgRoas ? `${avgRoas.toFixed(2)}x` : '—'}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="p-2">
-            <CardContent className="flex items-center gap-2 p-0">
-              <div className="rounded-lg bg-blue-100 p-1.5 text-blue-600">
-                <TrendingUp className="h-3.5 w-3.5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-muted-foreground truncate">Conversiones</p>
-                <p className="text-sm font-semibold truncate">
-                  {totalConversions > 0 ? formatNumber(totalConversions) : '—'}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="p-2">
-            <CardContent className="flex items-center gap-2 p-0">
-              <div className="rounded-lg bg-purple-100 p-1.5 text-purple-600">
-                <Eye className="h-3.5 w-3.5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-muted-foreground truncate">Impresiones</p>
-                <p className="text-sm font-semibold truncate">
-                  {totalImpressions ? formatCompactNumber(totalImpressions) : '—'}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="p-2">
-            <CardContent className="flex items-center gap-2 p-0">
-              <div className="rounded-lg bg-blue-100 p-1.5 text-blue-600">
-                <Calendar className="h-3.5 w-3.5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-muted-foreground truncate">Citas Confirmadas</p>
-                <p className="text-sm font-semibold truncate">
-                  {formatNumber(conversionsByType.citas)}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="p-2">
-            <CardContent className="flex items-center gap-2 p-0">
-              <div className="rounded-lg bg-amber-100 p-1.5 text-amber-600">
-                <Target className="h-3.5 w-3.5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-muted-foreground truncate">Leads</p>
-                <p className="text-sm font-semibold truncate">
-                  {formatNumber(conversionsByType.leads)}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="p-2">
-            <CardContent className="flex items-center gap-2 p-0">
-              <div className="rounded-lg bg-emerald-100 p-1.5 text-emerald-600">
-                <ShoppingBag className="h-3.5 w-3.5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-muted-foreground truncate">Ventas Online</p>
-                <p className="text-sm font-semibold truncate">
-                  {formatNumber(conversionsByType.ventas)}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* KPIs y Quick Stats - Solo para Campañas */}
+        {activeTab === 'campaigns' && (
+          <>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2">
+              <Card className="p-2">
+                <CardContent className="flex items-center gap-2 p-0">
+                  <div className="rounded-lg bg-rose-100 p-1.5 text-rose-600">
+                    <DollarSign className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-muted-foreground truncate">Gasto Total</p>
+                    <p className="text-sm font-semibold truncate">
+                      {totalSpend ? formatCurrency(totalSpend) : '—'}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="p-2">
+                <CardContent className="flex items-center gap-2 p-0">
+                  <div className="rounded-lg bg-emerald-100 p-1.5 text-emerald-600">
+                    <Target className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-muted-foreground truncate">ROAS Promedio</p>
+                    <p className="text-sm font-semibold truncate">
+                      {avgRoas ? `${avgRoas.toFixed(2)}x` : '—'}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="p-2">
+                <CardContent className="flex items-center gap-2 p-0">
+                  <div className="rounded-lg bg-blue-100 p-1.5 text-blue-600">
+                    <TrendingUp className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-muted-foreground truncate">Conversiones</p>
+                    <p className="text-sm font-semibold truncate">
+                      {totalConversions > 0 ? formatNumber(totalConversions) : '—'}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="p-2">
+                <CardContent className="flex items-center gap-2 p-0">
+                  <div className="rounded-lg bg-purple-100 p-1.5 text-purple-600">
+                    <Eye className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-muted-foreground truncate">Impresiones</p>
+                    <p className="text-sm font-semibold truncate">
+                      {totalImpressions ? formatCompactNumber(totalImpressions) : '—'}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="p-2">
+                <CardContent className="flex items-center gap-2 p-0">
+                  <div className="rounded-lg bg-blue-100 p-1.5 text-blue-600">
+                    <Calendar className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-muted-foreground truncate">Citas Confirmadas</p>
+                    <p className="text-sm font-semibold truncate">
+                      {formatNumber(conversionsByType.citas)}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="p-2">
+                <CardContent className="flex items-center gap-2 p-0">
+                  <div className="rounded-lg bg-amber-100 p-1.5 text-amber-600">
+                    <Target className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-muted-foreground truncate">Leads</p>
+                    <p className="text-sm font-semibold truncate">
+                      {formatNumber(conversionsByType.leads)}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="p-2">
+                <CardContent className="flex items-center gap-2 p-0">
+                  <div className="rounded-lg bg-emerald-100 p-1.5 text-emerald-600">
+                    <ShoppingBag className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-muted-foreground truncate">Ventas Online</p>
+                    <p className="text-sm font-semibold truncate">
+                      {formatNumber(conversionsByType.ventas)}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
-        {/* Diagrama de Sankey - Distribución del Gasto */}
-        {sankeyData.nodes.length > 0 && sankeyData.links.length > 0 && (
-          <SankeyChart
-            title="Distribución del Gasto"
-            description="Flujo de gasto desde el total hacia conjuntos y campañas específicas"
-            nodes={sankeyData.nodes}
-            links={sankeyData.links}
-            height={500}
-          />
+            {/* Diagrama de Sankey - Distribución del Gasto - Solo para Campañas */}
+            {sankeyData.nodes.length > 0 && sankeyData.links.length > 0 && (
+              <SankeyChart
+                title="Distribución del Gasto"
+                description="Flujo de gasto desde el total hacia conjuntos y campañas específicas"
+                nodes={sankeyData.nodes}
+                links={sankeyData.links}
+                height={500}
+              />
+            )}
+          </>
         )}
 
-        {/* Filters and Actions */}
-        <Card>
-          <CardHeader className="pb-4">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <CardTitle className="text-base font-medium">Campañas</CardTitle>
-              <div className="flex flex-wrap gap-2">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    placeholder="Buscar campaña..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-64 pl-9"
-                  />
+        {/* Filters and Actions - Solo para Campañas */}
+        {activeTab === 'campaigns' && (
+          <Card>
+            <CardHeader className="pb-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <CardTitle className="text-base font-medium">Campañas</CardTitle>
+                <div className="flex flex-wrap gap-2">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      placeholder="Buscar campaña..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-64 pl-9"
+                    />
+                  </div>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-40">
+                      <Filter className="mr-2 h-4 w-4" />
+                      <SelectValue placeholder="Estado" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Activas</SelectItem>
+                      <SelectItem value="ACTIVE">Solo Activas</SelectItem>
+                      <SelectItem value="PAUSED">Pausadas</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button variant="outline" size="icon" onClick={handleSync} disabled={syncing}>
+                    {syncing ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <RefreshCw className="h-4 w-4" />
+                    )}
+                  </Button>
+                  <Button variant="outline" size="icon">
+                    <Download className="h-4 w-4" />
+                  </Button>
                 </div>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-40">
-                    <Filter className="mr-2 h-4 w-4" />
-                    <SelectValue placeholder="Estado" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Activas</SelectItem>
-                    <SelectItem value="ACTIVE">Solo Activas</SelectItem>
-                    <SelectItem value="PAUSED">Pausadas</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button variant="outline" size="icon" onClick={handleSync} disabled={syncing}>
-                  {syncing ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <RefreshCw className="h-4 w-4" />
-                  )}
-                </Button>
-                <Button variant="outline" size="icon">
-                  <Download className="h-4 w-4" />
-                </Button>
               </div>
-            </div>
-          </CardHeader>
-        </Card>
+            </CardHeader>
+          </Card>
+        )}
 
-        {/* Helper function to render a campaign table */}
-        {(() => {
-          const renderCampaignTable = (title: string, campaigns: MetaCampaign[], category: 'citas' | 'leads' | 'ecom') => {
+        {/* Renderizar contenido según pestaña activa */}
+        {activeTab === 'campaigns' && (
+          <>
+            {/* Helper function to render a campaign table */}
+            {(() => {
+              const renderCampaignTable = (title: string, campaigns: MetaCampaign[], category: 'citas' | 'leads' | 'ecom') => {
             if (campaigns.length === 0) return null
 
             return (
@@ -1176,6 +1350,18 @@ export default function AdsPage() {
             </>
           )
         })()}
+          </>
+        )}
+
+        {activeTab === 'ads' && (
+          <AdsView dateRange={getDateRange} />
+        )}
+
+        {activeTab === 'comparatives' && (
+          <div className="text-center text-sm text-muted-foreground py-8">
+            Vista Comparativas - Próximamente
+          </div>
+        )}
       </div>
     </div>
   )

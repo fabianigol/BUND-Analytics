@@ -1,4 +1,4 @@
-import { MetaCampaign } from '@/types'
+import { MetaCampaign, MetaAd } from '@/types'
 
 const META_API_URL = 'https://graph.facebook.com/v18.0'
 
@@ -690,6 +690,398 @@ export class MetaService {
     })
   }
 
+  async getAds(campaignId?: string) {
+    const allAds: Array<{
+      id: string
+      name: string
+      status: string
+      adset_id: string
+      campaign_id: string
+      creative?: { id: string; name?: string; thumbnail_url?: string }
+    }> = []
+    let nextUrl: string | null = null
+    let pageCount = 0
+    const failedPages: number[] = []
+
+    do {
+      pageCount++
+      try {
+        const endpoint = campaignId
+          ? `/${campaignId}/ads`
+          : `/${this.adAccountId}/ads`
+
+        const params: Record<string, string> = {
+          fields: 'id,name,status,adset_id,campaign_id,creative{id,name,thumbnail_url}',
+          limit: '100', // Máximo por página según API de Meta
+        }
+
+        if (nextUrl) {
+          // Extraer cursor 'after' de la URL de paginación
+          try {
+            const url = new URL(nextUrl)
+            const after = url.searchParams.get('after')
+            if (after) {
+              params.after = after
+            }
+          } catch (e) {
+            // Si nextUrl no es una URL válida, puede ser solo el cursor
+            params.after = nextUrl
+          }
+        }
+
+        const response = await this.request<{
+          data: Array<{
+            id: string
+            name: string
+            status: string
+            adset_id: string
+            campaign_id: string
+            creative?: { id: string; name?: string; thumbnail_url?: string }
+          }>
+          paging?: {
+            cursors?: {
+              after?: string
+            }
+            next?: string
+          }
+        }>(endpoint, params)
+
+        if (response.data && response.data.length > 0) {
+          allAds.push(...response.data)
+          console.log(`[Meta API] getAds - Page ${pageCount}: ${response.data.length} ads (total: ${allAds.length})`)
+        }
+
+        // Verificar si hay más páginas
+        nextUrl = response.paging?.cursors?.after || response.paging?.next || null
+        
+        // Si no hay más páginas, salir del bucle explícitamente
+        if (!nextUrl) {
+          console.log(`[Meta API] getAds - No more pages, stopping pagination`)
+          break
+        }
+      } catch (error: any) {
+        console.error(`[Meta API] getAds - Error on page ${pageCount}:`, error.message)
+        failedPages.push(pageCount)
+        // Si hay muchos errores, salir para evitar bucle infinito
+        if (pageCount >= 10 || failedPages.length >= 5) {
+          console.error(`[Meta API] getAds - Too many errors (${failedPages.length}), stopping pagination`)
+          break
+        }
+        nextUrl = null
+      }
+    } while (nextUrl && pageCount < 50) // Límite de seguridad: máximo 50 páginas (5000 anuncios)
+
+    if (failedPages.length > 0) {
+      console.warn(`[Meta API] getAds - Failed to fetch ${failedPages.length} page(s): ${failedPages.join(', ')}`)
+    }
+
+    console.log(`[Meta API] getAds - Total ads fetched: ${allAds.length} from ${pageCount} page(s)`)
+
+    return {
+      data: allAds,
+    }
+  }
+
+  async getAdInsights(
+    adId: string,
+    params?: {
+      datePreset?: string
+      timeRange?: { since: string; until: string }
+    }
+  ) {
+    // Usar EXACTAMENTE la misma lógica que getCampaignInsights
+    const fields = 'spend,impressions,clicks,actions,reach,cpm,cpc,ctr,cost_per_action_type,outbound_clicks'
+    const insightParams: Record<string, string> = { 
+      fields,
+    }
+
+    if (params?.timeRange) {
+      const since = params.timeRange.since.match(/^\d{4}-\d{2}-\d{2}$/) 
+        ? params.timeRange.since 
+        : new Date(params.timeRange.since).toISOString().split('T')[0]
+      const until = params.timeRange.until.match(/^\d{4}-\d{2}-\d{2}$/) 
+        ? params.timeRange.until 
+        : new Date(params.timeRange.until).toISOString().split('T')[0]
+      
+      insightParams.time_range = JSON.stringify({ since, until })
+      // Reducir logging - solo loggear una vez al inicio, no por cada anuncio
+      // console.log(`[Meta API] Using time_range for ad insights: ${insightParams.time_range} (timezone: PST/PDT, aggregated data)`)
+    } else if (params?.datePreset) {
+      insightParams.date_preset = params.datePreset
+      // console.log(`[Meta API] Using date_preset for ad insights: ${params.datePreset} (aggregated data)`)
+    }
+
+    const response = await this.request<{
+      data: Array<{
+        spend: string
+        impressions: string
+        clicks: string
+        actions?: Array<{ action_type: string; value: string }>
+        reach?: string
+        cpm: string
+        cpc: string
+        ctr: string
+        cost_per_action_type?: Array<{ action_type: string; value: string }>
+        outbound_clicks?: string
+        date_start: string
+        date_stop: string
+      }>
+      paging?: {
+        cursors?: { before?: string; after?: string }
+        next?: string
+        previous?: string
+      }
+    }>(`/${adId}/insights`, insightParams)
+
+    // Si la API devuelve un solo registro, son datos agregados - aplicar misma lógica que campañas
+    if (response.data && response.data.length === 1) {
+      const insight = response.data[0]
+      
+      // AGRUPAR VARIANTES de actions antes de devolver (misma lógica que campañas)
+      if (insight.actions && insight.actions.length > 0) {
+        const groupedActions = this.groupActionVariants(insight.actions)
+        console.log(`[Meta API] Ad insights - Actions AFTER grouping (${groupedActions.length}):`, 
+          groupedActions.map(a => `"${a.action_type}": ${a.value}`).join(', '))
+        insight.actions = groupedActions
+      }
+      
+      // AGRUPAR VARIANTES de cost_per_action_type también
+      if (insight.cost_per_action_type && insight.cost_per_action_type.length > 0) {
+        const groupedCostPerAction = this.groupCostPerActionVariants(
+          insight.cost_per_action_type,
+          insight.actions || []
+        )
+        console.log(`[Meta API] Ad insights - Cost per action type AFTER grouping (${groupedCostPerAction.length}):`, 
+          groupedCostPerAction.map(cpa => `"${cpa.action_type}": ${cpa.value}`).join(', '))
+        insight.cost_per_action_type = groupedCostPerAction
+      }
+      
+      return response
+    }
+    
+    // Si hay múltiples registros, consolidar (misma lógica que campañas)
+    if (response.data && response.data.length > 1) {
+      const consolidated = response.data.reduce(
+        (acc, day) => {
+          const accActions = acc.actions || []
+          const dayActions = day.actions || []
+          const actionsMap = new Map<string, number>()
+
+          accActions.forEach((action) => {
+            const current = parseInt(action.value) || 0
+            actionsMap.set(action.action_type, (actionsMap.get(action.action_type) || 0) + current)
+          })
+
+          dayActions.forEach((action) => {
+            const current = parseInt(action.value) || 0
+            actionsMap.set(action.action_type, (actionsMap.get(action.action_type) || 0) + current)
+          })
+
+          const baseActionsMap = new Map<string, { totalValue: number; variants: Array<{ action_type: string; value: number }> }>()
+          
+          actionsMap.forEach((value, action_type) => {
+            if (value > 0) {
+              const baseName = this.normalizeActionName(action_type)
+              
+              if (!baseActionsMap.has(baseName)) {
+                baseActionsMap.set(baseName, { totalValue: 0, variants: [] })
+              }
+              
+              const baseAction = baseActionsMap.get(baseName)!
+              baseAction.totalValue += value
+              baseAction.variants.push({ action_type, value })
+            }
+          })
+
+          const consolidatedActions: Array<{ action_type: string; value: string }> = []
+          
+          baseActionsMap.forEach(({ totalValue, variants }, baseKey) => {
+            const readableVariant = variants.find(v => 
+              !v.action_type.includes('onsite_conversion') && 
+              !v.action_type.includes('offsite_conversion')
+            )
+            
+            const actionType = readableVariant 
+              ? readableVariant.action_type 
+              : variants[0].action_type
+            
+            consolidatedActions.push({
+              action_type: actionType,
+              value: totalValue.toString(),
+            })
+          })
+
+          // Consolidar cost_per_action_type
+          const accCostPerAction = acc.cost_per_action_type || []
+          const dayCostPerAction = day.cost_per_action_type || []
+          const costPerActionMap = new Map<string, { totalCost: number; totalActions: number }>()
+
+          accCostPerAction.forEach((cpa) => {
+            const actionType = cpa.action_type
+            const cost = parseFloat(cpa.value) || 0
+            let actionCount = actionsMap.get(actionType) || 0
+            if (actionCount === 0) {
+              const baseName = this.normalizeActionName(actionType)
+              actionsMap.forEach((value, at) => {
+                if (this.normalizeActionName(at) === baseName) {
+                  actionCount += value
+                }
+              })
+            }
+            if (actionCount > 0) {
+              const existing = costPerActionMap.get(actionType) || { totalCost: 0, totalActions: 0 }
+              costPerActionMap.set(actionType, {
+                totalCost: existing.totalCost + (cost * actionCount),
+                totalActions: existing.totalActions + actionCount,
+              })
+            }
+          })
+
+          dayCostPerAction.forEach((cpa) => {
+            const actionType = cpa.action_type
+            const cost = parseFloat(cpa.value) || 0
+            let dayActionCount = parseInt(dayActions.find(a => a.action_type === actionType)?.value || '0') || 0
+            if (dayActionCount === 0) {
+              const baseName = this.normalizeActionName(actionType)
+              dayActions.forEach(a => {
+                if (this.normalizeActionName(a.action_type) === baseName) {
+                  dayActionCount += parseInt(a.value) || 0
+                }
+              })
+            }
+            if (dayActionCount > 0) {
+              const existing = costPerActionMap.get(actionType) || { totalCost: 0, totalActions: 0 }
+              costPerActionMap.set(actionType, {
+                totalCost: existing.totalCost + (cost * dayActionCount),
+                totalActions: existing.totalActions + dayActionCount,
+              })
+            }
+          })
+
+          const baseCostPerActionMap = new Map<string, { totalCost: number; totalActions: number; variants: Array<{ action_type: string; cost: number; actions: number }> }>()
+          
+          costPerActionMap.forEach(({ totalCost, totalActions }, actionType) => {
+            const baseName = this.normalizeActionName(actionType)
+            
+            if (!baseCostPerActionMap.has(baseName)) {
+              baseCostPerActionMap.set(baseName, { totalCost: 0, totalActions: 0, variants: [] })
+            }
+            
+            const base = baseCostPerActionMap.get(baseName)!
+            base.totalCost += totalCost
+            base.totalActions += totalActions
+            base.variants.push({ action_type: actionType, cost: totalCost / totalActions, actions: totalActions })
+          })
+
+          const consolidatedCostPerAction: Array<{ action_type: string; value: string }> = []
+          
+          baseCostPerActionMap.forEach(({ totalCost, totalActions, variants }, baseName) => {
+            const avgCost = totalActions > 0 ? totalCost / totalActions : 0
+            
+            const readableVariant = variants.find(v => 
+              !v.action_type.includes('onsite_conversion') && 
+              !v.action_type.includes('offsite_conversion')
+            )
+            
+            const actionType = readableVariant 
+              ? readableVariant.action_type 
+              : variants[0].action_type
+            
+            consolidatedCostPerAction.push({
+              action_type: actionType,
+              value: avgCost.toFixed(4),
+            })
+          })
+
+          const totalSpend = parseFloat(acc.spend) + parseFloat(day.spend)
+          const totalImpressions = parseInt(acc.impressions) + parseInt(day.impressions)
+          const totalClicks = parseInt(acc.clicks) + parseInt(day.clicks)
+          
+          let accOutboundClicks = parseInt(acc.outbound_clicks || '0')
+          let dayOutboundClicks = parseInt(day.outbound_clicks || '0')
+          
+          if (accOutboundClicks === 0 && accActions.length > 0) {
+            const accLinkClickSum = this.sumActionVariants(accActions, 'link_click')
+            if (accLinkClickSum.totalValue > 0) {
+              accOutboundClicks = accLinkClickSum.totalValue
+            } else {
+              const accLinkActions = accActions.filter(a => {
+                const actionType = a.action_type.toLowerCase()
+                return actionType.includes('link') && (actionType.includes('click') || actionType.includes('outbound'))
+              })
+              if (accLinkActions.length > 0) {
+                accOutboundClicks = accLinkActions.reduce((sum, a) => sum + (parseInt(a.value) || 0), 0)
+              }
+            }
+          }
+          
+          if (dayOutboundClicks === 0 && dayActions.length > 0) {
+            const dayLinkClickSum = this.sumActionVariants(dayActions, 'link_click')
+            if (dayLinkClickSum.totalValue > 0) {
+              dayOutboundClicks = dayLinkClickSum.totalValue
+            } else {
+              const dayLinkActions = dayActions.filter(a => {
+                const actionType = a.action_type.toLowerCase()
+                return actionType.includes('link') && (actionType.includes('click') || actionType.includes('outbound'))
+              })
+              if (dayLinkActions.length > 0) {
+                dayOutboundClicks = dayLinkActions.reduce((sum, a) => sum + (parseInt(a.value) || 0), 0)
+              }
+            }
+          }
+          
+          const totalOutboundClicks = accOutboundClicks + dayOutboundClicks
+
+          const accReach = parseInt(acc.reach || '0')
+          const dayReach = parseInt(day.reach || '0')
+          const maxReach = Math.max(accReach, dayReach)
+
+          return {
+            spend: totalSpend.toString(),
+            impressions: totalImpressions.toString(),
+            clicks: totalClicks.toString(),
+            actions: consolidatedActions,
+            reach: maxReach.toString(),
+            outbound_clicks: totalOutboundClicks.toString(),
+            cpm: '0',
+            cpc: '0',
+            ctr: '0',
+            cost_per_action_type: consolidatedCostPerAction,
+            date_start: acc.date_start,
+            date_stop: day.date_stop,
+          }
+        },
+        response.data[0]
+      )
+
+      const totalSpend = parseFloat(consolidated.spend)
+      const totalClicks = parseInt(consolidated.clicks)
+      const totalImpressions = parseInt(consolidated.impressions)
+
+      if (totalImpressions > 0) {
+        consolidated.ctr = ((totalClicks / totalImpressions) * 100).toFixed(4)
+      } else {
+        consolidated.ctr = '0'
+      }
+
+      if (totalClicks > 0) {
+        consolidated.cpc = (totalSpend / totalClicks).toFixed(4)
+      } else {
+        consolidated.cpc = '0'
+      }
+
+      if (totalImpressions > 0) {
+        consolidated.cpm = ((totalSpend / totalImpressions) * 1000).toFixed(4)
+      } else {
+        consolidated.cpm = '0'
+      }
+
+      return { data: [consolidated] }
+    }
+
+    return response
+  }
+
   // Normalizar nombres de acciones para agrupar variantes (onsite/offsite)
   // Esta función centraliza la lógica de normalización para que todas las funciones
   // usen la misma lógica al comparar nombres de acciones
@@ -1074,7 +1466,7 @@ export class MetaService {
         console.log(`[Meta Transform] ✓ OUTCOME_LEADS: Found Form1_Short_Completed by manual search (${form1Manual.length} actions):`, 
           form1ManualVariants.map(v => `"${v.action_type}"=${v.value}`).join(', '),
           `TOTAL: ${form1ManualTotal}`)
-        return {
+          return {
           actionType: form1Manual[0].action_type,
           value: form1ManualTotal,
           variants: form1ManualVariants,
@@ -1114,7 +1506,7 @@ export class MetaService {
       const citaDirect = findActionDirectly('CITA CONFIRMADA')
       if (citaDirect.action && parseInt(citaDirect.action.value) > 0) {
         console.log(`[Meta Transform] OUTCOME_LEADS: Found CITA CONFIRMADA directly (unusual for leads): "${citaDirect.action.action_type}" = ${citaDirect.action.value}`)
-        return {
+          return {
           actionType: citaDirect.action.action_type,
           value: parseInt(citaDirect.action.value) || 0,
           variants: [{ action_type: citaDirect.action.action_type, value: parseInt(citaDirect.action.value) || 0 }],
@@ -1200,7 +1592,7 @@ export class MetaService {
           console.log(`[Meta Transform] ✓ OUTCOME_LEADS: Found lead action by keyword variants (${topActionSum.variants.length}):`, 
             topActionSum.variants.map(v => `${v.action_type}=${v.value}`).join(', '),
             `TOTAL: ${topActionSum.totalValue}`)
-          return {
+        return {
             actionType: topAction.action_type,
             value: topActionSum.totalValue,
             variants: topActionSum.variants,
@@ -1344,7 +1736,7 @@ export class MetaService {
             citaVariants.map(v => `"${v.action_type}"=${v.value}`).join(', '),
             `TOTAL: ${totalCitaValue}`)
           
-          return {
+        return {
             actionType: actionType,
             value: totalCitaValue,
             variants: citaVariants,
@@ -1376,7 +1768,7 @@ export class MetaService {
       const purchaseDirect = findActionDirectly('Website purchases')
       if (purchaseDirect.action && parseInt(purchaseDirect.action.value) > 0) {
         console.log(`[Meta Transform] OUTCOME_SALES: Found Website purchases directly: "${purchaseDirect.action.action_type}" = ${purchaseDirect.action.value}`)
-        return {
+          return {
           actionType: purchaseDirect.action.action_type,
           value: parseInt(purchaseDirect.action.value) || 0,
           variants: [{ action_type: purchaseDirect.action.action_type, value: parseInt(purchaseDirect.action.value) || 0 }],
@@ -1408,7 +1800,7 @@ export class MetaService {
           console.log(`[Meta Transform] OUTCOME_SALES: Found purchase variants by pattern (${purchaseSumFallback.variants.length}):`, 
             purchaseSumFallback.variants.map(v => `${v.action_type}=${v.value}`).join(', '),
             `TOTAL: ${purchaseSumFallback.totalValue}`)
-          return {
+        return {
             actionType: purchaseActions[0].action_type,
             value: purchaseSumFallback.totalValue,
             variants: purchaseSumFallback.variants,
@@ -1453,7 +1845,7 @@ export class MetaService {
         console.log(`[Meta Transform] Using conversion action variants (fallback) (${conversionSum.variants.length}):`, 
           conversionSum.variants.map(v => `${v.action_type}=${v.value}`).join(', '),
           `TOTAL: ${conversionSum.totalValue}`)
-        return {
+      return {
           actionType: topConversionAction.action_type,
           value: conversionSum.totalValue,
           variants: conversionSum.variants,
@@ -1836,7 +2228,7 @@ export class MetaService {
             const diffPercent = (diff / cost_per_result) * 100
             console.log(`[Meta Transform] Found cost_per_action_type for "${primaryActionType}": ${cpaValue.toFixed(2)} (matched: "${matchingCostPerAction.action_type}")`)
             console.log(`[Meta Transform] Manual calculation: ${cost_per_result.toFixed(2)}, cost_per_action_type: ${cpaValue.toFixed(2)} (diff: ${diff.toFixed(2)}, ${diffPercent.toFixed(1)}%) - using manual calculation`)
-          } else {
+      } else {
             // Si no pudimos calcular manualmente, usar cost_per_action_type como fallback
             cost_per_result = cpaValue
             console.log(`[Meta Transform] ✓ Using cost_per_action_type as fallback: ${cost_per_result.toFixed(2)}`)
@@ -1878,6 +2270,49 @@ export class MetaService {
       cost_per_result,
       date: insights?.date_start || new Date().toISOString().split('T')[0],
       created_at: campaign.created_time || new Date().toISOString(),
+    }
+  }
+
+  // Transform Meta API ad data to our internal format
+  // REUTILIZA toda la lógica de transformCampaign
+  transformAd(
+    ad: { id: string; name: string; status: string; adset_id: string; campaign_id: string; creative?: { id?: string; name?: string; thumbnail_url?: string } },
+    insights?: {
+      spend?: string
+      impressions?: string
+      clicks?: string
+      actions?: Array<{ action_type: string; value: string }>
+      reach?: string
+      cpm?: string
+      cpc?: string
+      ctr?: string
+      cost_per_action_type?: Array<{ action_type: string; value: string }>
+      outbound_clicks?: string
+      date_start?: string
+    },
+    campaignName?: string
+  ): Omit<MetaAd, 'id'> {
+    // Reutilizar transformCampaign pasando un objeto campaign temporal
+    // Esto asegura que toda la lógica sea idéntica
+    const tempCampaign = {
+      id: ad.campaign_id,
+      name: campaignName || ad.campaign_id,
+      status: ad.status,
+      objective: 'UNKNOWN', // Se determinará basándose en campaignName
+      created_time: new Date().toISOString(),
+    }
+    
+    const transformed = this.transformCampaign(tempCampaign, insights)
+    
+    // Añadir campos específicos de anuncios
+    return {
+      ...transformed,
+      ad_id: ad.id,
+      ad_name: ad.name,
+      adset_id: ad.adset_id,
+      campaign_id: ad.campaign_id,
+      campaign_name: campaignName || transformed.campaign_name,
+      thumbnail_url: ad.creative?.thumbnail_url,
     }
   }
 }
