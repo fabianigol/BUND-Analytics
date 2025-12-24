@@ -150,6 +150,15 @@ interface Prompt {
   imageUrl?: string
 }
 
+interface Tool {
+  id: string
+  name: string
+  url: string
+  emoji: string
+  description?: string
+  isCustom?: boolean
+}
+
 const promptResources: Prompt[] = []
 
 // Opciones predefinidas para el formulario
@@ -169,6 +178,34 @@ const emojiOptions = [
   { value: '📚', label: '📚 Educación' },
   { value: '🤖', label: '🤖 IA' },
   { value: '⚡', label: '⚡ Automatización' },
+]
+
+const toolEmojiOptions = [
+  { value: '📷', label: '📷 Instagram' },
+  { value: '🎵', label: '🎵 TikTok' },
+  { value: '📺', label: '📺 YouTube' },
+  { value: '📌', label: '📌 Pinterest' },
+  { value: '✂️', label: '✂️ CapCut' },
+  { value: '🤖', label: '🤖 IA' },
+  { value: '🎨', label: '🎨 Envato' },
+  { value: '📝', label: '📝 Notion' },
+  { value: '📊', label: '📊 Airtable' },
+  { value: '📧', label: '📧 Klaviyo' },
+  { value: '💻', label: '💻 Desarrollo' },
+  { value: '🖼️', label: '🖼️ Imagen' },
+  { value: '🎬', label: '🎬 Video' },
+  { value: '📱', label: '📱 Móvil' },
+  { value: '🌐', label: '🌐 Web' },
+  { value: '☁️', label: '☁️ Cloud' },
+  { value: '🔧', label: '🔧 Herramienta' },
+  { value: '⚙️', label: '⚙️ Configuración' },
+  { value: '📈', label: '📈 Analytics' },
+  { value: '💳', label: '💳 Pago' },
+  { value: '🔗', label: '🔗 Enlace' },
+  { value: '📦', label: '📦 E-commerce' },
+  { value: '🎯', label: '🎯 Marketing' },
+  { value: '💬', label: '💬 Comunicación' },
+  { value: '📚', label: '📚 Documentación' },
 ]
 
 const categoryOptions = [
@@ -201,134 +238,161 @@ const colorOptions = [
   { value: 'bg-slate-100 text-slate-700 border-slate-200', label: 'Gris' },
 ]
 
-const toolResources: ResourceItem[] = [
+// Herramientas predefinidas
+const defaultTools: Tool[] = [
   {
-    id: 'design-tools',
-    title: 'Herramientas de Diseño',
-    description: 'Figma, Canva, Adobe y más herramientas de diseño',
-    icon: Palette,
-    color: 'text-rose-600',
-    bgColor: 'bg-rose-100',
+    id: 'instagram',
+    name: 'Instagram',
+    url: 'https://www.instagram.com',
+    emoji: '📷',
+    description: 'Red social para compartir fotos y videos',
   },
   {
-    id: 'development-tools',
-    title: 'Herramientas de Desarrollo',
-    description: 'IDEs, editores, y herramientas para desarrolladores',
-    icon: Code,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-100',
+    id: 'tiktok',
+    name: 'TikTok',
+    url: 'https://www.tiktok.com',
+    emoji: '🎵',
+    description: 'Plataforma de videos cortos',
   },
   {
-    id: 'analytics-tools',
-    title: 'Herramientas de Analytics',
-    description: 'Google Analytics, Mixpanel, Amplitude y más',
-    icon: BarChart3,
-    color: 'text-amber-600',
-    bgColor: 'bg-amber-100',
+    id: 'youtube',
+    name: 'YouTube',
+    url: 'https://www.youtube.com',
+    emoji: '📺',
+    description: 'Plataforma de videos y streaming',
   },
   {
-    id: 'email-tools',
-    title: 'Herramientas de Email',
-    description: 'Plataformas de email marketing y automatización',
-    icon: Mail,
-    color: 'text-red-600',
-    bgColor: 'bg-red-100',
+    id: 'pinterest',
+    name: 'Pinterest',
+    url: 'https://www.pinterest.com',
+    emoji: '📌',
+    description: 'Red social para descubrir y guardar ideas',
   },
   {
-    id: 'calendar-tools',
-    title: 'Herramientas de Calendario',
-    description: 'Herramientas de gestión de citas y calendarios',
-    icon: Calendar,
-    color: 'text-teal-600',
-    bgColor: 'bg-teal-100',
+    id: 'capcut',
+    name: 'CapCut',
+    url: 'https://www.capcut.com',
+    emoji: '✂️',
+    description: 'Editor de video profesional',
   },
   {
-    id: 'ecommerce-tools',
-    title: 'Herramientas de E-commerce',
-    description: 'Shopify, WooCommerce, y plataformas de ventas',
-    icon: ShoppingCart,
-    color: 'text-green-600',
-    bgColor: 'bg-green-100',
+    id: 'higgsfield',
+    name: 'Higgsfield AI',
+    url: 'https://www.higgsfield.ai',
+    emoji: '🤖',
+    description: 'Plataforma de inteligencia artificial',
   },
   {
-    id: 'social-tools',
-    title: 'Herramientas de Social Media',
-    description: 'Herramientas para gestionar redes sociales',
-    icon: Megaphone,
-    color: 'text-indigo-600',
-    bgColor: 'bg-indigo-100',
+    id: 'envato',
+    name: 'Envato',
+    url: 'https://www.envato.com',
+    emoji: '🎨',
+    description: 'Marketplace de recursos creativos',
   },
   {
-    id: 'image-tools',
-    title: 'Herramientas de Imagen',
-    description: 'Editores de imagen, optimizadores y generadores',
-    icon: ImageIcon,
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-100',
+    id: 'notion',
+    name: 'Notion',
+    url: 'https://www.notion.so',
+    emoji: '📝',
+    description: 'Herramienta de productividad y organización',
   },
   {
-    id: 'video-tools',
-    title: 'Herramientas de Video',
-    description: 'Editores de video y plataformas de streaming',
-    icon: Video,
-    color: 'text-red-600',
-    bgColor: 'bg-red-100',
+    id: 'airtable',
+    name: 'Airtable',
+    url: 'https://www.airtable.com',
+    emoji: '📊',
+    description: 'Base de datos y gestión de proyectos',
   },
   {
-    id: 'audio-tools',
-    title: 'Herramientas de Audio',
-    description: 'Editores de audio y plataformas de podcast',
-    icon: Music,
-    color: 'text-pink-600',
-    bgColor: 'bg-pink-100',
+    id: 'klaviyo',
+    name: 'Klaviyo',
+    url: 'https://www.klaviyo.com',
+    emoji: '📧',
+    description: 'Plataforma de email marketing y automatización',
   },
   {
-    id: 'documentation-tools',
-    title: 'Herramientas de Documentación',
-    description: 'Plataformas para crear y gestionar documentación',
-    icon: BookOpen,
-    color: 'text-slate-600',
-    bgColor: 'bg-slate-100',
+    id: 'slack',
+    name: 'Slack',
+    url: 'https://slack.com',
+    emoji: '💬',
+    description: 'Plataforma de comunicación y colaboración en equipo',
   },
   {
-    id: 'link-tools',
-    title: 'Herramientas de Enlaces',
-    description: 'Acortadores de URL y gestores de enlaces',
-    icon: LinkIcon,
-    color: 'text-cyan-600',
-    bgColor: 'bg-cyan-100',
+    id: 'business-meta',
+    name: 'Business Meta',
+    url: 'https://business.facebook.com',
+    emoji: '📊',
+    description: 'Meta Business Suite para gestionar anuncios y páginas',
   },
   {
-    id: 'cloud-tools',
-    title: 'Herramientas Cloud',
-    description: 'Servicios en la nube y almacenamiento',
-    icon: Cloud,
-    color: 'text-sky-600',
-    bgColor: 'bg-sky-100',
+    id: 'shots-so',
+    name: 'Shots.so',
+    url: 'https://shots.so',
+    emoji: '📸',
+    description: 'Herramienta para crear mockups de aplicaciones',
   },
   {
-    id: 'server-tools',
-    title: 'Herramientas de Servidor',
-    description: 'Herramientas para gestión de servidores y hosting',
-    icon: Server,
-    color: 'text-gray-600',
-    bgColor: 'bg-gray-100',
+    id: 'suno',
+    name: 'Suno',
+    url: 'https://www.suno.ai',
+    emoji: '🎵',
+    description: 'IA para generar música',
   },
   {
-    id: 'mobile-tools',
-    title: 'Herramientas Móviles',
-    description: 'Herramientas para desarrollo y gestión móvil',
-    icon: Smartphone,
-    color: 'text-violet-600',
-    bgColor: 'bg-violet-100',
+    id: 'eleven-labs',
+    name: 'Eleven Labs',
+    url: 'https://elevenlabs.io',
+    emoji: '🎙️',
+    description: 'IA de síntesis de voz y audio',
   },
   {
-    id: 'desktop-tools',
-    title: 'Herramientas de Escritorio',
-    description: 'Aplicaciones y herramientas para escritorio',
-    icon: Monitor,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-100',
+    id: 'spotify',
+    name: 'Spotify',
+    url: 'https://www.spotify.com',
+    emoji: '🎶',
+    description: 'Plataforma de streaming de música',
+  },
+  {
+    id: 'metricool',
+    name: 'Metricool',
+    url: 'https://metricool.com',
+    emoji: '📈',
+    description: 'Herramienta de análisis y gestión de redes sociales',
+  },
+  {
+    id: 'acuity-scheduling',
+    name: 'Acuity Scheduling',
+    url: 'https://www.acuityscheduling.com',
+    emoji: '📅',
+    description: 'Sistema de reservas y citas online',
+  },
+  {
+    id: 'midjourney',
+    name: 'Midjourney',
+    url: 'https://www.midjourney.com',
+    emoji: '🎨',
+    description: 'IA generativa de imágenes',
+  },
+  {
+    id: 'cliply',
+    name: 'Cliply',
+    url: 'https://www.cliply.space',
+    emoji: '✂️',
+    description: 'Herramienta para descargar partes de videos',
+  },
+  {
+    id: 'really-good-emails',
+    name: 'Really Good Emails',
+    url: 'https://reallygoodemails.com',
+    emoji: '📧',
+    description: 'Inspiración y plantillas de emails',
+  },
+  {
+    id: 'mockly',
+    name: 'Mockly',
+    url: 'https://www.getmockly.com',
+    emoji: '💬',
+    description: 'Herramienta para crear mockups de conversaciones',
   },
 ]
 
@@ -367,6 +431,16 @@ export default function RecursosPage() {
     username: '',
     password: '',
     isShared: false,
+  })
+  const [tools, setTools] = useState<Tool[]>(defaultTools)
+  const [loadingTools, setLoadingTools] = useState(false)
+  const [isToolDialogOpen, setIsToolDialogOpen] = useState(false)
+  const [editingTool, setEditingTool] = useState<Tool | null>(null)
+  const [toolForm, setToolForm] = useState({
+    name: '',
+    url: '',
+    emoji: '',
+    description: '',
   })
 
   // Verificar si el usuario es administrador
@@ -521,6 +595,51 @@ export default function RecursosPage() {
     }
 
     loadPrompts()
+  }, [supabase])
+
+  // Cargar herramientas desde la base de datos
+  useEffect(() => {
+    const loadTools = async () => {
+      try {
+        setLoadingTools(true)
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
+          setTools(defaultTools)
+          setLoadingTools(false)
+          return
+        }
+
+        const { data, error } = await (supabase as any)
+          .from('tools')
+          .select('id, name, url, emoji, description')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+
+        if (error) {
+          console.error('Error loading tools:', error)
+          setTools(defaultTools)
+        } else if (data && data.length > 0) {
+          const loadedTools: Tool[] = data.map((item: any) => ({
+            id: item.id,
+            name: item.name,
+            url: item.url,
+            emoji: item.emoji || '🔗',
+            description: item.description || undefined,
+            isCustom: true,
+          }))
+          setTools([...defaultTools, ...loadedTools])
+        } else {
+          setTools(defaultTools)
+        }
+      } catch (error) {
+        console.error('Error loading tools:', error)
+        setTools(defaultTools)
+      } finally {
+        setLoadingTools(false)
+      }
+    }
+
+    loadTools()
   }, [supabase])
 
   const handleResourceClick = async (resource: ResourceItem) => {
@@ -1133,32 +1252,83 @@ export default function RecursosPage() {
           </TabsContent>
 
           <TabsContent value="herramientas" className="mt-6">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {toolResources.map((resource) => {
-                const Icon = resource.icon
-                return (
-                  <Card
-                    key={resource.id}
-                    className="cursor-pointer transition-all hover:shadow-lg hover:scale-105"
-                    onClick={() => console.log('Herramientas:', resource.id)}
-                  >
-                    <CardHeader>
-                      <div className="flex items-center gap-3">
-                        {Icon && resource.bgColor && resource.color && (
-                          <div className={`rounded-lg p-2 ${resource.bgColor}`}>
-                            <Icon className={`h-5 w-5 ${resource.color}`} />
-                          </div>
-                        )}
-                        <CardTitle className="text-base">{resource.title}</CardTitle>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">{resource.description}</p>
-                    </CardContent>
-                  </Card>
-                )
-              })}
-            </div>
+            {loadingTools ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>Cargando herramientas...</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex justify-end">
+                  <Button onClick={() => {
+                    setEditingTool(null)
+                    setToolForm({
+                      name: '',
+                      url: '',
+                      emoji: '',
+                      description: '',
+                    })
+                    setIsToolDialogOpen(true)
+                  }} className="gap-2">
+                    <Plus className="h-4 w-4" />
+                    Añadir Herramienta
+                  </Button>
+                </div>
+              <div className="flex flex-wrap gap-2">
+                {tools.map((tool) => (
+                  <div key={tool.id} className="relative group">
+                    <a
+                      href={tool.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-border bg-background hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+                    >
+                      <span className="text-lg">{tool.emoji}</span>
+                      <span className="font-medium">{tool.name}</span>
+                      {tool.description && (
+                        <span className="text-xs text-muted-foreground hidden sm:inline">
+                          - {tool.description}
+                        </span>
+                      )}
+                    </a>
+                    {tool.isCustom && (
+                      <button
+                        onClick={async (e) => {
+                          e.preventDefault()
+                          if (confirm(`¿Estás seguro de que quieres eliminar ${tool.name}?`)) {
+                            try {
+                              const { data: { user } } = await supabase.auth.getUser()
+                              if (!user) return
+
+                              const { error } = await (supabase as any)
+                                .from('tools')
+                                .delete()
+                                .eq('id', tool.id)
+                                .eq('user_id', user.id)
+
+                              if (error) {
+                                console.error('Error deleting tool:', error)
+                                alert('Error al eliminar la herramienta')
+                                return
+                              }
+
+                              setTools(tools.filter((t) => t.id !== tool.id))
+                            } catch (error) {
+                              console.error('Error deleting tool:', error)
+                              alert('Error al eliminar la herramienta')
+                            }
+                          }
+                        }}
+                        className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                        title="Eliminar herramienta"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </div>
@@ -1549,6 +1719,224 @@ export default function RecursosPage() {
             <Button onClick={handleSavePrompt}>
               <Save className="mr-2 h-4 w-4" />
               {editingPrompt ? 'Actualizar' : 'Guardar'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog para añadir herramientas */}
+      <Dialog open={isToolDialogOpen} onOpenChange={setIsToolDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              {editingTool ? 'Editar Herramienta' : 'Añadir Nueva Herramienta'}
+            </DialogTitle>
+            <DialogDescription>
+              Añade una herramienta con su URL y descripción
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            <div>
+              <Label htmlFor="toolName">Nombre *</Label>
+              <Input
+                id="toolName"
+                value={toolForm.name}
+                onChange={(e) =>
+                  setToolForm({ ...toolForm, name: e.target.value })
+                }
+                placeholder="Ej: Canva"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="toolUrl">URL *</Label>
+              <Input
+                id="toolUrl"
+                type="url"
+                value={toolForm.url}
+                onChange={(e) =>
+                  setToolForm({ ...toolForm, url: e.target.value })
+                }
+                placeholder="https://www.ejemplo.com"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="toolEmoji">Emoji</Label>
+              <Select
+                value={toolForm.emoji}
+                onValueChange={(value) =>
+                  setToolForm({ ...toolForm, emoji: value })
+                }
+              >
+                <SelectTrigger id="toolEmoji" className="mt-1 w-full">
+                  <SelectValue placeholder="Selecciona un emoji" />
+                </SelectTrigger>
+                <SelectContent>
+                  {toolEmojiOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="toolDescription">Descripción</Label>
+              <textarea
+                id="toolDescription"
+                value={toolForm.description}
+                onChange={(e) =>
+                  setToolForm({ ...toolForm, description: e.target.value })
+                }
+                placeholder="Explica qué hace esta herramienta..."
+                className="mt-1 w-full min-h-[80px] px-3 py-2 border border-input bg-background rounded-md text-sm"
+                rows={3}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 mt-6">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsToolDialogOpen(false)
+                setToolForm({
+                  name: '',
+                  url: '',
+                  emoji: '',
+                  description: '',
+                })
+                setEditingTool(null)
+              }}
+            >
+              <X className="mr-2 h-4 w-4" />
+              Cancelar
+            </Button>
+            <Button
+              onClick={async () => {
+                if (!toolForm.name || !toolForm.url) {
+                  alert('Por favor, completa el nombre y la URL')
+                  return
+                }
+
+                try {
+                  const { data: { user } } = await supabase.auth.getUser()
+                  if (!user) {
+                    alert('Debes estar autenticado para guardar herramientas')
+                    return
+                  }
+
+                  if (editingTool) {
+                    // Actualizar herramienta existente
+                    const { error } = await (supabase as any)
+                      .from('tools')
+                      .update({
+                        name: toolForm.name,
+                        url: toolForm.url,
+                        emoji: toolForm.emoji || null,
+                        description: toolForm.description || null,
+                      })
+                      .eq('id', editingTool.id)
+                      .eq('user_id', user.id)
+
+                    if (error) {
+                      console.error('Error updating tool:', error)
+                      alert('Error al actualizar la herramienta')
+                      return
+                    }
+
+                    // Actualizar en el estado
+                    setTools(
+                      tools.map((t) =>
+                        t.id === editingTool.id
+                          ? {
+                              ...t,
+                              name: toolForm.name,
+                              url: toolForm.url,
+                              emoji: toolForm.emoji || '🔗',
+                              description: toolForm.description || undefined,
+                            }
+                          : t
+                      )
+                    )
+                  } else {
+                    // Crear nueva herramienta
+                    const { data, error } = await (supabase as any)
+                      .from('tools')
+                      .insert({
+                        user_id: user.id,
+                        name: toolForm.name,
+                        url: toolForm.url,
+                        emoji: toolForm.emoji || null,
+                        description: toolForm.description || null,
+                      })
+                      .select()
+                      .single() as { data: any; error: any }
+
+                    if (error) {
+                      console.error('Error creating tool:', error)
+                      alert('Error al crear la herramienta')
+                      return
+                    }
+
+                    // Añadir a la lista
+                    if (data) {
+                      const newTool: Tool = {
+                        id: data.id,
+                        name: data.name,
+                        url: data.url,
+                        emoji: data.emoji || '🔗',
+                        description: data.description || undefined,
+                        isCustom: true,
+                      }
+                      setTools([...tools, newTool])
+                    }
+                  }
+
+                  setIsToolDialogOpen(false)
+                  setToolForm({
+                    name: '',
+                    url: '',
+                    emoji: '',
+                    description: '',
+                  })
+                  setEditingTool(null)
+                  // Recargar herramientas
+                  const loadToolsAgain = async () => {
+                    try {
+                      const { data: { user } } = await supabase.auth.getUser()
+                      if (!user) return
+
+                      const { data, error } = await (supabase as any)
+                        .from('tools')
+                        .select('id, name, url, emoji, description')
+                        .eq('user_id', user.id)
+                        .order('created_at', { ascending: false })
+
+                      if (!error && data) {
+                        const loadedTools: Tool[] = data.map((item: any) => ({
+                          id: item.id,
+                          name: item.name,
+                          url: item.url,
+                          emoji: item.emoji || '🔗',
+                          description: item.description || undefined,
+                          isCustom: true,
+                        }))
+                        setTools([...defaultTools, ...loadedTools])
+                      }
+                    } catch (error) {
+                      console.error('Error reloading tools:', error)
+                    }
+                  }
+                  loadToolsAgain()
+                } catch (error) {
+                  console.error('Error saving tool:', error)
+                  alert('Error al guardar la herramienta')
+                }
+              }}
+            >
+              <Save className="mr-2 h-4 w-4" />
+              {editingTool ? 'Actualizar' : 'Guardar'}
             </Button>
           </div>
         </DialogContent>
