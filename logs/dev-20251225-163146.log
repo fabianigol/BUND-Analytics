@@ -1,0 +1,1752 @@
+   ▲ Next.js 16.0.7 (webpack)
+   - Local:         http://localhost:3000
+   - Network:       http://192.168.1.35:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+ ✓ Ready in 2.1s
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ ○ Compiling / ...
+ GET / 200 in 13.5s (compile: 11.6s, proxy.ts: 628ms, render: 1241ms)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ ○ Compiling /integraciones ...
+ GET /integraciones 200 in 5.7s (compile: 4.0s, proxy.ts: 1602ms, render: 72ms)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 217ms (compile: 9ms, proxy.ts: 190ms, render: 18ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/meta?t=1766676747234&_=0.7918865119219295 200 in 2.2s (compile: 1396ms, proxy.ts: 577ms, render: 277ms)
+ GET /api/integrations/analytics?t=1766676747234&_=0.26493569165565056 200 in 2.2s (compile: 1396ms, proxy.ts: 556ms, render: 277ms)
+ GET /api/integrations/analytics?t=1766676747233&_=0.42633346391204796 200 in 2.3s (compile: 1387ms, proxy.ts: 587ms, render: 278ms)
+ GET /api/integrations/meta?t=1766676747233&_=0.10312462078464635 200 in 2.3s (compile: 1565ms, proxy.ts: 420ms, render: 279ms)
+ GET /api/integrations/acuity?t=1766676747234&_=0.7757501974630571 200 in 2.2s (compile: 1393ms, proxy.ts: 558ms, render: 281ms)
+ GET /api/integrations/acuity?t=1766676747233&_=0.1286862304914358 200 in 2.3s (compile: 1409ms, proxy.ts: 564ms, render: 282ms)
+🔍 Middleware Debug: { url: '/api/sync/acuity', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ ○ Compiling /api/sync/acuity ...
+[Acuity Sync] Starting sync process...
+[Acuity Sync] Fetching appointment types...
+[Acuity API] Requesting: /appointment-types
+[Acuity Sync] Found 28 appointment types
+[Acuity Sync] Appointment type "The Bundclub Madrid" (ID: 57323769) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Sevilla" (ID: 86543274) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Málaga" (ID: 86543346) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Barcelona" (ID: 86543347) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Murcia" (ID: 86543350) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Valencia" (ID: 86543354) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Zaragoza" (ID: 86543361) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Bilbao" (ID: 86543366) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub CDMX (Polanco)" (ID: 86543368) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Madrid" (ID: 84755233) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Sevilla" (ID: 86543278) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Málaga" (ID: 86543279) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Barcelona" (ID: 86543281) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Murcia" (ID: 86543290) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Valencia" (ID: 86543299) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Zaragoza" (ID: 86543302) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Bilbao" (ID: 86543306) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub CDMX (Polanco)" (ID: 86543311) -> Category: medición
+[Acuity Sync] Appointment type "The BundHQ" (ID: 86555517) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Madrid -" (ID: 86887772) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Sevilla -" (ID: 86887796) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Málaga -" (ID: 86887802) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Barcelona -" (ID: 86887835) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Murcia -" (ID: 86887838) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Valencia -" (ID: 86887841) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Zaragoza -" (ID: 86887848) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Bilbao - " (ID: 86887853) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub CDMX (Polanco) -" (ID: 86887859) -> Category: medición
+[Acuity Sync] Fetching calendars...
+[Acuity API] Requesting: /calendars
+[Acuity Sync] Found 29 calendars
+[Acuity Sync] Connection date is recent, syncing from start of current month: 2025-12-01
+[Acuity Sync] Date range: 2025-12-01 to 2026-12-25
+[Acuity Sync] Fetching upcoming appointments (next 365 days)...
+[Acuity API] Fetching appointments for month range: 2025-12-25 to 2025-12-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 100 appointments for 2025-12-25 to 2025-12-30
+[Acuity API] Warning: Got 100 appointments for month 2025-12-25, may need further subdivision
+[Acuity API] Fetching appointments for month range: 2025-12-31 to 2026-01-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 100 appointments for 2025-12-31 to 2026-01-30
+[Acuity API] Warning: Got 100 appointments for month 2025-12-31, may need further subdivision
+[Acuity API] Fetching appointments for month range: 2026-01-31 to 2026-02-27
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 2 appointments for 2026-01-31 to 2026-02-27
+[Acuity API] Fetching appointments for month range: 2026-02-28 to 2026-03-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-02-28 to 2026-03-30
+[Acuity API] Fetching appointments for month range: 2026-03-31 to 2026-04-29
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-03-31 to 2026-04-29
+[Acuity API] Fetching appointments for month range: 2026-04-30 to 2026-05-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-04-30 to 2026-05-30
+[Acuity API] Fetching appointments for month range: 2026-05-31 to 2026-06-29
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-05-31 to 2026-06-29
+[Acuity API] Fetching appointments for month range: 2026-06-30 to 2026-07-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-06-30 to 2026-07-30
+[Acuity API] Fetching appointments for month range: 2026-07-31 to 2026-08-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-07-31 to 2026-08-30
+[Acuity API] Fetching appointments for month range: 2026-08-31 to 2026-09-29
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-08-31 to 2026-09-29
+[Acuity API] Fetching appointments for month range: 2026-09-30 to 2026-10-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-09-30 to 2026-10-30
+[Acuity API] Fetching appointments for month range: 2026-10-31 to 2026-11-29
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-10-31 to 2026-11-29
+[Acuity API] Fetching appointments for month range: 2026-11-30 to 2026-12-25
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-11-30 to 2026-12-25
+[Acuity API] Total unique appointments fetched: 202
+[Acuity Sync] Found 202 upcoming appointments
+[Acuity Sync] Fetching canceled upcoming appointments (next 365 days)...
+[Acuity API] Fetching appointments for month range: 2025-12-25 to 2025-12-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 8 appointments for 2025-12-25 to 2025-12-30
+[Acuity API] Fetching appointments for month range: 2025-12-31 to 2026-01-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 19 appointments for 2025-12-31 to 2026-01-30
+[Acuity API] Fetching appointments for month range: 2026-01-31 to 2026-02-27
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 1 appointments for 2026-01-31 to 2026-02-27
+[Acuity API] Fetching appointments for month range: 2026-02-28 to 2026-03-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-02-28 to 2026-03-30
+[Acuity API] Fetching appointments for month range: 2026-03-31 to 2026-04-29
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-03-31 to 2026-04-29
+[Acuity API] Fetching appointments for month range: 2026-04-30 to 2026-05-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-04-30 to 2026-05-30
+[Acuity API] Fetching appointments for month range: 2026-05-31 to 2026-06-29
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-05-31 to 2026-06-29
+[Acuity API] Fetching appointments for month range: 2026-06-30 to 2026-07-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-06-30 to 2026-07-30
+[Acuity API] Fetching appointments for month range: 2026-07-31 to 2026-08-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-07-31 to 2026-08-30
+[Acuity API] Fetching appointments for month range: 2026-08-31 to 2026-09-29
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-08-31 to 2026-09-29
+[Acuity API] Fetching appointments for month range: 2026-09-30 to 2026-10-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-09-30 to 2026-10-30
+[Acuity API] Fetching appointments for month range: 2026-10-31 to 2026-11-29
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-10-31 to 2026-11-29
+[Acuity API] Fetching appointments for month range: 2026-11-30 to 2026-12-25
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-11-30 to 2026-12-25
+[Acuity API] Total unique appointments fetched: 28
+[Acuity Sync] Found 28 canceled upcoming appointments
+[Acuity Sync] Fetching historical appointments since 2025-12-01...
+[Acuity API] Fetching appointments for month range: 2025-12-01 to 2025-12-25
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 66 appointments for 2025-12-01 to 2025-12-25
+[Acuity API] Total unique appointments fetched: 66
+[Acuity Sync] Found 66 historical appointments
+[Acuity Sync] Fetching canceled historical appointments since 2025-12-01...
+[Acuity API] Fetching appointments for month range: 2025-12-01 to 2025-12-25
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 30 appointments for 2025-12-01 to 2025-12-25
+[Acuity API] Total unique appointments fetched: 30
+[Acuity Sync] Found 30 canceled historical appointments
+[Acuity Sync] Sample appointment datetime format: {
+  acuity_id: 1602496596,
+  datetime_raw: '2025-12-30T20:45:00+0100',
+  datetime_type: 'string',
+  datetime_parsed: '2025-12-30T19:45:00.000Z',
+  end_time_raw: '21:30',
+  end_time_type: 'string',
+  end_time_parsed: 'INVALID'
+}
+[Acuity Sync] Sample appointment datetime format: {
+  acuity_id: 1602496377,
+  datetime_raw: '2025-12-30T20:00:00+0100',
+  datetime_type: 'string',
+  datetime_parsed: '2025-12-30T19:00:00.000Z',
+  end_time_raw: '20:45',
+  end_time_type: 'string',
+  end_time_parsed: 'INVALID'
+}
+[Acuity Sync] Sample appointment datetime format: {
+  acuity_id: 1602496031,
+  datetime_raw: '2025-12-30T19:15:00+0100',
+  datetime_type: 'string',
+  datetime_parsed: '2025-12-30T18:15:00.000Z',
+  end_time_raw: '19:45',
+  end_time_type: 'string',
+  end_time_parsed: 'INVALID'
+}
+[Acuity Sync] Processed 326 appointments: 100 inserted, 226 updated
+[Acuity Sync] Fetching availability for next 365 days...
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 57323769 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 57323769 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 57323769 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 57323769 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 57323769 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 57323769 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 57323769 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 57323769 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 57323769 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 57323769 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 57323769 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 57323769 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 57323769 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543274 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543274 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543274 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543274 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543274 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543274 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543274 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543274 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543274 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543274 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543274 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543274 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543274 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543346 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543346 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543346 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543346 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543346 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543346 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543346 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543346 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543346 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543346 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543346 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543346 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543346 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543347 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543347 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543347 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543347 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543347 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543347 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543347 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543347 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543347 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543347 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543347 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543347 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543347 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543350 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543350 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543350 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543350 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543350 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543350 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543350 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543350 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543350 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543350 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543350 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543350 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543350 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543354 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543354 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543354 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543354 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543354 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543354 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543354 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543354 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543354 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543354 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543354 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543354 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543354 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543361 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543361 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543361 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543361 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543361 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543361 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543361 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543361 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543361 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543361 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543361 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543361 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543361 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543366 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543366 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543366 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543366 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543366 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543366 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543366 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543366 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543366 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543366 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543366 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543366 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543366 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543368 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543368 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543368 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543368 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543368 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543368 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543368 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543368 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543368 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543368 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543368 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543368 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543368 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 84755233 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 84755233 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 84755233 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 84755233 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 84755233 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 84755233 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 84755233 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 84755233 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 84755233 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 84755233 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 84755233 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 84755233 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 84755233 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543278 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543278 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543278 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543278 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543278 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543278 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543278 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543278 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543278 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543278 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543278 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543278 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543278 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543279 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543279 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543279 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543279 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543279 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543279 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543279 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543279 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543279 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543279 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543279 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543279 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543279 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543281 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543281 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543281 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543281 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543281 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543281 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543281 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543281 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543281 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543281 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543281 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543281 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543281 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543290 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543290 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543290 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543290 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543290 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543290 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543290 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543290 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543290 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543290 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543290 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543290 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543290 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543299 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543299 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543299 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543299 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543299 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543299 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543299 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543299 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543299 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543299 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543299 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543299 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543299 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543302 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543302 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543302 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543302 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543302 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543302 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543302 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543302 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543302 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543302 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543302 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543302 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543302 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543306 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543306 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543306 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543306 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543306 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543306 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543306 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543306 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543306 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543306 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543306 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543306 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543306 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543311 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543311 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543311 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543311 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543311 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543311 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543311 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543311 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543311 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543311 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543311 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543311 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86543311 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86555517 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86555517 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86555517 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86555517 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86555517 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86555517 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86555517 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86555517 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86555517 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86555517 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86555517 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86555517 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86555517 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887772 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887772 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887772 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887772 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887772 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887772 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887772 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887772 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887772 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887772 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887772 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887772 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887772 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887796 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887796 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887796 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887796 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887796 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887796 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887796 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887796 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887796 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887796 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887796 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887796 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887796 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887802 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887802 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887802 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887802 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887802 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887802 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887802 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887802 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887802 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887802 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887802 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887802 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887802 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887835 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887835 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887835 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887835 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887835 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887835 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887835 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887835 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887835 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887835 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887835 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887835 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887835 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887838 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887838 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887838 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887838 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887838 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887838 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887838 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887838 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887838 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887838 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887838 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887838 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887838 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887841 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887841 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887841 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887841 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887841 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887841 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887841 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887841 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887841 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887841 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887841 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887841 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887841 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887848 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887848 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887848 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887848 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887848 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887848 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887848 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887848 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887848 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887848 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887848 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887848 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887848 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887853 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887853 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887853 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887853 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887853 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887853 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887853 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887853 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887853 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887853 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887853 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887853 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887853 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887859 from 2025-12-25: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887859 from 2026-01-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887859 from 2026-02-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887859 from 2026-03-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887859 from 2026-04-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887859 from 2026-05-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887859 from 2026-06-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887859 from 2026-07-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887859 from 2026-08-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887859 from 2026-09-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887859 from 2026-10-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887859 from 2026-11-01: { datesCount: 0, totalSlots: 0 }
+[Acuity API] Requesting: /availability/times
+[Acuity Sync] Availability response for type 86887859 from 2026-12-01: { datesCount: 0, totalSlots: 0 }
+[Acuity Sync] Processed 0 availability records
+[Acuity Sync] Updating monthly appointment counts...
+[Acuity API] Fetching appointments for month range: 2025-12-01 to 2025-12-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 100 appointments for 2025-12-01 to 2025-12-30
+[Acuity API] Warning: Got 100 appointments for month 2025-12-01, may need further subdivision
+[Acuity API] Total unique appointments fetched: 100
+[Acuity API] Fetching appointments for month range: 2025-12-01 to 2025-12-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 38 appointments for 2025-12-01 to 2025-12-30
+[Acuity API] Total unique appointments fetched: 38
+[Acuity API] Fetching appointments for month range: 2026-01-01 to 2026-01-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 100 appointments for 2026-01-01 to 2026-01-30
+[Acuity API] Warning: Got 100 appointments for month 2026-01-01, may need further subdivision
+[Acuity API] Total unique appointments fetched: 100
+[Acuity API] Fetching appointments for month range: 2026-01-01 to 2026-01-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 18 appointments for 2026-01-01 to 2026-01-30
+[Acuity API] Total unique appointments fetched: 18
+[Acuity API] Fetching appointments for month range: 2026-02-01 to 2026-02-27
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 2 appointments for 2026-02-01 to 2026-02-27
+[Acuity API] Total unique appointments fetched: 2
+[Acuity API] Fetching appointments for month range: 2026-02-01 to 2026-02-27
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 1 appointments for 2026-02-01 to 2026-02-27
+[Acuity API] Total unique appointments fetched: 1
+[Acuity API] Fetching appointments for month range: 2026-03-01 to 2026-03-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-03-01 to 2026-03-30
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-03-01 to 2026-03-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-03-01 to 2026-03-30
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-04-01 to 2026-04-29
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-04-01 to 2026-04-29
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-04-01 to 2026-04-29
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-04-01 to 2026-04-29
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-05-01 to 2026-05-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-05-01 to 2026-05-30
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-05-01 to 2026-05-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-05-01 to 2026-05-30
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-06-01 to 2026-06-29
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-06-01 to 2026-06-29
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-06-01 to 2026-06-29
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-06-01 to 2026-06-29
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-07-01 to 2026-07-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-07-01 to 2026-07-30
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-07-01 to 2026-07-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-07-01 to 2026-07-30
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-08-01 to 2026-08-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-08-01 to 2026-08-30
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-08-01 to 2026-08-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-08-01 to 2026-08-30
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-09-01 to 2026-09-29
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-09-01 to 2026-09-29
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-09-01 to 2026-09-29
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-09-01 to 2026-09-29
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-10-01 to 2026-10-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-10-01 to 2026-10-30
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-10-01 to 2026-10-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-10-01 to 2026-10-30
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-11-01 to 2026-11-29
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-11-01 to 2026-11-29
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-11-01 to 2026-11-29
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-11-01 to 2026-11-29
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-12-01 to 2026-12-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-12-01 to 2026-12-30
+[Acuity API] Total unique appointments fetched: 0
+[Acuity API] Fetching appointments for month range: 2026-12-01 to 2026-12-30
+[Acuity API] Requesting: /appointments
+[Acuity API] Fetched 0 appointments for 2026-12-01 to 2026-12-30
+[Acuity API] Total unique appointments fetched: 0
+[Acuity Sync] Updated monthly counts for 13 months
+ POST /api/sync/acuity 200 in 3.6min (compile: 5.3s, proxy.ts: 208ms, render: 3.5min)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/meta?t=1766676972191&_=0.1243448977185182 200 in 447ms (compile: 61ms, proxy.ts: 190ms, render: 197ms)
+ GET /api/integrations/acuity?t=1766676972191&_=0.15474915223937524 200 in 460ms (compile: 28ms, proxy.ts: 243ms, render: 189ms)
+ GET /api/integrations/analytics?t=1766676972191&_=0.7566075441207348 200 in 475ms (compile: 26ms, proxy.ts: 183ms, render: 265ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 3.0s (compile: 2.7s, proxy.ts: 224ms, render: 88ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:36:34.050Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:36:34.054Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:36:34.057Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:36:34.058Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:36:34.059Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:36:34.060Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=daily&year=2025&month=12 200 in 2.6s (compile: 2.0s, proxy.ts: 336ms, render: 235ms)
+ GET /api/acuity/stats?type=availability&days=21 200 in 2.6s (compile: 2.0s, proxy.ts: 337ms, render: 241ms)
+ GET /api/acuity/stats?type=monthly&months=12 200 in 2.8s (compile: 2.0s, proxy.ts: 333ms, render: 413ms)
+[Acuity Stats] Found 58 cancellations
+ GET /api/acuity/stats?type=cancellations 200 in 2.8s (compile: 2.0s, proxy.ts: 336ms, render: 419ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Found 212 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1602551426,
+  datetime: '2026-01-15T15:15:00+00:00',
+  status: 'scheduled',
+  category: 'fitting',
+  calendar: 'Ariadna Vega'
+}
+ GET /api/acuity/stats?type=upcoming&days=21 200 in 2.9s (compile: 1936ms, proxy.ts: 412ms, render: 506ms)
+ GET /api/acuity/stats?type=occupation&days=21 200 in 2.9s (compile: 2.0s, proxy.ts: 335ms, render: 512ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-11-30T23:00:00.000Z',
+  endDateStr: '2025-12-31T22:59:59.999Z',
+  futureEndDateStr: '2025-12-31T22:59:59.999Z',
+  startDateStrOnly: '2025-12-01',
+  endDateStrOnly: '2025-12-31',
+  futureEndDateStrOnly: '2025-12-31',
+  category: 'fitting',
+  calendar: null,
+  todayISO: '2025-12-25T15:36:34.553Z',
+  todayStartISO: '2025-11-30T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-11-30T23:00:00.000Z',
+  endDateStr: '2025-12-31T22:59:59.999Z',
+  futureEndDateStr: '2025-12-31T22:59:59.999Z',
+  startDateStrOnly: '2025-12-01',
+  endDateStrOnly: '2025-12-31',
+  futureEndDateStrOnly: '2025-12-31',
+  category: 'medición',
+  calendar: null,
+  todayISO: '2025-12-25T15:36:34.562Z',
+  todayStartISO: '2025-11-30T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:36:34.584Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:36:34.588Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:36:34.619Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:36:34.621Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Found 56 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1602568291,
+  datetime: '2025-12-23T19:45:00+00:00',
+  status: 'scheduled',
+  category: 'fitting',
+  calendar: 'Andrea Hernández'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2025-12-01&endDate=2025-12-31&category=fitting 200 in 349ms (compile: 4ms, proxy.ts: 148ms, render: 197ms)
+ GET /api/acuity/stats?type=availability&days=21 200 in 324ms (compile: 1815µs, proxy.ts: 131ms, render: 191ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Found 110 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1602567944,
+  datetime: '2025-12-23T19:45:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Josmar González'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2025-12-01&endDate=2025-12-31&category=medici%C3%B3n 200 in 399ms (compile: 1830µs, proxy.ts: 150ms, render: 247ms)
+ GET /api/acuity/stats?type=daily&year=2025&month=12 200 in 365ms (compile: 4ms, proxy.ts: 145ms, render: 216ms)
+ GET /api/acuity/stats?type=monthly&months=12 200 in 336ms (compile: 7ms, proxy.ts: 97ms, render: 232ms)
+[Acuity Stats] Found 58 cancellations
+ GET /api/acuity/stats?type=cancellations 200 in 345ms (compile: 5ms, proxy.ts: 99ms, render: 241ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:36:34.895Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-11-30T23:00:00.000Z',
+  endDateStr: '2025-12-31T22:59:59.999Z',
+  futureEndDateStr: '2025-12-31T22:59:59.999Z',
+  startDateStrOnly: '2025-12-01',
+  endDateStrOnly: '2025-12-31',
+  futureEndDateStrOnly: '2025-12-31',
+  category: 'fitting',
+  calendar: null,
+  todayISO: '2025-12-25T15:36:34.966Z',
+  todayStartISO: '2025-11-30T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:36:34.969Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-11-30T23:00:00.000Z',
+  endDateStr: '2025-12-31T22:59:59.999Z',
+  futureEndDateStr: '2025-12-31T22:59:59.999Z',
+  startDateStrOnly: '2025-12-01',
+  endDateStrOnly: '2025-12-31',
+  futureEndDateStrOnly: '2025-12-31',
+  category: 'medición',
+  calendar: null,
+  todayISO: '2025-12-25T15:36:34.975Z',
+  todayStartISO: '2025-11-30T23:00:00.000Z'
+}
+[Acuity Stats] Found 212 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1602551426,
+  datetime: '2026-01-15T15:15:00+00:00',
+  status: 'scheduled',
+  category: 'fitting',
+  calendar: 'Ariadna Vega'
+}
+ GET /api/acuity/stats?type=upcoming&days=21 200 in 363ms (compile: 25ms, proxy.ts: 122ms, render: 217ms)
+[Acuity Stats] Found 56 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1602568291,
+  datetime: '2025-12-23T19:45:00+00:00',
+  status: 'scheduled',
+  category: 'fitting',
+  calendar: 'Andrea Hernández'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2025-12-01&endDate=2025-12-31&category=fitting 200 in 337ms (compile: 9ms, proxy.ts: 125ms, render: 203ms)
+[Acuity Stats] Found 110 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1602567944,
+  datetime: '2025-12-23T19:45:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Josmar González'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2025-12-01&endDate=2025-12-31&category=medici%C3%B3n 200 in 406ms (compile: 14ms, proxy.ts: 129ms, render: 263ms)
+ GET /api/acuity/stats?type=occupation&days=21 200 in 413ms (compile: 9ms, proxy.ts: 124ms, render: 279ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:37:16.895Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=daily&year=2026&month=1 200 in 907ms (compile: 47ms, proxy.ts: 557ms, render: 303ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:37:17.313Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=daily&year=2026&month=1 200 in 402ms (compile: 11ms, proxy.ts: 149ms, render: 242ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-02-01T22:59:59.999Z',
+  futureEndDateStr: '2026-02-01T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-02-01',
+  futureEndDateStrOnly: '2026-02-01',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:37:29.636Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-02-01T22:59:59.999Z',
+  futureEndDateStr: '2026-02-01T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-02-01',
+  futureEndDateStrOnly: '2026-02-01',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:37:29.638Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-02-01T22:59:59.999Z',
+  futureEndDateStr: '2026-02-01T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-02-01',
+  futureEndDateStrOnly: '2026-02-01',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:37:29.639Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:37:29.663Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-02-01T22:59:59.999Z',
+  futureEndDateStr: '2026-02-01T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-02-01',
+  futureEndDateStrOnly: '2026-02-01',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:37:29.685Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=availability&days=21&startDate=2025-12-25&endDate=2026-02-01 200 in 376ms (compile: 25ms, proxy.ts: 173ms, render: 178ms)
+ GET /api/acuity/stats?type=monthly&months=12 200 in 405ms (compile: 11ms, proxy.ts: 197ms, render: 197ms)
+[Acuity Stats] Found 58 cancellations
+ GET /api/acuity/stats?type=cancellations&startDate=2025-12-25&endDate=2026-02-01 200 in 436ms (compile: 1732µs, proxy.ts: 206ms, render: 228ms)
+[Acuity Stats] Found 210 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1602551426,
+  datetime: '2026-01-15T15:15:00+00:00',
+  status: 'scheduled',
+  category: 'fitting',
+  calendar: 'Ariadna Vega'
+}
+ GET /api/acuity/stats?type=upcoming&days=21&startDate=2025-12-25&endDate=2026-02-01 200 in 445ms (compile: 9ms, proxy.ts: 170ms, render: 267ms)
+ GET /api/acuity/stats?type=occupation&days=21&startDate=2025-12-25&endDate=2026-02-01 200 in 456ms (compile: 10ms, proxy.ts: 168ms, render: 278ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 21,
+  startDateStr: '2025-11-30T23:00:00.000Z',
+  endDateStr: '2025-12-25T22:59:59.999Z',
+  futureEndDateStr: '2025-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-01',
+  endDateStrOnly: '2025-12-25',
+  futureEndDateStrOnly: '2025-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:40:39.141Z',
+  todayStartISO: '2025-11-30T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-11-30T23:00:00.000Z',
+  endDateStr: '2025-12-25T22:59:59.999Z',
+  futureEndDateStr: '2025-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-01',
+  endDateStrOnly: '2025-12-25',
+  futureEndDateStrOnly: '2025-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:40:39.151Z',
+  todayStartISO: '2025-11-30T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:40:39.152Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2025-11-30T23:00:00.000Z',
+  endDateStr: '2025-12-25T22:59:59.999Z',
+  futureEndDateStr: '2025-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-01',
+  endDateStrOnly: '2025-12-25',
+  futureEndDateStrOnly: '2025-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:40:39.154Z',
+  todayStartISO: '2025-11-30T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 21,
+  startDateStr: '2025-11-30T23:00:00.000Z',
+  endDateStr: '2025-12-25T22:59:59.999Z',
+  futureEndDateStr: '2025-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-01',
+  endDateStrOnly: '2025-12-25',
+  futureEndDateStrOnly: '2025-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T15:40:39.232Z',
+  todayStartISO: '2025-11-30T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=monthly&months=12 200 in 1095ms (compile: 43ms, proxy.ts: 639ms, render: 413ms)
+[Acuity Stats] Found 66 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1602512501,
+  datetime: '2025-12-22T16:45:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Francisco Gutiérrez'
+}
+ GET /api/acuity/stats?type=upcoming&days=21&startDate=2025-12-01&endDate=2025-12-25 200 in 1122ms (compile: 32ms, proxy.ts: 653ms, render: 437ms)
+ GET /api/acuity/stats?type=occupation&days=21&startDate=2025-12-01&endDate=2025-12-25 200 in 1124ms (compile: 38ms, proxy.ts: 646ms, render: 440ms)
+[Acuity Stats] Found 58 cancellations
+ GET /api/acuity/stats?type=cancellations&startDate=2025-12-01&endDate=2025-12-25 200 in 1128ms (compile: 36ms, proxy.ts: 648ms, render: 444ms)
+ GET /api/acuity/stats?type=availability&days=21&startDate=2025-12-01&endDate=2025-12-25 200 in 1159ms (compile: 34ms, proxy.ts: 650ms, render: 475ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 1269ms (compile: 466ms, proxy.ts: 435ms, render: 368ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 401ms (compile: 52ms, proxy.ts: 255ms, render: 94ms)

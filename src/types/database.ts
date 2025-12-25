@@ -491,6 +491,197 @@ export interface Database {
           updated_at?: string
         }
       }
+      acuity_appointments: {
+        Row: {
+          id: string
+          acuity_id: number
+          calendar_id: number | null
+          calendar_name: string | null
+          appointment_type_id: number
+          appointment_type_name: string
+          appointment_category: 'medición' | 'fitting'
+          datetime: string
+          end_time: string
+          customer_name: string | null
+          customer_email: string | null
+          phone: string | null
+          notes: string | null
+          status: 'scheduled' | 'canceled' | 'rescheduled'
+          canceled_at: string | null
+          rescheduled_from_id: number | null
+          scheduling_link: string | null
+          metadata: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          acuity_id: number
+          calendar_id?: number | null
+          calendar_name?: string | null
+          appointment_type_id: number
+          appointment_type_name: string
+          appointment_category: 'medición' | 'fitting'
+          datetime: string
+          end_time: string
+          customer_name?: string | null
+          customer_email?: string | null
+          phone?: string | null
+          notes?: string | null
+          status: 'scheduled' | 'canceled' | 'rescheduled'
+          canceled_at?: string | null
+          rescheduled_from_id?: number | null
+          scheduling_link?: string | null
+          metadata?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          acuity_id?: number
+          calendar_id?: number | null
+          calendar_name?: string | null
+          appointment_type_id?: number
+          appointment_type_name?: string
+          appointment_category?: 'medición' | 'fitting'
+          datetime?: string
+          end_time?: string
+          customer_name?: string | null
+          customer_email?: string | null
+          phone?: string | null
+          notes?: string | null
+          status?: 'scheduled' | 'canceled' | 'rescheduled'
+          canceled_at?: string | null
+          rescheduled_from_id?: number | null
+          scheduling_link?: string | null
+          metadata?: Json
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      acuity_availability: {
+        Row: {
+          id: string
+          date: string
+          calendar_id: number | null
+          calendar_name: string
+          appointment_category: 'medición' | 'fitting'
+          total_slots: number
+          available_slots: number
+          booked_slots: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          date: string
+          calendar_id?: number | null
+          calendar_name: string
+          appointment_category: 'medición' | 'fitting'
+          total_slots?: number
+          available_slots?: number
+          booked_slots?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          date?: string
+          calendar_id?: number | null
+          calendar_name?: string
+          appointment_category?: 'medición' | 'fitting'
+          total_slots?: number
+          available_slots?: number
+          booked_slots?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      acuity_appointment_counts: {
+        Row: {
+          id: string
+          year: number
+          month: number
+          calendar_name: string
+          appointment_category: 'medición' | 'fitting'
+          total_count: number
+          scheduled_count: number
+          canceled_count: number
+          rescheduled_count: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          year: number
+          month: number
+          calendar_name: string
+          appointment_category: 'medición' | 'fitting'
+          total_count?: number
+          scheduled_count?: number
+          canceled_count?: number
+          rescheduled_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          year?: number
+          month?: number
+          calendar_name?: string
+          appointment_category?: 'medición' | 'fitting'
+          total_count?: number
+          scheduled_count?: number
+          canceled_count?: number
+          rescheduled_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      acuity_calendars: {
+        Row: {
+          id: string
+          acuity_calendar_id: number | null
+          name: string
+          display_name: string
+          appointment_category: 'medición' | 'fitting'
+          appointment_type_id: number
+          appointment_type_name: string
+          scheduling_link: string | null
+          is_active: boolean
+          metadata: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          acuity_calendar_id?: number | null
+          name: string
+          display_name: string
+          appointment_category: 'medición' | 'fitting'
+          appointment_type_id: number
+          appointment_type_name: string
+          scheduling_link?: string | null
+          is_active?: boolean
+          metadata?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          acuity_calendar_id?: number | null
+          name?: string
+          display_name?: string
+          appointment_category?: 'medición' | 'fitting'
+          appointment_type_id?: number
+          appointment_type_name?: string
+          scheduling_link?: string | null
+          is_active?: boolean
+          metadata?: Json
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never

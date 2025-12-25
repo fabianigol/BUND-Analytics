@@ -92,6 +92,15 @@ const integrations: Integration[] = [
     status: 'disconnected',
     docsUrl: 'https://airtable.com/developers/web/api',
   },
+  {
+    id: 'acuity',
+    name: 'Acuity Scheduling',
+    description: 'Gestión y análisis de citas por tienda (Medición y Fitting)',
+    iconColor: 'bg-cyan-100 text-cyan-600',
+    connected: false,
+    status: 'disconnected',
+    docsUrl: 'https://developers.acuityscheduling.com',
+  },
 ]
 
 export default function IntegracionesPage() {
@@ -141,6 +150,15 @@ export default function IntegracionesPage() {
         status: 'disconnected',
         docsUrl: 'https://airtable.com/developers/web/api',
       },
+      {
+        id: 'acuity',
+        name: 'Acuity Scheduling',
+        description: 'Gestión y análisis de citas por tienda (Medición y Fitting)',
+        iconColor: 'bg-cyan-100 text-cyan-600',
+        connected: false,
+        status: 'disconnected',
+        docsUrl: 'https://developers.acuityscheduling.com',
+      },
     ]
     return initialIntegrations
   })
@@ -151,6 +169,7 @@ export default function IntegracionesPage() {
     adAccountId: '',
   })
   const [analyticsPropertyId, setAnalyticsPropertyId] = useState('')
+  const [acuityCredentials, setAcuityCredentials] = useState({ userId: '', apiKey: '' })
   const [connecting, setConnecting] = useState(false)
   const [openDialog, setOpenDialog] = useState<string | null>(null)
 
@@ -205,9 +224,10 @@ export default function IntegracionesPage() {
         }
       }
       
-      const [metaData, analyticsData] = await Promise.all([
+      const [metaData, analyticsData, acuityData] = await Promise.all([
         fetchWithErrorHandling(`/api/integrations/meta?t=${timestamp}&_=${Math.random()}`),
         fetchWithErrorHandling(`/api/integrations/analytics?t=${timestamp}&_=${Math.random()}`),
+        fetchWithErrorHandling(`/api/integrations/acuity?t=${timestamp}&_=${Math.random()}`),
       ])
 
       const baseIntegrations: Integration[] = [
@@ -252,6 +272,16 @@ export default function IntegracionesPage() {
           connected: false,
           status: 'disconnected',
           docsUrl: 'https://airtable.com/developers/web/api',
+        },
+        {
+          id: 'acuity',
+          name: 'Acuity Scheduling',
+          description: 'Gestión y análisis de citas por tienda (Medición y Fitting)',
+          iconColor: 'bg-cyan-100 text-cyan-600',
+          connected: acuityData.connected || false,
+          lastSync: acuityData.lastSync || undefined,
+          status: acuityData.connected ? 'connected' : 'disconnected',
+          docsUrl: 'https://developers.acuityscheduling.com',
         },
       ]
       
@@ -454,6 +484,103 @@ export default function IntegracionesPage() {
       alert(`Sincronización completada:\n\n✅ ${data.records_synced} registro(s) sincronizado(s)`)
     } catch (error) {
       console.error('Error syncing Analytics:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
+      alert(`Error al sincronizar:\n\n${errorMessage}`)
+    } finally {
+      setSyncing(null)
+    }
+  }
+
+  const handleConnectAcuity = async () => {
+    if (!acuityCredentials.userId || !acuityCredentials.apiKey) {
+      alert('Por favor, completa todos los campos')
+      return
+    }
+
+    try {
+      setConnecting(true)
+      const response = await fetch('/api/integrations/acuity', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(acuityCredentials),
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Error ${response.status}: ${errorText}`)
+      }
+
+      const contentType = response.headers.get('content-type')
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('La respuesta no es JSON válido')
+      }
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al conectar Acuity')
+      }
+
+      // Recargar integraciones
+      await loadIntegrations()
+      setOpenDialog(null)
+      setAcuityCredentials({ userId: '', apiKey: '' })
+      alert('Acuity conectado correctamente')
+    } catch (error) {
+      console.error('Error connecting Acuity:', error)
+      alert(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`)
+    } finally {
+      setConnecting(false)
+    }
+  }
+
+  const handleSyncAcuity = async () => {
+    try {
+      setSyncing('acuity')
+      const response = await fetch('/api/sync/acuity', {
+        method: 'POST',
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Error ${response.status}: ${errorText}`)
+      }
+
+      const contentType = response.headers.get('content-type')
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('La respuesta no es JSON válido')
+      }
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        const errorMsg = data.details 
+          ? `${data.error}\n\nDetalles: ${data.details}` 
+          : data.error || 'Error al sincronizar'
+        throw new Error(errorMsg)
+      }
+
+      // Recargar integraciones para actualizar lastSync
+      await loadIntegrations()
+      
+      let message = `Sincronización completada:\n\n`
+      message += `✅ ${data.records_synced || 0} registro(s) sincronizado(s)`
+      if (data.appointments) {
+        message += `\n   - ${data.appointments.inserted || 0} citas insertadas`
+        message += `\n   - ${data.appointments.updated || 0} citas actualizadas`
+      }
+      if (data.availability) {
+        message += `\n   - ${data.availability.records || 0} registros de disponibilidad`
+      }
+      if (data.months_processed) {
+        message += `\n   - ${data.months_processed} meses procesados`
+      }
+      
+      alert(message)
+    } catch (error) {
+      console.error('Error syncing Acuity:', error)
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
       alert(`Error al sincronizar:\n\n${errorMessage}`)
     } finally {
@@ -707,6 +834,45 @@ export default function IntegracionesPage() {
                             </div>
                           </>
                         )}
+                        {integration.id === 'acuity' && (
+                          <>
+                            <div className="space-y-2">
+                              <Label>User ID</Label>
+                              <Input 
+                                type="text"
+                                placeholder="Tu User ID de Acuity"
+                                value={acuityCredentials.userId}
+                                onChange={(e) =>
+                                  setAcuityCredentials({
+                                    ...acuityCredentials,
+                                    userId: e.target.value,
+                                  })
+                                }
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>API Key</Label>
+                              <Input 
+                                type="password" 
+                                placeholder="Tu API Key de Acuity"
+                                value={acuityCredentials.apiKey}
+                                onChange={(e) =>
+                                  setAcuityCredentials({
+                                    ...acuityCredentials,
+                                    apiKey: e.target.value,
+                                  })
+                                }
+                              />
+                              <p className="text-xs text-muted-foreground">
+                                Encuentra estas credenciales en Acuity → Integraciones → API
+                                <br />
+                                <strong>⚠️ Importante:</strong> La integración sincronizará citas desde la fecha de conexión hacia adelante
+                                <br />
+                                Gestiona citas de tipo Medición y Fitting por separado para análisis detallados.
+                              </p>
+                            </div>
+                          </>
+                        )}
                       </div>
                       <DialogFooter>
                         <Button variant="outline" asChild>
@@ -743,6 +909,20 @@ export default function IntegracionesPage() {
                               integration.connected ? 'Reconectar' : 'Conectar con Google'
                             )}
                           </Button>
+                        ) : integration.id === 'acuity' ? (
+                          <Button
+                            onClick={handleConnectAcuity}
+                            disabled={connecting}
+                          >
+                            {connecting ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Conectando...
+                              </>
+                            ) : (
+                              integration.connected ? 'Actualizar' : 'Conectar'
+                            )}
+                          </Button>
                         ) : (
                           <Button disabled>Conectar</Button>
                         )}
@@ -771,6 +951,20 @@ export default function IntegracionesPage() {
                       disabled={syncing === 'analytics'}
                     >
                       {syncing === 'analytics' ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <RefreshCw className="h-4 w-4" />
+                      )}
+                    </Button>
+                  )}
+                  {integration.connected && integration.id === 'acuity' && (
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleSyncAcuity}
+                      disabled={syncing === 'acuity'}
+                    >
+                      {syncing === 'acuity' ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
                         <RefreshCw className="h-4 w-4" />

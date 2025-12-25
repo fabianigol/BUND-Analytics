@@ -1,0 +1,2192 @@
+   ▲ Next.js 16.0.7 (webpack)
+   - Local:         http://localhost:3000
+   - Network:       http://192.168.0.123:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+ ✓ Ready in 2.3s
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ ○ Compiling / ...
+ GET / 200 in 5.4s (compile: 4.3s, proxy.ts: 714ms, render: 430ms)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 1880ms (compile: 1589ms, proxy.ts: 201ms, render: 90ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/meta?t=1766668796714&_=0.26148306502407126 200 in 2.2s (compile: 1788ms, proxy.ts: 211ms, render: 189ms)
+ GET /api/integrations/acuity?t=1766668796714&_=0.58029911408533 200 in 2.1s (compile: 1779ms, proxy.ts: 147ms, render: 191ms)
+ GET /api/integrations/analytics?t=1766668796713&_=0.8077658287058094 200 in 2.2s (compile: 1814ms, proxy.ts: 184ms, render: 217ms)
+ GET /api/integrations/meta?t=1766668796713&_=0.8574020717019415 200 in 2.2s (compile: 1861ms, proxy.ts: 137ms, render: 227ms)
+ GET /api/integrations/analytics?t=1766668796714&_=0.10956850489930803 200 in 2.2s (compile: 1730ms, proxy.ts: 196ms, render: 228ms)
+ GET /api/integrations/acuity?t=1766668796713&_=0.3843895754841785 200 in 2.2s (compile: 1780ms, proxy.ts: 218ms, render: 229ms)
+🔍 Middleware Debug: { url: '/api/sync/acuity', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Sync] Starting sync process...
+[Acuity Sync] Fetching appointment types...
+[Acuity API] Requesting: /appointment-types
+[Acuity Sync] Found 28 appointment types
+[Acuity Sync] Appointment type "The Bundclub Madrid" (ID: 57323769) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Sevilla" (ID: 86543274) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Málaga" (ID: 86543346) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Barcelona" (ID: 86543347) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Murcia" (ID: 86543350) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Valencia" (ID: 86543354) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Zaragoza" (ID: 86543361) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Bilbao" (ID: 86543366) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub CDMX (Polanco)" (ID: 86543368) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Madrid" (ID: 84755233) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Sevilla" (ID: 86543278) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Málaga" (ID: 86543279) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Barcelona" (ID: 86543281) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Murcia" (ID: 86543290) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Valencia" (ID: 86543299) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Zaragoza" (ID: 86543302) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Bilbao" (ID: 86543306) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub CDMX (Polanco)" (ID: 86543311) -> Category: medición
+[Acuity Sync] Appointment type "The BundHQ" (ID: 86555517) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Madrid -" (ID: 86887772) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Sevilla -" (ID: 86887796) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Málaga -" (ID: 86887802) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Barcelona -" (ID: 86887835) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Murcia -" (ID: 86887838) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Valencia -" (ID: 86887841) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Zaragoza -" (ID: 86887848) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Bilbao - " (ID: 86887853) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub CDMX (Polanco) -" (ID: 86887859) -> Category: medición
+[Acuity Sync] Fetching calendars...
+[Acuity API] Requesting: /calendars
+[Acuity Sync] Found 29 calendars
+[Acuity Sync] Date range: 2025-12-25 to 2026-01-15
+[Acuity Sync] Fetching upcoming appointments (next 21 days)...
+[Acuity API] Requesting: /appointments
+[Acuity Sync] Found 97 upcoming appointments
+[Acuity Sync] Fetching historical appointments since 2025-12-25...
+[Acuity API] Requesting: /appointments
+[Acuity Sync] Found 0 historical appointments
+[Acuity Sync] Error during sync: RangeError: Invalid time value
+    at Date1.toISOString (<anonymous>)
+    at POST (src/app/api/sync/acuity/route.ts:173:82)
+  171 |             end_time_raw: appointment.endTime,
+  172 |             end_time_type: typeof appointment.endTime,
+> 173 |             end_time_parsed: appointment.endTime ? new Date(appointment.endTime).toISOString() : null,
+      |                                                                                  ^
+  174 |           })
+  175 |         }
+  176 |
+Acuity sync error: RangeError: Invalid time value
+    at Date1.toISOString (<anonymous>)
+    at POST (src/app/api/sync/acuity/route.ts:173:82)
+  171 |             end_time_raw: appointment.endTime,
+  172 |             end_time_type: typeof appointment.endTime,
+> 173 |             end_time_parsed: appointment.endTime ? new Date(appointment.endTime).toISOString() : null,
+      |                                                                                  ^
+  174 |           })
+  175 |         }
+  176 |
+ POST /api/sync/acuity 500 in 11.2s (compile: 723ms, proxy.ts: 140ms, render: 10.3s)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 429ms (compile: 182ms, proxy.ts: 218ms, render: 29ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/analytics?t=1766668898030&_=0.8194315042272191 200 in 1038ms (compile: 665ms, proxy.ts: 177ms, render: 196ms)
+ GET /api/integrations/acuity?t=1766668898030&_=0.562670193377196 200 in 1039ms (compile: 664ms, proxy.ts: 177ms, render: 198ms)
+ GET /api/integrations/meta?t=1766668898030&_=0.9324323414793075 200 in 1044ms (compile: 729ms, proxy.ts: 113ms, render: 202ms)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 225ms (compile: 57ms, proxy.ts: 145ms, render: 23ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/meta?t=1766668910123&_=0.07948950937890498 200 in 292ms (compile: 12ms, proxy.ts: 93ms, render: 187ms)
+ GET /api/integrations/analytics?t=1766668910123&_=0.05999202050164454 200 in 339ms (compile: 15ms, proxy.ts: 154ms, render: 170ms)
+ GET /api/integrations/acuity?t=1766668910123&_=0.5764271656852967 200 in 345ms (compile: 2ms, proxy.ts: 156ms, render: 187ms)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 163ms (compile: 4ms, proxy.ts: 135ms, render: 23ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/meta?t=1766668929663&_=0.19260045025490846 200 in 265ms (compile: 3ms, proxy.ts: 87ms, render: 174ms)
+ GET /api/integrations/acuity?t=1766668929663&_=0.5848836432427078 200 in 299ms (compile: 2ms, proxy.ts: 132ms, render: 164ms)
+ GET /api/integrations/analytics?t=1766668929663&_=0.24676556789687298 200 in 308ms (compile: 3ms, proxy.ts: 123ms, render: 182ms)
+🔍 Middleware Debug: { url: '/api/sync/acuity', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 123ms (compile: 33ms, proxy.ts: 74ms, render: 16ms)
+[Acuity Sync] Starting sync process...
+[Acuity Sync] Fetching appointment types...
+[Acuity API] Requesting: /appointment-types
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/analytics?t=1766668933540&_=0.8599072473488361 200 in 257ms (compile: 10ms, proxy.ts: 109ms, render: 138ms)
+ GET /api/integrations/meta?t=1766668933540&_=0.6011120320559301 200 in 259ms (compile: 6ms, proxy.ts: 108ms, render: 144ms)
+ GET /api/integrations/acuity?t=1766668933540&_=0.00696304628386879 200 in 271ms (compile: 3ms, proxy.ts: 125ms, render: 143ms)
+[Acuity Sync] Found 28 appointment types
+[Acuity Sync] Appointment type "The Bundclub Madrid" (ID: 57323769) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Sevilla" (ID: 86543274) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Málaga" (ID: 86543346) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Barcelona" (ID: 86543347) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Murcia" (ID: 86543350) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Valencia" (ID: 86543354) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Zaragoza" (ID: 86543361) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Bilbao" (ID: 86543366) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub CDMX (Polanco)" (ID: 86543368) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Madrid" (ID: 84755233) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Sevilla" (ID: 86543278) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Málaga" (ID: 86543279) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Barcelona" (ID: 86543281) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Murcia" (ID: 86543290) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Valencia" (ID: 86543299) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Zaragoza" (ID: 86543302) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Bilbao" (ID: 86543306) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub CDMX (Polanco)" (ID: 86543311) -> Category: medición
+[Acuity Sync] Appointment type "The BundHQ" (ID: 86555517) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Madrid -" (ID: 86887772) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Sevilla -" (ID: 86887796) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Málaga -" (ID: 86887802) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Barcelona -" (ID: 86887835) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Murcia -" (ID: 86887838) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Valencia -" (ID: 86887841) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Zaragoza -" (ID: 86887848) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Bilbao - " (ID: 86887853) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub CDMX (Polanco) -" (ID: 86887859) -> Category: medición
+[Acuity Sync] Fetching calendars...
+[Acuity API] Requesting: /calendars
+[Acuity Sync] Found 29 calendars
+[Acuity Sync] Date range: 2025-12-25 to 2026-01-15
+[Acuity Sync] Fetching upcoming appointments (next 21 days)...
+[Acuity API] Requesting: /appointments
+[Acuity Sync] Found 97 upcoming appointments
+[Acuity Sync] Fetching historical appointments since 2025-12-25...
+[Acuity API] Requesting: /appointments
+[Acuity Sync] Found 0 historical appointments
+[Acuity Sync] Error during sync: RangeError: Invalid time value
+    at Date1.toISOString (<anonymous>)
+    at POST (src/app/api/sync/acuity/route.ts:173:82)
+  171 |             end_time_raw: appointment.endTime,
+  172 |             end_time_type: typeof appointment.endTime,
+> 173 |             end_time_parsed: appointment.endTime ? new Date(appointment.endTime).toISOString() : null,
+      |                                                                                  ^
+  174 |           })
+  175 |         }
+  176 |
+Acuity sync error: RangeError: Invalid time value
+    at Date1.toISOString (<anonymous>)
+    at POST (src/app/api/sync/acuity/route.ts:173:82)
+  171 |             end_time_raw: appointment.endTime,
+  172 |             end_time_type: typeof appointment.endTime,
+> 173 |             end_time_parsed: appointment.endTime ? new Date(appointment.endTime).toISOString() : null,
+      |                                                                                  ^
+  174 |           })
+  175 |         }
+  176 |
+ POST /api/sync/acuity 500 in 14.7s (compile: 822ms, proxy.ts: 102ms, render: 13.7s)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 568ms (compile: 8ms, proxy.ts: 201ms, render: 359ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/meta?t=1766668954310&_=0.853971482665791 200 in 257ms (compile: 3ms, proxy.ts: 107ms, render: 147ms)
+ GET /api/integrations/analytics?t=1766668954310&_=0.702639786333886 200 in 301ms (compile: 1658µs, proxy.ts: 154ms, render: 145ms)
+ GET /api/integrations/acuity?t=1766668954313&_=0.615595671181326 200 in 307ms (compile: 4ms, proxy.ts: 164ms, render: 140ms)
+ GET /api/integrations/analytics?t=1766668954313&_=0.431577463240971 200 in 309ms (compile: 3ms, proxy.ts: 152ms, render: 153ms)
+ GET /api/integrations/meta?t=1766668954313&_=0.2120422072410959 200 in 319ms (compile: 2ms, proxy.ts: 163ms, render: 153ms)
+ GET /api/integrations/acuity?t=1766668954310&_=0.4417166823582179 200 in 330ms (compile: 3ms, proxy.ts: 164ms, render: 162ms)
+🔍 Middleware Debug: { url: '/api/sync/acuity', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Sync] Starting sync process...
+[Acuity Sync] Fetching appointment types...
+[Acuity API] Requesting: /appointment-types
+[Acuity Sync] Found 28 appointment types
+[Acuity Sync] Appointment type "The Bundclub Madrid" (ID: 57323769) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Sevilla" (ID: 86543274) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Málaga" (ID: 86543346) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Barcelona" (ID: 86543347) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Murcia" (ID: 86543350) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Valencia" (ID: 86543354) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Zaragoza" (ID: 86543361) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Bilbao" (ID: 86543366) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub CDMX (Polanco)" (ID: 86543368) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Madrid" (ID: 84755233) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Sevilla" (ID: 86543278) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Málaga" (ID: 86543279) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Barcelona" (ID: 86543281) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Murcia" (ID: 86543290) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Valencia" (ID: 86543299) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Zaragoza" (ID: 86543302) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Bilbao" (ID: 86543306) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub CDMX (Polanco)" (ID: 86543311) -> Category: medición
+[Acuity Sync] Appointment type "The BundHQ" (ID: 86555517) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Madrid -" (ID: 86887772) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Sevilla -" (ID: 86887796) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Málaga -" (ID: 86887802) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Barcelona -" (ID: 86887835) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Murcia -" (ID: 86887838) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Valencia -" (ID: 86887841) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Zaragoza -" (ID: 86887848) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Bilbao - " (ID: 86887853) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub CDMX (Polanco) -" (ID: 86887859) -> Category: medición
+[Acuity Sync] Fetching calendars...
+[Acuity API] Requesting: /calendars
+[Acuity Sync] Found 29 calendars
+[Acuity Sync] Date range: 2025-12-25 to 2026-01-15
+[Acuity Sync] Fetching upcoming appointments (next 21 days)...
+[Acuity API] Requesting: /appointments
+[Acuity Sync] Found 97 upcoming appointments
+[Acuity Sync] Fetching historical appointments since 2025-12-25...
+[Acuity API] Requesting: /appointments
+[Acuity Sync] Found 0 historical appointments
+[Acuity Sync] Error during sync: RangeError: Invalid time value
+    at Date1.toISOString (<anonymous>)
+    at POST (src/app/api/sync/acuity/route.ts:173:82)
+  171 |             end_time_raw: appointment.endTime,
+  172 |             end_time_type: typeof appointment.endTime,
+> 173 |             end_time_parsed: appointment.endTime ? new Date(appointment.endTime).toISOString() : null,
+      |                                                                                  ^
+  174 |           })
+  175 |         }
+  176 |
+Acuity sync error: RangeError: Invalid time value
+    at Date1.toISOString (<anonymous>)
+    at POST (src/app/api/sync/acuity/route.ts:173:82)
+  171 |             end_time_raw: appointment.endTime,
+  172 |             end_time_type: typeof appointment.endTime,
+> 173 |             end_time_parsed: appointment.endTime ? new Date(appointment.endTime).toISOString() : null,
+      |                                                                                  ^
+  174 |           })
+  175 |         }
+  176 |
+ POST /api/sync/acuity 500 in 9.5s (compile: 8ms, proxy.ts: 132ms, render: 9.3s)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 4.2s (compile: 380ms, proxy.ts: 687ms, render: 3.1s)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/acuity?t=1766670714238&_=0.2585462851832332 200 in 2.5s (compile: 1693ms, proxy.ts: 389ms, render: 388ms)
+ GET /api/integrations/acuity?t=1766670714235&_=0.9762550938817588 200 in 2.6s (compile: 1696ms, proxy.ts: 490ms, render: 389ms)
+ GET /api/integrations/analytics?t=1766670714238&_=0.6017517840761937 200 in 2.5s (compile: 1691ms, proxy.ts: 392ms, render: 390ms)
+ GET /api/integrations/analytics?t=1766670714235&_=0.7973656314231223 200 in 2.6s (compile: 1701ms, proxy.ts: 485ms, render: 390ms)
+ GET /api/integrations/meta?t=1766670714238&_=0.7170833956208763 200 in 2.6s (compile: 1690ms, proxy.ts: 495ms, render: 391ms)
+ GET /api/integrations/meta?t=1766670714235&_=0.4986706753877075 200 in 2.6s (compile: 1694ms, proxy.ts: 491ms, render: 391ms)
+🔍 Middleware Debug: { url: '/api/sync/acuity', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 151ms (compile: 48ms, proxy.ts: 81ms, render: 23ms)
+[Acuity Sync] Starting sync process...
+[Acuity Sync] Fetching appointment types...
+[Acuity API] Requesting: /appointment-types
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/analytics?t=1766670720234&_=0.30297589015688253 200 in 242ms (compile: 4ms, proxy.ts: 84ms, render: 154ms)
+ GET /api/integrations/meta?t=1766670720234&_=0.9624974943474253 200 in 267ms (compile: 4ms, proxy.ts: 95ms, render: 168ms)
+ GET /api/integrations/acuity?t=1766670720234&_=0.5880675527190111 200 in 280ms (compile: 6ms, proxy.ts: 105ms, render: 169ms)
+[Acuity Sync] Found 28 appointment types
+[Acuity Sync] Appointment type "The Bundclub Madrid" (ID: 57323769) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Sevilla" (ID: 86543274) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Málaga" (ID: 86543346) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Barcelona" (ID: 86543347) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Murcia" (ID: 86543350) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Valencia" (ID: 86543354) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Zaragoza" (ID: 86543361) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Bilbao" (ID: 86543366) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub CDMX (Polanco)" (ID: 86543368) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Madrid" (ID: 84755233) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Sevilla" (ID: 86543278) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Málaga" (ID: 86543279) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Barcelona" (ID: 86543281) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Murcia" (ID: 86543290) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Valencia" (ID: 86543299) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Zaragoza" (ID: 86543302) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Bilbao" (ID: 86543306) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub CDMX (Polanco)" (ID: 86543311) -> Category: medición
+[Acuity Sync] Appointment type "The BundHQ" (ID: 86555517) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Madrid -" (ID: 86887772) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Sevilla -" (ID: 86887796) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Málaga -" (ID: 86887802) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Barcelona -" (ID: 86887835) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Murcia -" (ID: 86887838) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Valencia -" (ID: 86887841) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Zaragoza -" (ID: 86887848) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Bilbao - " (ID: 86887853) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub CDMX (Polanco) -" (ID: 86887859) -> Category: medición
+[Acuity Sync] Fetching calendars...
+[Acuity API] Requesting: /calendars
+[Acuity Sync] Found 29 calendars
+[Acuity Sync] Date range: 2025-12-25 to 2026-01-15
+[Acuity Sync] Fetching upcoming appointments (next 21 days)...
+[Acuity API] Requesting: /appointments
+[Acuity Sync] Found 97 upcoming appointments
+[Acuity Sync] Fetching historical appointments since 2025-12-25...
+[Acuity API] Requesting: /appointments
+[Acuity Sync] Found 0 historical appointments
+[Acuity Sync] Sample appointment datetime format: {
+  acuity_id: 1602499372,
+  datetime_raw: '2026-01-15T17:45:00+0100',
+  datetime_type: 'string',
+  datetime_parsed: '2026-01-15T16:45:00.000Z',
+  end_time_raw: '19:15',
+  end_time_type: 'string',
+  end_time_parsed: 'INVALID'
+}
+[Acuity Sync] Sample appointment datetime format: {
+  acuity_id: 1602551678,
+  datetime_raw: '2026-01-15T17:45:00+0100',
+  datetime_type: 'string',
+  datetime_parsed: '2026-01-15T16:45:00.000Z',
+  end_time_raw: '18:15',
+  end_time_type: 'string',
+  end_time_parsed: 'INVALID'
+}
+[Acuity Sync] Sample appointment datetime format: {
+  acuity_id: 1602551572,
+  datetime_raw: '2026-01-15T17:00:00+0100',
+  datetime_type: 'string',
+  datetime_parsed: '2026-01-15T16:00:00.000Z',
+  end_time_raw: '17:30',
+  end_time_type: 'string',
+  end_time_parsed: 'INVALID'
+}
+[Acuity Sync] Processed 97 appointments: 97 inserted, 0 updated
+[Acuity Sync] Fetching availability for next 21 days...
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 57323769: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543274: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543346: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543347: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543350: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543354: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543361: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543366: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543368: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 84755233: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543278: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543279: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543281: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543290: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543299: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543302: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543306: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543311: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86555517: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887772: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887796: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887802: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887835: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887838: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887841: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887848: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887853: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887859: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:255:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity Sync] Processed 0 availability records
+[Acuity Sync] Updating monthly appointment counts...
+[Acuity API] Requesting: /appointments
+[Acuity Sync] Updated monthly counts for 1 months
+ POST /api/sync/acuity 200 in 44s (compile: 860ms, proxy.ts: 223ms, render: 43s)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/meta?t=1766670763297&_=0.23175619557237181 200 in 247ms (compile: 3ms, proxy.ts: 85ms, render: 160ms)
+ GET /api/integrations/analytics?t=1766670763297&_=0.4268698397077555 200 in 254ms (compile: 2ms, proxy.ts: 99ms, render: 153ms)
+ GET /api/integrations/acuity?t=1766670763297&_=0.46727956903578916 200 in 280ms (compile: 3ms, proxy.ts: 123ms, render: 154ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ ○ Compiling /citas ...
+ GET /citas 200 in 4.1s (compile: 3.7s, proxy.ts: 123ms, render: 222ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T13:53:12.524Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T13:53:12.546Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T13:53:12.548Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T13:53:12.551Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T13:53:12.557Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Found 0 cancellations
+ GET /api/acuity/stats?type=cancellations 200 in 3.3s (compile: 2.6s, proxy.ts: 443ms, render: 264ms)
+[Acuity Stats] Found 0 upcoming appointments
+[Acuity Stats] No appointments found with filters. Debugging...
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/acuity/stats?type=occupation&days=21 200 in 3.3s (compile: 2.6s, proxy.ts: 454ms, render: 282ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/acuity/stats?type=monthly&months=12 200 in 3.3s (compile: 2.6s, proxy.ts: 451ms, render: 321ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Total appointments in DB (no filters): 0
+[Acuity Stats] Query that returned 0 results: {
+  table: 'acuity_appointments',
+  filters: {
+    datetime_gte: '2025-12-24T23:00:00.000Z',
+    datetime_lte: '2026-12-25T22:59:59.999Z',
+    status_neq: 'canceled',
+    category: null,
+    calendar: null
+  }
+}
+[Acuity Stats] No appointments found in DB at all
+ GET /api/acuity/stats?type=upcoming&days=21 200 in 3.4s (compile: 2.6s, proxy.ts: 440ms, render: 359ms)
+ GET /api/acuity/stats?type=availability&days=21 200 in 3.4s (compile: 2.6s, proxy.ts: 458ms, render: 362ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T13:53:12.807Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T13:53:12.843Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T13:53:12.868Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Found 0 cancellations
+ GET /api/acuity/stats?type=cancellations 200 in 253ms (compile: 6ms, proxy.ts: 96ms, render: 151ms)
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T13:53:12.896Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T13:53:12.909Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=monthly&months=12 200 in 274ms (compile: 3ms, proxy.ts: 96ms, render: 175ms)
+ GET /api/acuity/stats?type=availability&days=21 200 in 247ms (compile: 1661µs, proxy.ts: 94ms, render: 151ms)
+[Acuity Stats] Found 0 upcoming appointments
+[Acuity Stats] No appointments found with filters. Debugging...
+ GET /api/acuity/stats?type=occupation&days=21 200 in 373ms (compile: 1859µs, proxy.ts: 115ms, render: 256ms)
+[Acuity Stats] Total appointments in DB (no filters): 0
+[Acuity Stats] Query that returned 0 results: {
+  table: 'acuity_appointments',
+  filters: {
+    datetime_gte: '2025-12-24T23:00:00.000Z',
+    datetime_lte: '2026-12-25T22:59:59.999Z',
+    status_neq: 'canceled',
+    category: null,
+    calendar: null
+  }
+}
+[Acuity Stats] No appointments found in DB at all
+ GET /api/acuity/stats?type=upcoming&days=21 200 in 350ms (compile: 1277µs, proxy.ts: 101ms, render: 247ms)
+🔍 Middleware Debug: {
+  url: '/.well-known/appspecific/com.chrome.devtools.json',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 1105ms (compile: 396ms, proxy.ts: 552ms, render: 157ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 222ms (compile: 4ms, proxy.ts: 184ms, render: 33ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 522ms (compile: 62ms, proxy.ts: 356ms, render: 103ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 377ms (compile: 16ms, proxy.ts: 287ms, render: 73ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 196ms (compile: 5ms, proxy.ts: 176ms, render: 15ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 249ms (compile: 41ms, proxy.ts: 165ms, render: 43ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 255ms (compile: 34ms, proxy.ts: 165ms, render: 56ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 135ms (compile: 3ms, proxy.ts: 115ms, render: 17ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 182ms (compile: 8ms, proxy.ts: 135ms, render: 39ms)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 629ms (compile: 33ms, proxy.ts: 164ms, render: 431ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/analytics?t=1766671149276&_=0.9566126263148992 200 in 2.7s (compile: 2.1s, proxy.ts: 370ms, render: 283ms)
+ GET /api/integrations/acuity?t=1766671149276&_=0.9560220891200486 200 in 2.7s (compile: 2.1s, proxy.ts: 372ms, render: 286ms)
+ GET /api/integrations/meta?t=1766671149276&_=0.5463015544160766 200 in 2.7s (compile: 2.3s, proxy.ts: 185ms, render: 288ms)
+ GET /api/integrations/analytics?t=1766671149280&_=0.44910737499918274 200 in 2.7s (compile: 2.1s, proxy.ts: 371ms, render: 294ms)
+ GET /api/integrations/meta?t=1766671149280&_=0.24323728592845706 200 in 2.7s (compile: 2.1s, proxy.ts: 374ms, render: 297ms)
+ GET /api/integrations/acuity?t=1766671149280&_=0.3301140182848278 200 in 2.8s (compile: 2.1s, proxy.ts: 363ms, render: 342ms)
+🔍 Middleware Debug: { url: '/api/sync/acuity', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 161ms (compile: 56ms, proxy.ts: 80ms, render: 26ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Sync] Starting sync process...
+[Acuity Sync] Fetching appointment types...
+[Acuity API] Requesting: /appointment-types
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/meta?t=1766671155248&_=0.7432965748927625 200 in 348ms (compile: 35ms, proxy.ts: 126ms, render: 187ms)
+ GET /api/integrations/acuity?t=1766671155248&_=0.5346368849871859 200 in 351ms (compile: 12ms, proxy.ts: 123ms, render: 216ms)
+ GET /api/integrations/analytics?t=1766671155248&_=0.46370799676345653 200 in 352ms (compile: 20ms, proxy.ts: 125ms, render: 208ms)
+[Acuity Sync] Found 28 appointment types
+[Acuity Sync] Appointment type "The Bundclub Madrid" (ID: 57323769) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Sevilla" (ID: 86543274) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Málaga" (ID: 86543346) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Barcelona" (ID: 86543347) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Murcia" (ID: 86543350) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Valencia" (ID: 86543354) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Zaragoza" (ID: 86543361) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Bilbao" (ID: 86543366) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub CDMX (Polanco)" (ID: 86543368) -> Category: fitting
+[Acuity Sync] Appointment type "The Bundclub Madrid" (ID: 84755233) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Sevilla" (ID: 86543278) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Málaga" (ID: 86543279) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Barcelona" (ID: 86543281) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Murcia" (ID: 86543290) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Valencia" (ID: 86543299) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Zaragoza" (ID: 86543302) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub Bilbao" (ID: 86543306) -> Category: medición
+[Acuity Sync] Appointment type "The Bundclub CDMX (Polanco)" (ID: 86543311) -> Category: medición
+[Acuity Sync] Appointment type "The BundHQ" (ID: 86555517) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Madrid -" (ID: 86887772) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Sevilla -" (ID: 86887796) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Málaga -" (ID: 86887802) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Barcelona -" (ID: 86887835) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Murcia -" (ID: 86887838) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Valencia -" (ID: 86887841) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Zaragoza -" (ID: 86887848) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub Bilbao - " (ID: 86887853) -> Category: medición
+[Acuity Sync] Appointment type "- The Bundclub CDMX (Polanco) -" (ID: 86887859) -> Category: medición
+[Acuity Sync] Fetching calendars...
+[Acuity API] Requesting: /calendars
+[Acuity Sync] Found 29 calendars
+[Acuity Sync] Date range: 2025-12-25 to 2026-01-15
+[Acuity Sync] Fetching upcoming appointments (next 21 days)...
+[Acuity API] Requesting: /appointments
+[Acuity Sync] Found 97 upcoming appointments
+[Acuity Sync] Fetching historical appointments since 2025-12-25...
+[Acuity API] Requesting: /appointments
+[Acuity Sync] Found 0 historical appointments
+[Acuity Sync] Sample appointment datetime format: {
+  acuity_id: 1602499372,
+  datetime_raw: '2026-01-15T17:45:00+0100',
+  datetime_type: 'string',
+  datetime_parsed: '2026-01-15T16:45:00.000Z',
+  end_time_raw: '19:15',
+  end_time_type: 'string',
+  end_time_parsed: 'INVALID'
+}
+[Acuity Sync] Sample appointment datetime format: {
+  acuity_id: 1602551678,
+  datetime_raw: '2026-01-15T17:45:00+0100',
+  datetime_type: 'string',
+  datetime_parsed: '2026-01-15T16:45:00.000Z',
+  end_time_raw: '18:15',
+  end_time_type: 'string',
+  end_time_parsed: 'INVALID'
+}
+[Acuity Sync] Sample appointment datetime format: {
+  acuity_id: 1602551572,
+  datetime_raw: '2026-01-15T17:00:00+0100',
+  datetime_type: 'string',
+  datetime_parsed: '2026-01-15T16:00:00.000Z',
+  end_time_raw: '17:30',
+  end_time_type: 'string',
+  end_time_parsed: 'INVALID'
+}
+[Acuity Sync] Processed 97 appointments: 97 inserted, 0 updated
+[Acuity Sync] Fetching availability for next 21 days...
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 57323769: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543274: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543346: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543347: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543350: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543354: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543361: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543366: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543368: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 84755233: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543278: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543279: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543281: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543290: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543299: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543302: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543306: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86543311: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86555517: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887772: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887796: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887802: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887835: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887838: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887841: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887848: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887853: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity API] Requesting: /availability/times
+[Acuity API] Error response: {
+  status_code: 400,
+  message: 'The parameter "date" is required.',
+  error: 'required_date'
+}
+[Acuity Sync] Error fetching availability for type 86887859: Error: Acuity API error: The parameter "date" is required. (Status: 400)
+    at AcuityService.request (src/lib/integrations/acuity.ts:116:13)
+    at async POST (src/app/api/sync/acuity/route.ts:318:32)
+  114 |         console.error(`[Acuity API] Error text:`, text)
+  115 |       }
+> 116 |       throw new Error(`Acuity API error: ${errorMessage} (Status: ${response.status})`)
+      |             ^
+  117 |     }
+  118 |
+  119 |     return response.json()
+[Acuity Sync] Processed 0 availability records
+[Acuity Sync] Updating monthly appointment counts...
+[Acuity API] Requesting: /appointments
+[Acuity Sync] Updated monthly counts for 1 months
+ POST /api/sync/acuity 200 in 40s (compile: 733ms, proxy.ts: 97ms, render: 39.5s)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/meta?t=1766671194541&_=0.8645582363163336 200 in 248ms (compile: 2ms, proxy.ts: 93ms, render: 153ms)
+ GET /api/integrations/analytics?t=1766671194541&_=0.5069706236367865 200 in 252ms (compile: 2ms, proxy.ts: 101ms, render: 148ms)
+ GET /api/integrations/acuity?t=1766671194541&_=0.4737987694419259 200 in 272ms (compile: 1242µs, proxy.ts: 128ms, render: 143ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 202ms (compile: 40ms, proxy.ts: 132ms, render: 29ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T14:00:02.563Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T14:00:02.567Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T14:00:02.567Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T14:00:02.575Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T14:00:02.589Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=availability&days=21 200 in 1124ms (compile: 761ms, proxy.ts: 207ms, render: 156ms)
+[Acuity Stats] Found 0 cancellations
+ GET /api/acuity/stats?type=cancellations 200 in 1114ms (compile: 670ms, proxy.ts: 287ms, render: 158ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Found 97 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1602499372,
+  datetime: '2026-01-15T16:45:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Javier Peña'
+}
+ GET /api/acuity/stats?type=upcoming&days=21 200 in 1154ms (compile: 833ms, proxy.ts: 134ms, render: 187ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/acuity/stats?type=monthly&months=12 200 in 1179ms (compile: 669ms, proxy.ts: 299ms, render: 211ms)
+ GET /api/acuity/stats?type=occupation&days=21 200 in 1185ms (compile: 765ms, proxy.ts: 202ms, render: 218ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T14:00:02.789Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T14:00:02.796Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T14:00:02.811Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Found 0 cancellations
+ GET /api/acuity/stats?type=cancellations 200 in 221ms (compile: 3ms, proxy.ts: 79ms, render: 139ms)
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T14:00:02.860Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=availability&days=21 200 in 226ms (compile: 1275µs, proxy.ts: 81ms, render: 144ms)
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2025-12-24T23:00:00.000Z',
+  endDateStr: '2026-01-15T22:59:59.999Z',
+  futureEndDateStr: '2026-12-25T22:59:59.999Z',
+  startDateStrOnly: '2025-12-25',
+  endDateStrOnly: '2026-01-15',
+  futureEndDateStrOnly: '2026-12-25',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-25T14:00:02.884Z',
+  todayStartISO: '2025-12-24T23:00:00.000Z'
+}
+[Acuity Stats] Found 97 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1602499372,
+  datetime: '2026-01-15T16:45:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Javier Peña'
+}
+ GET /api/acuity/stats?type=upcoming&days=21 200 in 223ms (compile: 1050µs, proxy.ts: 67ms, render: 155ms)
+ GET /api/acuity/stats?type=occupation&days=21 200 in 249ms (compile: 1852µs, proxy.ts: 83ms, render: 164ms)
+ GET /api/acuity/stats?type=monthly&months=12 200 in 275ms (compile: 1107µs, proxy.ts: 107ms, render: 167ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 699ms (compile: 289ms, proxy.ts: 349ms, render: 61ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 210ms (compile: 3ms, proxy.ts: 190ms, render: 17ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 186ms (compile: 5ms, proxy.ts: 153ms, render: 28ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 159ms (compile: 4ms, proxy.ts: 144ms, render: 11ms)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 466ms (compile: 48ms, proxy.ts: 355ms, render: 63ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/acuity?t=1766672149840&_=0.7947115401070216 200 in 1644ms (compile: 997ms, proxy.ts: 366ms, render: 281ms)
+ GET /api/integrations/acuity?t=1766672149841&_=0.7239344951491778 200 in 1664ms (compile: 997ms, proxy.ts: 366ms, render: 301ms)
+ GET /api/integrations/analytics?t=1766672149841&_=0.2768184843878402 200 in 1665ms (compile: 1089ms, proxy.ts: 274ms, render: 302ms)
+ GET /api/integrations/meta?t=1766672149841&_=0.30078164957777465 200 in 1669ms (compile: 1098ms, proxy.ts: 265ms, render: 306ms)
+ GET /api/integrations/meta?t=1766672149840&_=0.5091504430563509 200 in 1670ms (compile: 1144ms, proxy.ts: 219ms, render: 307ms)
+ GET /api/integrations/analytics?t=1766672149840&_=0.8609017317526008 200 in 1673ms (compile: 995ms, proxy.ts: 368ms, render: 310ms)
