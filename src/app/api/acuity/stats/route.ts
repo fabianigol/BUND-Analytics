@@ -7,6 +7,30 @@ type AcuityAppointment = Database['public']['Tables']['acuity_appointments']['Ro
 type AcuityAvailability = Database['public']['Tables']['acuity_availability']['Row']
 type AcuityCount = Database['public']['Tables']['acuity_appointment_counts']['Row']
 
+/**
+ * Normaliza el nombre de una tienda eliminando variaciones y sufijos.
+ * Ejemplos:
+ * - "The Bundclub Madrid + Añadir 1 persona más" → "The Bundclub Madrid"
+ * - "- The Bundclub Valencia -" → "The Bundclub Valencia"
+ * - "The Bundclub Madrid + Solo quiero informarme" → "The Bundclub Madrid"
+ */
+function normalizeStoreName(storeName: string): string {
+  if (!storeName || storeName === 'Unknown') return storeName
+  
+  let normalized = storeName.trim()
+  
+  // Eliminar guiones al inicio y final
+  normalized = normalized.replace(/^-\s*/, '').replace(/\s*-$/, '')
+  
+  // Eliminar todo después de "+" (incluye variaciones como "+ Añadir X persona(s) más", "+ Solo quiero informarme", etc.)
+  const plusIndex = normalized.indexOf('+')
+  if (plusIndex !== -1) {
+    normalized = normalized.substring(0, plusIndex).trim()
+  }
+  
+  return normalized.trim() || storeName // Fallback al nombre original si queda vacío
+}
+
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient()
@@ -194,6 +218,20 @@ export async function GET(request: NextRequest) {
           total: number
         }>()
 
+        // Agrupar por tienda (appointment_type_name) con empleados anidados
+        const byStore = new Map<string, {
+          storeName: string
+          medición: number
+          fitting: number
+          total: number
+          employees: Map<string, {
+            employeeName: string
+            medición: number
+            fitting: number
+            total: number
+          }>
+        }>()
+
         const byCategory = {
           medición: 0,
           fitting: 0,
@@ -205,6 +243,7 @@ export async function GET(request: NextRequest) {
           byCategory[cat]++
           byCategory.total++
 
+          // Agrupación por empleado (calendar_name) - mantener para compatibilidad
           const calName = apt.calendar_name || 'Unknown'
           if (!byCalendar.has(calName)) {
             byCalendar.set(calName, {
@@ -218,7 +257,52 @@ export async function GET(request: NextRequest) {
           const calData = byCalendar.get(calName)!
           calData[cat]++
           calData.total++
+
+          // Agrupación por tienda (appointment_type_name) con empleados
+          // Normalizar el nombre de la tienda para agrupar variaciones
+          const originalStoreName = apt.appointment_type_name || 'Unknown'
+          const normalizedStoreName = normalizeStoreName(originalStoreName)
+          
+          if (!byStore.has(normalizedStoreName)) {
+            byStore.set(normalizedStoreName, {
+              storeName: normalizedStoreName,
+              medición: 0,
+              fitting: 0,
+              total: 0,
+              employees: new Map(),
+            })
+          }
+
+          const storeData = byStore.get(normalizedStoreName)!
+          storeData[cat]++
+          storeData.total++
+
+          // Agregar empleado dentro de la tienda
+          if (!storeData.employees.has(calName)) {
+            storeData.employees.set(calName, {
+              employeeName: calName,
+              medición: 0,
+              fitting: 0,
+              total: 0,
+            })
+          }
+
+          const employeeData = storeData.employees.get(calName)!
+          employeeData[cat]++
+          employeeData.total++
         }
+
+        // Convertir Map de empleados a Array, ordenar empleados por total descendente, y ordenar tiendas por total descendente
+        const byStoreArray = Array.from(byStore.values())
+          .map(store => ({
+            storeName: store.storeName,
+            medición: store.medición,
+            fitting: store.fitting,
+            total: store.total,
+            employees: Array.from(store.employees.values())
+              .sort((a, b) => b.total - a.total), // Ordenar empleados por total descendente
+          }))
+          .sort((a, b) => b.total - a.total) // Ordenar tiendas por total descendente
 
         return NextResponse.json({
           type: 'upcoming',
@@ -229,6 +313,7 @@ export async function GET(request: NextRequest) {
             fitting: byCategory.fitting,
           },
           byCalendar: Array.from(byCalendar.values()),
+          byStore: byStoreArray,
           filtered: {
             category,
             calendar,
@@ -261,6 +346,23 @@ export async function GET(request: NextRequest) {
 
         const availabilityTyped = (availability || []) as AcuityAvailability[]
 
+        // Obtener mapeo de calendar_name -> appointment_type_name desde acuity_calendars
+        const { data: calendarsData } = await supabase
+          .from('acuity_calendars')
+          .select('name, appointment_type_name, appointment_category')
+        
+        const calendarToStoreMap = new Map<string, string>()
+        if (calendarsData) {
+          for (const cal of calendarsData as Array<{ name: string; appointment_type_name: string; appointment_category: string }>) {
+            // Mapear por nombre de calendario (empleado) a tienda normalizada
+            // Puede haber múltiples entradas por empleado (medición y fitting), usar la primera encontrada
+            if (!calendarToStoreMap.has(cal.name)) {
+              const normalizedStoreName = normalizeStoreName(cal.appointment_type_name)
+              calendarToStoreMap.set(cal.name, normalizedStoreName)
+            }
+          }
+        }
+
         // Agregar por categoría y calendario
         const byCategory = {
           medición: { total: 0, available: 0, booked: 0 },
@@ -273,6 +375,18 @@ export async function GET(request: NextRequest) {
           fitting: { total: number; available: number; booked: number }
         }>()
 
+        // Agrupar por tienda (appointment_type_name) con empleados anidados
+        const byStore = new Map<string, {
+          storeName: string
+          medición: { total: number; available: number; booked: number }
+          fitting: { total: number; available: number; booked: number }
+          employees: Map<string, {
+            employeeName: string
+            medición: { total: number; available: number; booked: number }
+            fitting: { total: number; available: number; booked: number }
+          }>
+        }>()
+
         for (const avail of availabilityTyped) {
           const cat = avail.appointment_category as 'medición' | 'fitting'
           byCategory[cat].total += avail.total_slots || 0
@@ -280,6 +394,8 @@ export async function GET(request: NextRequest) {
           byCategory[cat].booked += avail.booked_slots || 0
 
           const calName = avail.calendar_name || 'Unknown'
+          
+          // Agrupación por empleado (calendar_name) - mantener para compatibilidad
           if (!byCalendar.has(calName)) {
             byCalendar.set(calName, {
               calendarName: calName,
@@ -292,13 +408,55 @@ export async function GET(request: NextRequest) {
           calData[cat].total += avail.total_slots || 0
           calData[cat].available += avail.available_slots || 0
           calData[cat].booked += avail.booked_slots || 0
+
+          // Agrupación por tienda usando el mapeo
+          const storeName = calendarToStoreMap.get(calName) || 'Unknown'
+          if (!byStore.has(storeName)) {
+            byStore.set(storeName, {
+              storeName,
+              medición: { total: 0, available: 0, booked: 0 },
+              fitting: { total: 0, available: 0, booked: 0 },
+              employees: new Map(),
+            })
+          }
+
+          const storeData = byStore.get(storeName)!
+          storeData[cat].total += avail.total_slots || 0
+          storeData[cat].available += avail.available_slots || 0
+          storeData[cat].booked += avail.booked_slots || 0
+
+          // Agregar empleado dentro de la tienda
+          if (!storeData.employees.has(calName)) {
+            storeData.employees.set(calName, {
+              employeeName: calName,
+              medición: { total: 0, available: 0, booked: 0 },
+              fitting: { total: 0, available: 0, booked: 0 },
+            })
+          }
+
+          const employeeData = storeData.employees.get(calName)!
+          employeeData[cat].total += avail.total_slots || 0
+          employeeData[cat].available += avail.available_slots || 0
+          employeeData[cat].booked += avail.booked_slots || 0
         }
+
+        // Convertir Map de empleados a Array, ordenar empleados por total descendente, y ordenar tiendas por total descendente
+        const byStoreArray = Array.from(byStore.values())
+          .map(store => ({
+            storeName: store.storeName,
+            medición: store.medición,
+            fitting: store.fitting,
+            employees: Array.from(store.employees.values())
+              .sort((a, b) => (b.medición.total + b.fitting.total) - (a.medición.total + a.fitting.total)), // Ordenar empleados por total descendente
+          }))
+          .sort((a, b) => (b.medición.total + b.fitting.total) - (a.medición.total + a.fitting.total)) // Ordenar tiendas por total descendente
 
         return NextResponse.json({
           type: 'availability',
           days,
           byCategory,
           byCalendar: Array.from(byCalendar.values()),
+          byStore: byStoreArray,
           filtered: {
             category,
             calendar,
@@ -356,6 +514,22 @@ export async function GET(request: NextRequest) {
         const appointmentsTyped = (appointments || []) as AcuityAppointment[]
         const availabilityTyped = (availability || []) as AcuityAvailability[]
 
+        // Obtener mapeo de calendar_name -> appointment_type_name desde acuity_calendars
+        const { data: calendarsData } = await supabase
+          .from('acuity_calendars')
+          .select('name, appointment_type_name, appointment_category')
+        
+        const calendarToStoreMap = new Map<string, string>()
+        if (calendarsData) {
+          for (const cal of calendarsData as Array<{ name: string; appointment_type_name: string; appointment_category: string }>) {
+            // Mapear por nombre de calendario (empleado) a tienda normalizada
+            if (!calendarToStoreMap.has(cal.name)) {
+              const normalizedStoreName = normalizeStoreName(cal.appointment_type_name)
+              calendarToStoreMap.set(cal.name, normalizedStoreName)
+            }
+          }
+        }
+
         // Calcular ocupación
         const byCategory = {
           medición: { booked: 0, total: 0, percentage: 0 },
@@ -378,7 +552,7 @@ export async function GET(request: NextRequest) {
           }
         }
 
-        // Por calendario
+        // Por calendario (empleado) - mantener para compatibilidad
         const byCalendar = new Map<string, {
           calendarName: string
           medición: { booked: number; total: number; percentage: number }
@@ -386,8 +560,25 @@ export async function GET(request: NextRequest) {
           overall: { booked: number; total: number; percentage: number }
         }>()
 
+        // Por tienda con empleados anidados
+        const byStore = new Map<string, {
+          storeName: string
+          medición: { booked: number; total: number; percentage: number }
+          fitting: { booked: number; total: number; percentage: number }
+          overall: { booked: number; total: number; percentage: number }
+          employees: Map<string, {
+            employeeName: string
+            medición: { booked: number; total: number; percentage: number }
+            fitting: { booked: number; total: number; percentage: number }
+            overall: { booked: number; total: number; percentage: number }
+          }>
+        }>()
+
         for (const avail of availabilityTyped) {
           const calName = avail.calendar_name || 'Unknown'
+          const cat = avail.appointment_category as 'medición' | 'fitting'
+          
+          // Agrupación por empleado (calendar_name) - mantener para compatibilidad
           if (!byCalendar.has(calName)) {
             byCalendar.set(calName, {
               calendarName: calName,
@@ -398,14 +589,47 @@ export async function GET(request: NextRequest) {
           }
 
           const calData = byCalendar.get(calName)!
-          const cat = avail.appointment_category as 'medición' | 'fitting'
           calData[cat].booked += avail.booked_slots || 0
           calData[cat].total += avail.total_slots || 0
           calData.overall.booked += avail.booked_slots || 0
           calData.overall.total += avail.total_slots || 0
+
+          // Agrupación por tienda usando el mapeo
+          const storeName = calendarToStoreMap.get(calName) || 'Unknown'
+          if (!byStore.has(storeName)) {
+            byStore.set(storeName, {
+              storeName,
+              medición: { booked: 0, total: 0, percentage: 0 },
+              fitting: { booked: 0, total: 0, percentage: 0 },
+              overall: { booked: 0, total: 0, percentage: 0 },
+              employees: new Map(),
+            })
+          }
+
+          const storeData = byStore.get(storeName)!
+          storeData[cat].booked += avail.booked_slots || 0
+          storeData[cat].total += avail.total_slots || 0
+          storeData.overall.booked += avail.booked_slots || 0
+          storeData.overall.total += avail.total_slots || 0
+
+          // Agregar empleado dentro de la tienda
+          if (!storeData.employees.has(calName)) {
+            storeData.employees.set(calName, {
+              employeeName: calName,
+              medición: { booked: 0, total: 0, percentage: 0 },
+              fitting: { booked: 0, total: 0, percentage: 0 },
+              overall: { booked: 0, total: 0, percentage: 0 },
+            })
+          }
+
+          const employeeData = storeData.employees.get(calName)!
+          employeeData[cat].booked += avail.booked_slots || 0
+          employeeData[cat].total += avail.total_slots || 0
+          employeeData.overall.booked += avail.booked_slots || 0
+          employeeData.overall.total += avail.total_slots || 0
         }
 
-        // Calcular porcentajes por calendario
+        // Calcular porcentajes por calendario (empleado)
         for (const calData of byCalendar.values()) {
           for (const key of ['medición', 'fitting', 'overall'] as const) {
             if (calData[key].total > 0) {
@@ -414,11 +638,41 @@ export async function GET(request: NextRequest) {
           }
         }
 
+        // Calcular porcentajes por tienda y empleados
+        for (const storeData of byStore.values()) {
+          for (const key of ['medición', 'fitting', 'overall'] as const) {
+            if (storeData[key].total > 0) {
+              storeData[key].percentage = Math.round((storeData[key].booked / storeData[key].total) * 100)
+            }
+          }
+          
+          for (const employeeData of storeData.employees.values()) {
+            for (const key of ['medición', 'fitting', 'overall'] as const) {
+              if (employeeData[key].total > 0) {
+                employeeData[key].percentage = Math.round((employeeData[key].booked / employeeData[key].total) * 100)
+              }
+            }
+          }
+        }
+
+        // Convertir Map de empleados a Array, ordenar empleados por total descendente, y ordenar tiendas por total descendente
+        const byStoreArray = Array.from(byStore.values())
+          .map(store => ({
+            storeName: store.storeName,
+            medición: store.medición,
+            fitting: store.fitting,
+            overall: store.overall,
+            employees: Array.from(store.employees.values())
+              .sort((a, b) => b.overall.total - a.overall.total), // Ordenar empleados por total descendente
+          }))
+          .sort((a, b) => b.overall.total - a.overall.total) // Ordenar tiendas por total descendente
+
         return NextResponse.json({
           type: 'occupation',
           days,
           byCategory,
           byCalendar: Array.from(byCalendar.values()),
+          byStore: byStoreArray,
           filtered: {
             category,
             calendar,

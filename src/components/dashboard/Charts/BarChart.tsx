@@ -121,11 +121,11 @@ export function BarChart({
                     dataKey={xAxisKey}
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: 'var(--muted-foreground)', fontSize: isMobile ? 10 : 12 }}
-                    angle={showLegend ? 0 : (isMobile ? -45 : 0)}
-                    textAnchor={showLegend ? 'middle' : (isMobile ? 'end' : 'middle')}
-                    height={showLegend ? 0 : (isMobile ? 60 : 30)}
-                    dy={showLegend ? 0 : (isMobile ? 15 : 10)}
+                    tick={{ fill: 'var(--muted-foreground)', fontSize: isMobile ? 11 : 13 }}
+                    angle={showLegend ? 0 : 0}
+                    textAnchor={showLegend ? 'middle' : 'middle'}
+                    height={showLegend ? 0 : 40}
+                    dy={showLegend ? 0 : 10}
                     hide={showLegend}
                   />
                   <YAxis

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { format } from 'date-fns'
 import { Header } from '@/components/dashboard/Header'
 import { MetricCard } from '@/components/dashboard/MetricCard'
@@ -21,16 +21,73 @@ import {
   Ruler,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
 } from 'lucide-react'
 import { formatNumber, formatCompactNumber } from '@/lib/utils/format'
 
 type CategoryFilter = 'all' | 'medición' | 'fitting'
+
+/**
+ * Convierte el nombre completo de una tienda a su acrónimo
+ */
+function getStoreAcronym(storeName: string): string {
+  const storeLower = storeName.toLowerCase()
+  
+  // Mapeo de tiendas a acrónimos
+  const acronymMap: Record<string, string> = {
+    'madrid': 'MAD',
+    'málaga': 'MLG',
+    'malaga': 'MLG',
+    'sevilla': 'SEV',
+    'bilbao': 'BIL',
+    'barcelona': 'BCN',
+    'valencia': 'VAL',
+    'murcia': 'MUR',
+    'zaragoza': 'ZAR',
+    'cdmx': 'CDMX',
+    'polanco': 'CDMX',
+  }
+  
+  // Buscar coincidencias en el nombre
+  for (const [key, acronym] of Object.entries(acronymMap)) {
+    if (storeLower.includes(key)) {
+      return acronym
+    }
+  }
+  
+  // Si no hay coincidencia, intentar extraer las iniciales de "The Bundclub [Ciudad]"
+  const match = storeName.match(/The Bundclub\s+([A-Za-z]+)/i)
+  if (match && match[1]) {
+    const city = match[1].toUpperCase()
+    // Si la ciudad tiene 3 o menos letras, usar directamente
+    if (city.length <= 3) {
+      return city
+    }
+    // Si no, usar las primeras 3 letras
+    return city.substring(0, 3)
+  }
+  
+  // Fallback: usar las primeras 3 letras del nombre
+  return storeName.substring(0, 3).toUpperCase()
+}
 
 interface AppointmentStats {
   upcoming: {
     total: number
     byCategory: { medición: number; fitting: number }
     byCalendar: Array<{ calendarName: string; medición: number; fitting: number; total: number }>
+    byStore: Array<{
+      storeName: string
+      medición: number
+      fitting: number
+      total: number
+      employees: Array<{
+        employeeName: string
+        medición: number
+        fitting: number
+        total: number
+      }>
+    }>
   }
   availability: {
     byCategory: {
@@ -41,6 +98,16 @@ interface AppointmentStats {
       calendarName: string
       medición: { total: number; available: number; booked: number }
       fitting: { total: number; available: number; booked: number }
+    }>
+    byStore: Array<{
+      storeName: string
+      medición: { total: number; available: number; booked: number }
+      fitting: { total: number; available: number; booked: number }
+      employees: Array<{
+        employeeName: string
+        medición: { total: number; available: number; booked: number }
+        fitting: { total: number; available: number; booked: number }
+      }>
     }>
   }
   occupation: {
@@ -54,6 +121,18 @@ interface AppointmentStats {
       medición: { booked: number; total: number; percentage: number }
       fitting: { booked: number; total: number; percentage: number }
       overall: { booked: number; total: number; percentage: number }
+    }>
+    byStore: Array<{
+      storeName: string
+      medición: { booked: number; total: number; percentage: number }
+      fitting: { booked: number; total: number; percentage: number }
+      overall: { booked: number; total: number; percentage: number }
+      employees: Array<{
+        employeeName: string
+        medición: { booked: number; total: number; percentage: number }
+        fitting: { booked: number; total: number; percentage: number }
+        overall: { booked: number; total: number; percentage: number }
+      }>
     }>
   }
   monthly: {
@@ -90,6 +169,9 @@ export default function CitasPage() {
   
   // Estado para el mes seleccionado en los gráficos de barras
   const [barsSelectedMonth, setBarsSelectedMonth] = useState({ year: today.getFullYear(), month: today.getMonth() + 1 })
+  
+  // Estado para controlar qué tiendas están expandidas en la tabla jerárquica
+  const [expandedStores, setExpandedStores] = useState<Set<string>>(new Set())
 
   // Ajustar mes seleccionado cuando cambian los datos
   useEffect(() => {
@@ -279,6 +361,14 @@ export default function CitasPage() {
           ...cal,
           total: cal[categoryFilter],
         })),
+        byStore: filtered.upcoming.byStore.map(store => ({
+          ...store,
+          total: store[categoryFilter],
+          employees: store.employees.map(emp => ({
+            ...emp,
+            total: emp[categoryFilter],
+          })),
+        })),
       }
     }
 
@@ -312,13 +402,13 @@ export default function CitasPage() {
           const fittingData = await fittingRes.json()
           
           setBarsData({
-            medición: medicionData.byCalendar?.map((cal: any) => ({
-              name: cal.calendarName,
-              value: cal.medición || cal.total || 0,
+            medición: medicionData.byStore?.map((store: any) => ({
+              name: getStoreAcronym(store.storeName),
+              value: store.medición || store.total || 0,
             })) || [],
-            fitting: fittingData.byCalendar?.map((cal: any) => ({
-              name: cal.calendarName,
-              value: cal.fitting || cal.total || 0,
+            fitting: fittingData.byStore?.map((store: any) => ({
+              name: getStoreAcronym(store.storeName),
+              value: store.fitting || store.total || 0,
             })) || [],
           })
         }
@@ -332,11 +422,11 @@ export default function CitasPage() {
   }, [barsSelectedMonth])
 
   // Preparar datos para gráficos (datos generales para cuando no hay filtro de mes o cuando categoryFilter != 'all')
-  const upcomingByCalendarData = filteredStats.upcoming?.byCalendar.map(cal => ({
-    name: cal.calendarName,
-    'Medición': cal.medición,
-    'Fitting': cal.fitting,
-    total: cal.total,
+  const upcomingByStoreData = filteredStats.upcoming?.byStore.map(store => ({
+    name: store.storeName,
+    'Medición': store.medición,
+    'Fitting': store.fitting,
+    total: store.total,
   })) || []
 
   // Usar datos diarios si están disponibles, sino usar datos mensuales
@@ -562,6 +652,8 @@ export default function CitasPage() {
                     data={barsData.medición}
                     formatValue={(v) => formatNumber(v)}
                     height={300}
+                    color="#8B0000"
+                    showLegend={false}
                   />
                 ) : (
                   <div className="flex items-center justify-center py-12 text-muted-foreground">
@@ -611,6 +703,8 @@ export default function CitasPage() {
                     data={barsData.fitting}
                     formatValue={(v) => formatNumber(v)}
                     height={300}
+                    color="#8B0000"
+                    showLegend={false}
                   />
                 ) : (
                   <div className="flex items-center justify-center py-12 text-muted-foreground">
@@ -620,7 +714,7 @@ export default function CitasPage() {
               </CardContent>
             </Card>
           </div>
-        ) : upcomingByCalendarData.length > 0 ? (
+        ) : upcomingByStoreData.length > 0 ? (
           <Card>
             <CardHeader>
               <CardTitle>Citas Reservadas por Tienda</CardTitle>
@@ -629,9 +723,11 @@ export default function CitasPage() {
             <CardContent>
               <BarChart
                 title=""
-                data={upcomingByCalendarData.map(d => ({ name: d.name, value: d[categoryFilter === 'medición' ? 'Medición' : 'Fitting'] }))}
+                data={upcomingByStoreData.map(d => ({ name: getStoreAcronym(d.name), value: d[categoryFilter === 'medición' ? 'Medición' : 'Fitting'] }))}
                 formatValue={(v) => formatNumber(v)}
                 height={300}
+                color="#8B0000"
+                showLegend={false}
               />
             </CardContent>
           </Card>
@@ -734,7 +830,7 @@ export default function CitasPage() {
         )}
 
         {/* Tabla comparativa por tienda */}
-        {filteredStats.upcoming?.byCalendar && filteredStats.upcoming.byCalendar.length > 0 && (
+        {filteredStats.upcoming?.byStore && filteredStats.upcoming.byStore.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle>Desglose por Tienda</CardTitle>
@@ -753,36 +849,96 @@ export default function CitasPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredStats.upcoming.byCalendar.map((cal) => {
-                      const occupation = filteredStats.occupation?.byCalendar.find(
-                        o => o.calendarName === cal.calendarName
+                    {filteredStats.upcoming.byStore.map((store) => {
+                      const isExpanded = expandedStores.has(store.storeName)
+                      const storeOccupation = filteredStats.occupation?.byStore.find(
+                        s => s.storeName === store.storeName
                       )
+                      
                       return (
-                        <tr key={cal.calendarName} className="border-b">
-                          <td className="p-2 font-medium">{cal.calendarName}</td>
-                          <td className="p-2 text-right">
-                            <Badge variant="outline" className="mr-2">
-                              <Ruler className="h-3 w-3 mr-1" />
-                              {formatNumber(cal.medición)}
-                            </Badge>
-                          </td>
-                          <td className="p-2 text-right">
-                            <Badge variant="outline" className="mr-2">
-                              <Scissors className="h-3 w-3 mr-1" />
-                              {formatNumber(cal.fitting)}
-                            </Badge>
-                          </td>
-                          <td className="p-2 text-right font-semibold">
-                            {formatNumber(cal.total)}
-                          </td>
-                          <td className="p-2 text-right">
-                            <Badge
-                              variant={occupation?.overall.percentage && occupation.overall.percentage > 80 ? 'destructive' : 'secondary'}
-                            >
-                              {occupation?.overall.percentage || 0}%
-                            </Badge>
-                          </td>
-                        </tr>
+                        <React.Fragment key={store.storeName}>
+                          {/* Fila de tienda */}
+                          <tr className="border-b bg-muted/30">
+                            <td className="p-2 font-medium">
+                              <button
+                                onClick={() => {
+                                  const newExpanded = new Set(expandedStores)
+                                  if (isExpanded) {
+                                    newExpanded.delete(store.storeName)
+                                  } else {
+                                    newExpanded.add(store.storeName)
+                                  }
+                                  setExpandedStores(newExpanded)
+                                }}
+                                className="flex items-center gap-2 hover:opacity-70 transition-opacity"
+                              >
+                                {isExpanded ? (
+                                  <ChevronDown className="h-4 w-4" />
+                                ) : (
+                                  <ChevronRight className="h-4 w-4" />
+                                )}
+                                <span className="font-semibold">{store.storeName}</span>
+                              </button>
+                            </td>
+                            <td className="p-2 text-right">
+                              <Badge variant="outline" className="mr-2">
+                                <Ruler className="h-3 w-3 mr-1" />
+                                {formatNumber(store.medición)}
+                              </Badge>
+                            </td>
+                            <td className="p-2 text-right">
+                              <Badge variant="outline" className="mr-2">
+                                <Scissors className="h-3 w-3 mr-1" />
+                                {formatNumber(store.fitting)}
+                              </Badge>
+                            </td>
+                            <td className="p-2 text-right font-semibold">
+                              {formatNumber(store.total)}
+                            </td>
+                            <td className="p-2 text-right">
+                              <Badge
+                                variant={storeOccupation?.overall.percentage && storeOccupation.overall.percentage > 80 ? 'destructive' : 'secondary'}
+                              >
+                                {storeOccupation?.overall.percentage || 0}%
+                              </Badge>
+                            </td>
+                          </tr>
+                          {/* Filas de empleados (con sangría) */}
+                          {isExpanded && store.employees.map((employee) => {
+                            const employeeOccupation = storeOccupation?.employees.find(
+                              e => e.employeeName === employee.employeeName
+                            )
+                            return (
+                              <tr key={employee.employeeName} className="border-b">
+                                <td className="p-2 pl-8 text-muted-foreground">
+                                  {employee.employeeName}
+                                </td>
+                                <td className="p-2 text-right">
+                                  <Badge variant="outline" className="mr-2">
+                                    <Ruler className="h-3 w-3 mr-1" />
+                                    {formatNumber(employee.medición)}
+                                  </Badge>
+                                </td>
+                                <td className="p-2 text-right">
+                                  <Badge variant="outline" className="mr-2">
+                                    <Scissors className="h-3 w-3 mr-1" />
+                                    {formatNumber(employee.fitting)}
+                                  </Badge>
+                                </td>
+                                <td className="p-2 text-right">
+                                  {formatNumber(employee.total)}
+                                </td>
+                                <td className="p-2 text-right">
+                                  <Badge
+                                    variant={employeeOccupation?.overall.percentage && employeeOccupation.overall.percentage > 80 ? 'destructive' : 'secondary'}
+                                  >
+                                    {employeeOccupation?.overall.percentage || 0}%
+                                  </Badge>
+                                </td>
+                              </tr>
+                            )
+                          })}
+                        </React.Fragment>
                       )
                     })}
                   </tbody>
