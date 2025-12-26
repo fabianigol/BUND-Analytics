@@ -1,0 +1,1051 @@
+   ▲ Next.js 16.0.7 (webpack)
+   - Local:         http://localhost:3000
+   - Network:       http://192.168.1.44:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+ ✓ Ready in 1736ms
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ ○ Compiling / ...
+ GET / 200 in 4.0s (compile: 3.4s, proxy.ts: 315ms, render: 308ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 1462ms (compile: 1240ms, proxy.ts: 196ms, render: 26ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:25:21.592Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:25:21.597Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:25:21.598Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:25:21.601Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:25:21.603Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:25:21.656Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=monthly&months=12 200 in 2.7s (compile: 1364ms, proxy.ts: 323ms, render: 996ms)
+[Acuity Stats] Found 41 cancellations
+ GET /api/acuity/stats?type=cancellations 200 in 2.7s (compile: 1425ms, proxy.ts: 262ms, render: 1011ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Found 301 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1603848252,
+  datetime: '2026-01-14T18:15:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Pablo Oliva'
+}
+ GET /api/acuity/stats?type=upcoming&days=21 200 in 2.7s (compile: 1363ms, proxy.ts: 324ms, render: 1048ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/acuity/stats?type=daily&year=2025&month=12 200 in 2.8s (compile: 1557ms, proxy.ts: 130ms, render: 1075ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/acuity/stats?type=occupation&days=21 200 in 2.9s (compile: 1364ms, proxy.ts: 323ms, render: 1173ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/acuity/stats?type=availability&days=21 200 in 2.9s (compile: 1418ms, proxy.ts: 269ms, render: 1184ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-11-30T23:00:00.000Z',
+  endDateStr: '2025-12-31T22:59:59.999Z',
+  futureEndDateStr: '2025-12-31T22:59:59.999Z',
+  startDateStrOnly: '2025-12-01',
+  endDateStrOnly: '2025-12-31',
+  futureEndDateStrOnly: '2025-12-31',
+  category: 'fitting',
+  calendar: null,
+  todayISO: '2025-12-26T15:25:22.683Z',
+  todayStartISO: '2025-11-30T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-11-30T23:00:00.000Z',
+  endDateStr: '2025-12-31T22:59:59.999Z',
+  futureEndDateStr: '2025-12-31T22:59:59.999Z',
+  startDateStrOnly: '2025-12-01',
+  endDateStrOnly: '2025-12-31',
+  futureEndDateStrOnly: '2025-12-31',
+  category: 'medición',
+  calendar: null,
+  todayISO: '2025-12-26T15:25:22.687Z',
+  todayStartISO: '2025-11-30T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:25:22.730Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:25:22.732Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Found 66 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1604221444,
+  datetime: '2025-12-26T10:51:00+00:00',
+  status: 'scheduled',
+  category: 'fitting',
+  calendar: 'José Jiménez'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2025-12-01&endDate=2025-12-31&category=fitting 200 in 307ms (compile: 4ms, proxy.ts: 97ms, render: 207ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Found 134 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1604241884,
+  datetime: '2025-12-30T17:30:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Andrea Quiñones'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2025-12-01&endDate=2025-12-31&category=medici%C3%B3n 200 in 332ms (compile: 4ms, proxy.ts: 102ms, render: 226ms)
+ GET /api/acuity/stats?type=monthly&months=12 200 in 294ms (compile: 3ms, proxy.ts: 97ms, render: 194ms)
+[Acuity Stats] Found 41 cancellations
+ GET /api/acuity/stats?type=cancellations 200 in 280ms (compile: 3ms, proxy.ts: 76ms, render: 200ms)
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:25:22.855Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:25:22.856Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:25:23.017Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Found 301 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1603848252,
+  datetime: '2026-01-14T18:15:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Pablo Oliva'
+}
+ GET /api/acuity/stats?type=upcoming&days=21 200 in 362ms (compile: 6ms, proxy.ts: 88ms, render: 268ms)
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:25:23.042Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-11-30T23:00:00.000Z',
+  endDateStr: '2025-12-31T22:59:59.999Z',
+  futureEndDateStr: '2025-12-31T22:59:59.999Z',
+  startDateStrOnly: '2025-12-01',
+  endDateStrOnly: '2025-12-31',
+  futureEndDateStrOnly: '2025-12-31',
+  category: 'medición',
+  calendar: null,
+  todayISO: '2025-12-26T15:25:23.043Z',
+  todayStartISO: '2025-11-30T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=daily&year=2025&month=12 200 in 370ms (compile: 2ms, proxy.ts: 82ms, render: 285ms)
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-11-30T23:00:00.000Z',
+  endDateStr: '2025-12-31T22:59:59.999Z',
+  futureEndDateStr: '2025-12-31T22:59:59.999Z',
+  startDateStrOnly: '2025-12-01',
+  endDateStrOnly: '2025-12-31',
+  futureEndDateStrOnly: '2025-12-31',
+  category: 'fitting',
+  calendar: null,
+  todayISO: '2025-12-26T15:25:23.048Z',
+  todayStartISO: '2025-11-30T23:00:00.000Z'
+}
+[Acuity Stats] Found 66 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1604221444,
+  datetime: '2025-12-26T10:51:00+00:00',
+  status: 'scheduled',
+  category: 'fitting',
+  calendar: 'José Jiménez'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2025-12-01&endDate=2025-12-31&category=fitting 200 in 297ms (compile: 6ms, proxy.ts: 85ms, render: 206ms)
+[Acuity Stats] Found 134 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1604241884,
+  datetime: '2025-12-30T17:30:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Andrea Quiñones'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2025-12-01&endDate=2025-12-31&category=medici%C3%B3n 200 in 325ms (compile: 5ms, proxy.ts: 86ms, render: 234ms)
+ GET /api/acuity/stats?type=occupation&days=21 200 in 399ms (compile: 2ms, proxy.ts: 99ms, render: 297ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-02-01T22:59:59.999Z',
+  futureEndDateStr: '2026-02-01T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-02-01',
+  futureEndDateStrOnly: '2026-02-01',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:25:27.771Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:25:27.779Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-02-01T22:59:59.999Z',
+  futureEndDateStr: '2026-02-01T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-02-01',
+  futureEndDateStrOnly: '2026-02-01',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:25:27.780Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-02-01T22:59:59.999Z',
+  futureEndDateStr: '2026-02-01T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-02-01',
+  futureEndDateStrOnly: '2026-02-01',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:25:27.781Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-02-01T22:59:59.999Z',
+  futureEndDateStr: '2026-02-01T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-02-01',
+  futureEndDateStrOnly: '2026-02-01',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:25:27.789Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=monthly&months=12 200 in 406ms (compile: 12ms, proxy.ts: 201ms, render: 194ms)
+[Acuity Stats] Found 29 cancellations
+ GET /api/acuity/stats?type=cancellations&startDate=2025-12-26&endDate=2026-02-01 200 in 419ms (compile: 4ms, proxy.ts: 209ms, render: 206ms)
+[Acuity Stats] Found 299 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1603848252,
+  datetime: '2026-01-14T18:15:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Pablo Oliva'
+}
+ GET /api/acuity/stats?type=upcoming&days=21&startDate=2025-12-26&endDate=2026-02-01 200 in 435ms (compile: 1303µs, proxy.ts: 237ms, render: 197ms)
+ GET /api/acuity/stats?type=availability&days=21&startDate=2025-12-26&endDate=2026-02-01 200 in 525ms (compile: 13ms, proxy.ts: 199ms, render: 313ms)
+ GET /api/acuity/stats?type=occupation&days=21&startDate=2025-12-26&endDate=2026-02-01 200 in 596ms (compile: 14ms, proxy.ts: 198ms, render: 385ms)
+ GET /api/acuity/stats?type=availability&days=21 200 in 57s (compile: 9ms, proxy.ts: 93ms, render: 57s)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 364ms (compile: 115ms, proxy.ts: 220ms, render: 28ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 186ms (compile: 4ms, proxy.ts: 164ms, render: 18ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 128ms (compile: 4ms, proxy.ts: 109ms, render: 15ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: false, email: undefined }
+ GET /api/acuity/stats?type=availability&days=21 401 in 1236ms (compile: 1199ms, proxy.ts: 17ms, render: 19ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 214ms (compile: 53ms, proxy.ts: 144ms, render: 18ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 296ms (compile: 55ms, proxy.ts: 178ms, render: 63ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 553ms (compile: 24ms, proxy.ts: 137ms, render: 392ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:29:08.685Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:29:08.713Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:29:08.717Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:29:08.728Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:29:08.732Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:29:08.743Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=daily&year=2025&month=12 200 in 425ms (compile: 44ms, proxy.ts: 185ms, render: 197ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Found 41 cancellations
+ GET /api/acuity/stats?type=cancellations 200 in 478ms (compile: 15ms, proxy.ts: 267ms, render: 195ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/acuity/stats?type=monthly&months=12 200 in 492ms (compile: 8ms, proxy.ts: 274ms, render: 209ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Found 301 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1603848252,
+  datetime: '2026-01-14T18:15:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Pablo Oliva'
+}
+ GET /api/acuity/stats?type=upcoming&days=21 200 in 533ms (compile: 7ms, proxy.ts: 275ms, render: 250ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Stats Availability] Found 42 employee availability records
+[Stats Availability] Found 78 calendars for mapping
+[Stats Availability] Calendar ID to Store map size: 27
+[Stats Availability] Calendar Name to Store map size: 27
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Records without calendar_id: 42
+[Stats Availability] Records with unknown store: 42
+[Stats Availability] Employee data map size: 1
+[Stats Availability] Creating store entry for: Unknown
+[Stats Availability] Added employee Unknown to store Unknown (calendar_id=-1)
+[Stats Availability] Total employees added to stores: 1
+ GET /api/acuity/stats?type=availability&days=21 200 in 591ms (compile: 25ms, proxy.ts: 244ms, render: 322ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-11-30T23:00:00.000Z',
+  endDateStr: '2025-12-31T22:59:59.999Z',
+  futureEndDateStr: '2025-12-31T22:59:59.999Z',
+  startDateStrOnly: '2025-12-01',
+  endDateStrOnly: '2025-12-31',
+  futureEndDateStrOnly: '2025-12-31',
+  category: 'medición',
+  calendar: null,
+  todayISO: '2025-12-26T15:29:08.964Z',
+  todayStartISO: '2025-11-30T23:00:00.000Z'
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/acuity/stats?type=occupation&days=21 200 in 629ms (compile: 34ms, proxy.ts: 235ms, render: 361ms)
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-11-30T23:00:00.000Z',
+  endDateStr: '2025-12-31T22:59:59.999Z',
+  futureEndDateStr: '2025-12-31T22:59:59.999Z',
+  startDateStrOnly: '2025-12-01',
+  endDateStrOnly: '2025-12-31',
+  futureEndDateStrOnly: '2025-12-31',
+  category: 'fitting',
+  calendar: null,
+  todayISO: '2025-12-26T15:29:09.001Z',
+  todayStartISO: '2025-11-30T23:00:00.000Z'
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:29:09.077Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:29:09.098Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Found 66 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1604221444,
+  datetime: '2025-12-26T10:51:00+00:00',
+  status: 'scheduled',
+  category: 'fitting',
+  calendar: 'José Jiménez'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2025-12-01&endDate=2025-12-31&category=fitting 200 in 257ms (compile: 1942µs, proxy.ts: 82ms, render: 173ms)
+[Acuity Stats] Found 134 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1604241884,
+  datetime: '2025-12-30T17:30:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Andrea Quiñones'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2025-12-01&endDate=2025-12-31&category=medici%C3%B3n 200 in 318ms (compile: 1516µs, proxy.ts: 92ms, render: 225ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:29:09.139Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:29:09.180Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Found 41 cancellations
+ GET /api/acuity/stats?type=cancellations 200 in 304ms (compile: 3ms, proxy.ts: 88ms, render: 213ms)
+ GET /api/acuity/stats?type=daily&year=2025&month=12 200 in 349ms (compile: 3ms, proxy.ts: 131ms, render: 216ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/acuity/stats?type=monthly&months=12 200 in 287ms (compile: 3ms, proxy.ts: 82ms, render: 203ms)
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:29:09.276Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 21,
+  startDateStr: '2025-12-25T23:00:00.000Z',
+  endDateStr: '2026-01-16T22:59:59.999Z',
+  futureEndDateStr: '2026-12-26T22:59:59.999Z',
+  startDateStrOnly: '2025-12-26',
+  endDateStrOnly: '2026-01-16',
+  futureEndDateStrOnly: '2026-12-26',
+  category: null,
+  calendar: null,
+  todayISO: '2025-12-26T15:29:09.323Z',
+  todayStartISO: '2025-12-25T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-11-30T23:00:00.000Z',
+  endDateStr: '2025-12-31T22:59:59.999Z',
+  futureEndDateStr: '2025-12-31T22:59:59.999Z',
+  startDateStrOnly: '2025-12-01',
+  endDateStrOnly: '2025-12-31',
+  futureEndDateStrOnly: '2025-12-31',
+  category: 'fitting',
+  calendar: null,
+  todayISO: '2025-12-26T15:29:09.382Z',
+  todayStartISO: '2025-11-30T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-11-30T23:00:00.000Z',
+  endDateStr: '2025-12-31T22:59:59.999Z',
+  futureEndDateStr: '2025-12-31T22:59:59.999Z',
+  startDateStrOnly: '2025-12-01',
+  endDateStrOnly: '2025-12-31',
+  futureEndDateStrOnly: '2025-12-31',
+  category: 'medición',
+  calendar: null,
+  todayISO: '2025-12-26T15:29:09.414Z',
+  todayStartISO: '2025-11-30T23:00:00.000Z'
+}
+[Acuity Stats] Found 66 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1604221444,
+  datetime: '2025-12-26T10:51:00+00:00',
+  status: 'scheduled',
+  category: 'fitting',
+  calendar: 'José Jiménez'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2025-12-01&endDate=2025-12-31&category=fitting 200 in 269ms (compile: 5ms, proxy.ts: 88ms, render: 176ms)
+ GET /api/acuity/stats?type=occupation&days=21 200 in 417ms (compile: 4ms, proxy.ts: 80ms, render: 333ms)
+[Acuity Stats] Found 134 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1604241884,
+  datetime: '2025-12-30T17:30:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Andrea Quiñones'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2025-12-01&endDate=2025-12-31&category=medici%C3%B3n 200 in 324ms (compile: 1551µs, proxy.ts: 109ms, render: 213ms)
+[Stats Availability] Found 42 employee availability records
+[Stats Availability] Found 78 calendars for mapping
+[Stats Availability] Calendar ID to Store map size: 27
+[Stats Availability] Calendar Name to Store map size: 27
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Record without calendar_id and unknown store: calendar_name=Unknown
+[Stats Availability] Records without calendar_id: 42
+[Stats Availability] Records with unknown store: 42
+[Stats Availability] Employee data map size: 1
+[Stats Availability] Creating store entry for: Unknown
+[Stats Availability] Added employee Unknown to store Unknown (calendar_id=-1)
+[Stats Availability] Total employees added to stores: 1
+ GET /api/acuity/stats?type=availability&days=21 200 in 449ms (compile: 1712µs, proxy.ts: 115ms, render: 332ms)
+[Acuity Stats] Found 301 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1603848252,
+  datetime: '2026-01-14T18:15:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Pablo Oliva'
+}
+ GET /api/acuity/stats?type=upcoming&days=21 200 in 969ms (compile: 8ms, proxy.ts: 92ms, render: 869ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 294ms (compile: 26ms, proxy.ts: 243ms, render: 24ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 290ms (compile: 88ms, proxy.ts: 169ms, render: 33ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 452ms (compile: 244ms, proxy.ts: 173ms, render: 35ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 117ms (compile: 5ms, proxy.ts: 93ms, render: 19ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 216ms (compile: 63ms, proxy.ts: 133ms, render: 20ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 364ms (compile: 4ms, proxy.ts: 350ms, render: 10ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 143ms (compile: 4ms, proxy.ts: 125ms, render: 13ms)

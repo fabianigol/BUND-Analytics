@@ -31,6 +31,25 @@ import Image from 'next/image'
 type CategoryFilter = 'all' | 'medición' | 'fitting'
 
 /**
+ * Obtiene el variant y className del Badge según el porcentaje de ocupación
+ * - 90-100%: rojo (destructive)
+ * - 70-90%: naranja (outline con className personalizado)
+ * - 50-70%: amarillo (outline con className personalizado)
+ * - < 50%: verde (outline con className personalizado)
+ */
+function getOccupationBadgeProps(percentage: number): { variant: 'destructive' | 'outline' | 'secondary', className?: string } {
+  if (percentage >= 90) {
+    return { variant: 'destructive' }
+  } else if (percentage >= 70) {
+    return { variant: 'outline', className: 'border-orange-500 bg-orange-50 text-orange-700 dark:bg-orange-950 dark:text-orange-400 dark:border-orange-600' }
+  } else if (percentage >= 50) {
+    return { variant: 'outline', className: 'border-yellow-500 bg-yellow-50 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-400 dark:border-yellow-600' }
+  } else {
+    return { variant: 'outline', className: 'border-green-500 bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400 dark:border-green-600' }
+  }
+}
+
+/**
  * Convierte el nombre completo de una tienda a su acrónimo
  */
 function getStoreAcronym(storeName: string): string {
@@ -469,9 +488,9 @@ export default function CitasPage() {
     return date.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
   }
 
-  const occupationByCalendarData = filteredStats.occupation?.byCalendar.map(cal => ({
-    name: cal.calendarName,
-    value: cal.overall.percentage,
+  const occupationByStoreData = filteredStats.occupation?.byStore.map(store => ({
+    name: getStoreAcronym(store.storeName),
+    value: store.overall.percentage,
   })) || []
 
   return (
@@ -797,7 +816,7 @@ export default function CitasPage() {
         )}
 
         {/* Ocupación por tienda */}
-        {occupationByCalendarData.length > 0 && (
+        {occupationByStoreData.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle>Ocupación por Tienda</CardTitle>
@@ -806,7 +825,7 @@ export default function CitasPage() {
             <CardContent>
               <BarChart
                 title=""
-                data={occupationByCalendarData}
+                data={occupationByStoreData}
                 formatValue={(v) => `${v}%`}
                 height={300}
               />
@@ -828,7 +847,9 @@ export default function CitasPage() {
                     <tr className="border-b">
                       <th className="text-left p-2 font-medium">Tienda</th>
                       <th className="text-right p-2 font-medium">Medición</th>
+                      <th className="text-right p-2 font-medium">Slots Libres Medición</th>
                       <th className="text-right p-2 font-medium">Fitting</th>
+                      <th className="text-right p-2 font-medium">Slots Libres Fitting</th>
                       <th className="text-right p-2 font-medium">Total</th>
                       <th className="text-right p-2 font-medium">% Ocupación</th>
                     </tr>
@@ -837,6 +858,9 @@ export default function CitasPage() {
                     {filteredStats.upcoming.byStore.map((store) => {
                       const isExpanded = expandedStores.has(store.storeName)
                       const storeOccupation = filteredStats.occupation?.byStore.find(
+                        s => s.storeName === store.storeName
+                      )
+                      const storeAvailability = filteredStats.availability?.byStore.find(
                         s => s.storeName === store.storeName
                       )
                       
@@ -872,9 +896,19 @@ export default function CitasPage() {
                               </Badge>
                             </td>
                             <td className="p-2 text-right">
+                              <Badge variant="secondary" className="mr-2">
+                                {formatNumber(storeAvailability?.medición?.available || 0)}
+                              </Badge>
+                            </td>
+                            <td className="p-2 text-right">
                               <Badge variant="outline" className="mr-2">
                                 <Scissors className="h-3 w-3 mr-1" />
                                 {formatNumber(store.fitting)}
+                              </Badge>
+                            </td>
+                            <td className="p-2 text-right">
+                              <Badge variant="secondary" className="mr-2">
+                                {formatNumber(storeAvailability?.fitting?.available || 0)}
                               </Badge>
                             </td>
                             <td className="p-2 text-right font-semibold">
@@ -882,7 +916,7 @@ export default function CitasPage() {
                             </td>
                             <td className="p-2 text-right">
                               <Badge
-                                variant={storeOccupation?.overall.percentage && storeOccupation.overall.percentage > 80 ? 'destructive' : 'secondary'}
+                                {...getOccupationBadgeProps(storeOccupation?.overall.percentage || 0)}
                               >
                                 {storeOccupation?.overall.percentage || 0}%
                               </Badge>
@@ -891,6 +925,9 @@ export default function CitasPage() {
                           {/* Filas de empleados (con sangría) */}
                           {isExpanded && store.employees.map((employee) => {
                             const employeeOccupation = storeOccupation?.employees.find(
+                              e => e.employeeName === employee.employeeName
+                            )
+                            const employeeAvailability = storeAvailability?.employees.find(
                               e => e.employeeName === employee.employeeName
                             )
                             return (
@@ -905,9 +942,19 @@ export default function CitasPage() {
                                   </Badge>
                                 </td>
                                 <td className="p-2 text-right">
+                                  <Badge variant="secondary" className="mr-2">
+                                    {formatNumber(employeeAvailability?.medición?.available || 0)}
+                                  </Badge>
+                                </td>
+                                <td className="p-2 text-right">
                                   <Badge variant="outline" className="mr-2">
                                     <Scissors className="h-3 w-3 mr-1" />
                                     {formatNumber(employee.fitting)}
+                                  </Badge>
+                                </td>
+                                <td className="p-2 text-right">
+                                  <Badge variant="secondary" className="mr-2">
+                                    {formatNumber(employeeAvailability?.fitting?.available || 0)}
                                   </Badge>
                                 </td>
                                 <td className="p-2 text-right">
@@ -915,7 +962,7 @@ export default function CitasPage() {
                                 </td>
                                 <td className="p-2 text-right">
                                   <Badge
-                                    variant={employeeOccupation?.overall.percentage && employeeOccupation.overall.percentage > 80 ? 'destructive' : 'secondary'}
+                                    {...getOccupationBadgeProps(employeeOccupation?.overall.percentage || 0)}
                                   >
                                     {employeeOccupation?.overall.percentage || 0}%
                                   </Badge>
@@ -1039,14 +1086,46 @@ export default function CitasPage() {
                                     {formatNumber(store.total)}
                                   </div>
                                 </div>
-                                <div className="relative p-4 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-950/30 dark:to-purple-900/20 border border-purple-200/50 dark:border-purple-800/30">
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <TrendingUp className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                                    <div className="text-xs font-medium text-purple-700 dark:text-purple-300 uppercase tracking-wide">
+                                <div className={`relative p-4 rounded-xl border ${
+                                  occupationPercentage >= 90
+                                    ? 'bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-950/30 dark:to-red-900/20 border-red-200/50 dark:border-red-800/30'
+                                    : occupationPercentage >= 70
+                                    ? 'bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/30 dark:to-orange-900/20 border-orange-200/50 dark:border-orange-800/30'
+                                    : occupationPercentage >= 50
+                                    ? 'bg-gradient-to-br from-yellow-50 to-yellow-100/50 dark:from-yellow-950/30 dark:to-yellow-900/20 border-yellow-200/50 dark:border-yellow-800/30'
+                                    : 'bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-950/30 dark:to-green-900/20 border-green-200/50 dark:border-green-800/30'
+                                }`}>
+                                  <div className={`flex items-center gap-2 mb-2 ${
+                                    occupationPercentage >= 90
+                                      ? 'text-red-700 dark:text-red-300'
+                                      : occupationPercentage >= 70
+                                      ? 'text-orange-700 dark:text-orange-300'
+                                      : occupationPercentage >= 50
+                                      ? 'text-yellow-700 dark:text-yellow-300'
+                                      : 'text-green-700 dark:text-green-300'
+                                  }`}>
+                                    <TrendingUp className={`h-4 w-4 ${
+                                      occupationPercentage >= 90
+                                        ? 'text-red-600 dark:text-red-400'
+                                        : occupationPercentage >= 70
+                                        ? 'text-orange-600 dark:text-orange-400'
+                                        : occupationPercentage >= 50
+                                        ? 'text-yellow-600 dark:text-yellow-400'
+                                        : 'text-green-600 dark:text-green-400'
+                                    }`} />
+                                    <div className="text-xs font-medium uppercase tracking-wide">
                                       Ocupación
                                     </div>
                                   </div>
-                                  <div className="text-3xl font-bold text-purple-900 dark:text-purple-100">
+                                  <div className={`text-3xl font-bold ${
+                                    occupationPercentage >= 90
+                                      ? 'text-red-900 dark:text-red-100'
+                                      : occupationPercentage >= 70
+                                      ? 'text-orange-900 dark:text-orange-100'
+                                      : occupationPercentage >= 50
+                                      ? 'text-yellow-900 dark:text-yellow-100'
+                                      : 'text-green-900 dark:text-green-100'
+                                  }`}>
                                     {occupationPercentage}%
                                   </div>
                                 </div>
@@ -1060,7 +1139,15 @@ export default function CitasPage() {
                                 </div>
                                 <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                                   <div 
-                                    className="h-full bg-gradient-to-r from-purple-500 to-purple-600 dark:from-purple-400 dark:to-purple-500 transition-all duration-500 rounded-full"
+                                    className={`h-full transition-all duration-500 rounded-full ${
+                                      occupationPercentage >= 90
+                                        ? 'bg-gradient-to-r from-red-500 to-red-600 dark:from-red-400 dark:to-red-500'
+                                        : occupationPercentage >= 70
+                                        ? 'bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-400 dark:to-orange-500'
+                                        : occupationPercentage >= 50
+                                        ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 dark:from-yellow-400 dark:to-yellow-500'
+                                        : 'bg-gradient-to-r from-green-500 to-green-600 dark:from-green-400 dark:to-green-500'
+                                    }`}
                                     style={{ width: `${Math.min(occupationPercentage, 100)}%` }}
                                   />
                                 </div>

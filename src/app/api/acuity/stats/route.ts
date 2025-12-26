@@ -324,42 +324,111 @@ export async function GET(request: NextRequest) {
 
       case 'availability': {
         // Citas disponibles próximos N días
-        // Usar nueva tabla acuity_availability_by_store que ya tiene datos agregados por tienda
+        // Usar acuity_availability_by_store para datos agregados por tienda
+        // Y acuity_availability para datos por empleado
         // Para campos DATE usamos formato YYYY-MM-DD
         // Extender rango a 1 año para incluir todas las fechas futuras
         // futureEndDateStrOnly ya está calculado arriba
         
-        let query = supabase
+        // Consultar datos agregados por tienda
+        let queryByStore = supabase
           .from('acuity_availability_by_store')
           .select('*')
           .gte('date', startDateStrOnly)
           .lte('date', futureEndDateStrOnly)
 
         if (category) {
-          query = query.eq('appointment_category', category)
+          queryByStore = queryByStore.eq('appointment_category', category)
         }
-        // Nota: No hay filtro por calendar ya que esta tabla es por tienda, no por empleado
 
-        const { data: availability, error } = await query
+        // Consultar datos por empleado
+        let queryByEmployee = supabase
+          .from('acuity_availability')
+          .select('*')
+          .gte('date', startDateStrOnly)
+          .lte('date', futureEndDateStrOnly)
 
-        if (error) throw error
+        if (category) {
+          queryByEmployee = queryByEmployee.eq('appointment_category', category)
+        }
 
-        const availabilityTyped = (availability || []) as AcuityAvailabilityByStore[]
+        // Consultar calendarios para mapear empleados a tiendas
+        // Usamos calendar_id para mapeo más confiable que calendar_name
+        const { data: calendars } = await supabase
+          .from('acuity_calendars')
+          .select('acuity_calendar_id, name, display_name, appointment_type_name')
+          .eq('is_active', true)
 
-        // Agregar por categoría y tienda
+        const [availabilityByStoreResult, availabilityByEmployeeResult] = await Promise.all([
+          queryByStore,
+          queryByEmployee,
+        ])
+
+        if (availabilityByStoreResult.error) throw availabilityByStoreResult.error
+        if (availabilityByEmployeeResult.error) throw availabilityByEmployeeResult.error
+
+        const availabilityByStoreTyped = (availabilityByStoreResult.data || []) as AcuityAvailabilityByStore[]
+        const availabilityByEmployeeTyped = (availabilityByEmployeeResult.data || []) as AcuityAvailability[]
+
+        // Filtrar registros con calendar_id válido (los registros antiguos pueden tener null)
+        const validEmployeeAvailability = availabilityByEmployeeTyped.filter(
+          avail => avail.calendar_id !== null && avail.calendar_id !== undefined && avail.calendar_name && avail.calendar_name !== 'Unknown'
+        )
+
+        console.log(`[Stats Availability] Found ${availabilityByEmployeeTyped.length} total employee availability records`)
+        console.log(`[Stats Availability] Found ${validEmployeeAvailability.length} valid employee availability records (with calendar_id)`)
+        console.log(`[Stats Availability] Found ${calendars?.length || 0} calendars for mapping`)
+
+        // Crear mapas de calendar_id y calendar_name a store_name usando acuity_calendars
+        const calendarIdToStoreMap = new Map<number, string>()
+        const calendarIdToNameMap = new Map<number, string>()
+        const calendarNameToStoreMap = new Map<string, string>()
+        
+        if (calendars) {
+          const calendarsTyped = calendars as Array<{
+            acuity_calendar_id: number | null
+            name: string
+            display_name: string | null
+            appointment_type_name: string
+          }>
+          
+          for (const cal of calendarsTyped) {
+            if (cal.acuity_calendar_id) {
+              const normalizedStoreName = normalizeStoreName(cal.appointment_type_name)
+              calendarIdToStoreMap.set(cal.acuity_calendar_id, normalizedStoreName)
+              calendarIdToNameMap.set(cal.acuity_calendar_id, cal.name)
+              // Mapear tanto name como display_name al mismo store_name
+              calendarNameToStoreMap.set(cal.name, normalizedStoreName)
+              if (cal.display_name && cal.display_name !== cal.name) {
+                calendarNameToStoreMap.set(cal.display_name, normalizedStoreName)
+              }
+            }
+          }
+        }
+
+        console.log(`[Stats Availability] Calendar ID to Store map size: ${calendarIdToStoreMap.size}`)
+        console.log(`[Stats Availability] Calendar Name to Store map size: ${calendarNameToStoreMap.size}`)
+
+        // Agregar por categoría
         const byCategory = {
           medición: { total: 0, available: 0, booked: 0 },
           fitting: { total: 0, available: 0, booked: 0 },
         }
 
-        // Agrupar por tienda (store_name) - ya está normalizado en la tabla
+        // Agrupar por tienda (store_name) con empleados
         const byStore = new Map<string, {
           storeName: string
           medición: { total: number; available: number; booked: number }
           fitting: { total: number; available: number; booked: number }
+          employees: Map<string, {
+            employeeName: string
+            medición: { total: number; available: number; booked: number }
+            fitting: { total: number; available: number; booked: number }
+          }>
         }>()
 
-        for (const avail of availabilityTyped) {
+        // Procesar datos agregados por tienda
+        for (const avail of availabilityByStoreTyped) {
           const cat = avail.appointment_category as 'medición' | 'fitting'
           byCategory[cat].total += avail.total_slots || 0
           byCategory[cat].available += avail.available_slots || 0
@@ -373,6 +442,7 @@ export async function GET(request: NextRequest) {
               storeName,
               medición: { total: 0, available: 0, booked: 0 },
               fitting: { total: 0, available: 0, booked: 0 },
+              employees: new Map(),
             })
           }
 
@@ -382,8 +452,129 @@ export async function GET(request: NextRequest) {
           storeData[cat].booked += avail.booked_slots || 0
         }
 
+        // Procesar datos por empleado y agregar a las tiendas
+        // Agrupar primero por empleado (usando calendar_id) para sumar todos los slots de todas las fechas
+        const employeeDataMap = new Map<number, {
+          calendarId: number
+          calendarName: string
+          storeName: string
+          medición: { total: number; available: number; booked: number }
+          fitting: { total: number; available: number; booked: number }
+        }>()
+
+        let recordsWithoutCalendarId = 0
+        let recordsWithUnknownStore = 0
+        
+        for (const avail of validEmployeeAvailability) {
+          const cat = avail.appointment_category as 'medición' | 'fitting'
+          const calendarId = avail.calendar_id
+          
+          // Si no hay calendar_id, intentar usar calendar_name como fallback
+          if (!calendarId) {
+            recordsWithoutCalendarId++
+            const calendarName = avail.calendar_name || 'Unknown'
+            const storeName = calendarNameToStoreMap.get(calendarName) || 'Unknown'
+            if (storeName === 'Unknown') {
+              recordsWithUnknownStore++
+              console.log(`[Stats Availability] Record without calendar_id and unknown store: calendar_name=${calendarName}`)
+            }
+
+            if (!employeeDataMap.has(-1)) { // Usar -1 como clave para empleados sin calendar_id
+              employeeDataMap.set(-1, {
+                calendarId: -1,
+                calendarName,
+                storeName,
+                medición: { total: 0, available: 0, booked: 0 },
+                fitting: { total: 0, available: 0, booked: 0 },
+              })
+            }
+
+            const employeeData = employeeDataMap.get(-1)!
+            employeeData[cat].total += avail.total_slots || 0
+            employeeData[cat].available += avail.available_slots || 0
+            employeeData[cat].booked += avail.booked_slots || 0
+            continue
+          }
+
+          // Usar calendar_id para mapeo más confiable
+          const storeName = calendarIdToStoreMap.get(calendarId) || 'Unknown'
+          const calendarName = calendarIdToNameMap.get(calendarId) || avail.calendar_name || 'Unknown'
+          
+          if (storeName === 'Unknown') {
+            recordsWithUnknownStore++
+            console.log(`[Stats Availability] Record with calendar_id=${calendarId} but unknown store. calendar_name=${avail.calendar_name}`)
+          }
+
+          // Clave única por empleado usando calendar_id
+          if (!employeeDataMap.has(calendarId)) {
+            employeeDataMap.set(calendarId, {
+              calendarId,
+              calendarName,
+              storeName,
+              medición: { total: 0, available: 0, booked: 0 },
+              fitting: { total: 0, available: 0, booked: 0 },
+            })
+          }
+
+          const employeeData = employeeDataMap.get(calendarId)!
+          employeeData[cat].total += avail.total_slots || 0
+          employeeData[cat].available += avail.available_slots || 0
+          employeeData[cat].booked += avail.booked_slots || 0
+        }
+
+        console.log(`[Stats Availability] Records without calendar_id: ${recordsWithoutCalendarId}`)
+        console.log(`[Stats Availability] Records with unknown store: ${recordsWithUnknownStore}`)
+        console.log(`[Stats Availability] Employee data map size: ${employeeDataMap.size}`)
+
+        // Ahora agregar los empleados a sus tiendas correspondientes
+        let employeesAdded = 0
+        for (const [employeeKey, employeeData] of employeeDataMap) {
+          const storeName = employeeData.storeName
+
+          // Si la tienda no existe, crearla (por si acaso)
+          if (!byStore.has(storeName)) {
+            console.log(`[Stats Availability] Creating store entry for: ${storeName}`)
+            byStore.set(storeName, {
+              storeName,
+              medición: { total: 0, available: 0, booked: 0 },
+              fitting: { total: 0, available: 0, booked: 0 },
+              employees: new Map(),
+            })
+          }
+
+          const storeData = byStore.get(storeName)!
+          
+          // Agregar o actualizar empleado en la tienda
+          if (!storeData.employees.has(employeeData.calendarName)) {
+            storeData.employees.set(employeeData.calendarName, {
+              employeeName: employeeData.calendarName,
+              medición: { total: 0, available: 0, booked: 0 },
+              fitting: { total: 0, available: 0, booked: 0 },
+            })
+            employeesAdded++
+            console.log(`[Stats Availability] Added employee ${employeeData.calendarName} to store ${storeName} (calendar_id=${employeeData.calendarId})`)
+          }
+
+          const storeEmployeeData = storeData.employees.get(employeeData.calendarName)!
+          storeEmployeeData.medición.total += employeeData.medición.total
+          storeEmployeeData.medición.available += employeeData.medición.available
+          storeEmployeeData.medición.booked += employeeData.medición.booked
+          storeEmployeeData.fitting.total += employeeData.fitting.total
+          storeEmployeeData.fitting.available += employeeData.fitting.available
+          storeEmployeeData.fitting.booked += employeeData.fitting.booked
+        }
+
+        console.log(`[Stats Availability] Total employees added to stores: ${employeesAdded}`)
+
         // Convertir a Array y ordenar tiendas por total descendente
         const byStoreArray = Array.from(byStore.values())
+          .map(store => ({
+            storeName: store.storeName,
+            medición: store.medición,
+            fitting: store.fitting,
+            employees: Array.from(store.employees.values())
+              .sort((a, b) => (b.medición.total + b.fitting.total) - (a.medición.total + a.fitting.total)),
+          }))
           .sort((a, b) => (b.medición.total + b.fitting.total) - (a.medición.total + a.fitting.total))
 
         return NextResponse.json({
@@ -419,6 +610,19 @@ export async function GET(request: NextRequest) {
         // Extender rango para ocupación también
         const futureEndDateOnly = format(addDays(today, 365), 'yyyy-MM-dd')
         
+        // Para el cálculo general (byCategory) usar acuity_availability_by_store
+        // que incluye TODOS los slots (con y sin empleado asignado)
+        let availabilityByStoreQuery = supabase
+          .from('acuity_availability_by_store')
+          .select('*')
+          .gte('date', startDateStrOnly)
+          .lte('date', futureEndDateStrOnly)
+
+        if (category) {
+          availabilityByStoreQuery = availabilityByStoreQuery.eq('appointment_category', category)
+        }
+
+        // Para desgloses por empleado, usar acuity_availability
         let availabilityQueryForOccupation = supabase
           .from('acuity_availability')
           .select('*')
@@ -432,19 +636,24 @@ export async function GET(request: NextRequest) {
           availabilityQueryForOccupation = availabilityQueryForOccupation.eq('calendar_name', calendar)
         }
 
-        const [{ data: appointments }, { data: availability }] = await Promise.all([
+        const [{ data: appointments }, { data: availabilityByStore }, { data: availability }] = await Promise.all([
           appointmentsQuery,
+          availabilityByStoreQuery,
           availabilityQueryForOccupation,
         ])
 
         if (!appointments) {
           console.log('[Acuity Stats] No appointments found for occupation calculation')
         }
+        if (!availabilityByStore) {
+          console.log('[Acuity Stats] No availability by store found for occupation calculation')
+        }
         if (!availability) {
           console.log('[Acuity Stats] No availability found for occupation calculation')
         }
 
         const appointmentsTyped = (appointments || []) as AcuityAppointment[]
+        const availabilityByStoreTyped = (availabilityByStore || []) as AcuityAvailabilityByStore[]
         const availabilityTyped = (availability || []) as AcuityAvailability[]
 
         // Obtener mapeo de calendar_name -> appointment_type_name desde acuity_calendars
@@ -463,14 +672,15 @@ export async function GET(request: NextRequest) {
           }
         }
 
-        // Calcular ocupación
+        // Calcular ocupación GENERAL usando acuity_availability_by_store
+        // Esto incluye TODOS los slots (con y sin empleado asignado)
         const byCategory = {
           medición: { booked: 0, total: 0, percentage: 0 },
           fitting: { booked: 0, total: 0, percentage: 0 },
           overall: { booked: 0, total: 0, percentage: 0 },
         }
 
-        for (const avail of availabilityTyped) {
+        for (const avail of availabilityByStoreTyped) {
           const cat = avail.appointment_category as 'medición' | 'fitting'
           byCategory[cat].booked += avail.booked_slots || 0
           byCategory[cat].total += avail.total_slots || 0
@@ -478,10 +688,11 @@ export async function GET(request: NextRequest) {
           byCategory.overall.total += avail.total_slots || 0
         }
 
-        // Calcular porcentajes
+        // Calcular porcentajes (limitar a máximo 100%)
         for (const key of ['medición', 'fitting', 'overall'] as const) {
           if (byCategory[key].total > 0) {
-            byCategory[key].percentage = Math.round((byCategory[key].booked / byCategory[key].total) * 100)
+            const percentage = (byCategory[key].booked / byCategory[key].total) * 100
+            byCategory[key].percentage = Math.min(100, Math.round(percentage))
           }
         }
 
@@ -494,6 +705,8 @@ export async function GET(request: NextRequest) {
         }>()
 
         // Por tienda con empleados anidados
+        // IMPORTANTE: Para tiendas, usar acuity_availability_by_store (incluye slots sin empleado asignado)
+        // Para empleados, usar acuity_availability (solo slots por empleado)
         const byStore = new Map<string, {
           storeName: string
           medición: { booked: number; total: number; percentage: number }
@@ -507,6 +720,29 @@ export async function GET(request: NextRequest) {
           }>
         }>()
 
+        // Primero, poblar datos por tienda desde acuity_availability_by_store
+        for (const avail of availabilityByStoreTyped) {
+          const storeName = normalizeStoreName(avail.store_name || 'Unknown')
+          const cat = avail.appointment_category as 'medición' | 'fitting'
+          
+          if (!byStore.has(storeName)) {
+            byStore.set(storeName, {
+              storeName,
+              medición: { booked: 0, total: 0, percentage: 0 },
+              fitting: { booked: 0, total: 0, percentage: 0 },
+              overall: { booked: 0, total: 0, percentage: 0 },
+              employees: new Map(),
+            })
+          }
+
+          const storeData = byStore.get(storeName)!
+          storeData[cat].booked += avail.booked_slots || 0
+          storeData[cat].total += avail.total_slots || 0
+          storeData.overall.booked += avail.booked_slots || 0
+          storeData.overall.total += avail.total_slots || 0
+        }
+
+        // Luego, agregar datos por empleado desde acuity_availability
         for (const avail of availabilityTyped) {
           const calName = avail.calendar_name || 'Unknown'
           const cat = avail.appointment_category as 'medición' | 'fitting'
@@ -527,9 +763,10 @@ export async function GET(request: NextRequest) {
           calData.overall.booked += avail.booked_slots || 0
           calData.overall.total += avail.total_slots || 0
 
-          // Agrupación por tienda usando el mapeo
+          // Agregar empleado dentro de la tienda correspondiente
           const storeName = calendarToStoreMap.get(calName) || 'Unknown'
           if (!byStore.has(storeName)) {
+            // Si la tienda no existe, crearla (aunque debería existir ya)
             byStore.set(storeName, {
               storeName,
               medición: { booked: 0, total: 0, percentage: 0 },
@@ -540,11 +777,7 @@ export async function GET(request: NextRequest) {
           }
 
           const storeData = byStore.get(storeName)!
-          storeData[cat].booked += avail.booked_slots || 0
-          storeData[cat].total += avail.total_slots || 0
-          storeData.overall.booked += avail.booked_slots || 0
-          storeData.overall.total += avail.total_slots || 0
-
+          
           // Agregar empleado dentro de la tienda
           if (!storeData.employees.has(calName)) {
             storeData.employees.set(calName, {
@@ -562,27 +795,32 @@ export async function GET(request: NextRequest) {
           employeeData.overall.total += avail.total_slots || 0
         }
 
-        // Calcular porcentajes por calendario (empleado)
+        // Calcular porcentajes por calendario (empleado) - limitar a máximo 100%
         for (const calData of byCalendar.values()) {
           for (const key of ['medición', 'fitting', 'overall'] as const) {
             if (calData[key].total > 0) {
-              calData[key].percentage = Math.round((calData[key].booked / calData[key].total) * 100)
+              const percentage = (calData[key].booked / calData[key].total) * 100
+              calData[key].percentage = Math.min(100, Math.round(percentage))
             }
           }
         }
 
-        // Calcular porcentajes por tienda y empleados
+        // Calcular porcentajes por tienda y empleados - limitar a máximo 100%
         for (const storeData of byStore.values()) {
           for (const key of ['medición', 'fitting', 'overall'] as const) {
             if (storeData[key].total > 0) {
-              storeData[key].percentage = Math.round((storeData[key].booked / storeData[key].total) * 100)
+              // % = (reservadas) / (reservadas + libres) * 100
+              // total = booked + available, así que: % = booked / total * 100
+              const percentage = (storeData[key].booked / storeData[key].total) * 100
+              storeData[key].percentage = Math.min(100, Math.round(percentage))
             }
           }
           
           for (const employeeData of storeData.employees.values()) {
             for (const key of ['medición', 'fitting', 'overall'] as const) {
               if (employeeData[key].total > 0) {
-                employeeData[key].percentage = Math.round((employeeData[key].booked / employeeData[key].total) * 100)
+                const percentage = (employeeData[key].booked / employeeData[key].total) * 100
+                employeeData[key].percentage = Math.min(100, Math.round(percentage))
               }
             }
           }
@@ -851,7 +1089,7 @@ export async function GET(request: NextRequest) {
 
       case 'availability_history': {
         // Datos históricos de disponibilidad (snapshots)
-        const periodType = searchParams.get('periodType') as 'weekly' | 'monthly' | 'quarterly' | null
+        const periodType = searchParams.get('periodType') as 'daily' | 'weekly' | 'monthly' | 'quarterly' | null
         const storeName = searchParams.get('store') as string | null
 
         let query = supabase

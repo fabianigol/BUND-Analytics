@@ -1,14 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { AcuityService, normalizeStoreName, AcuityAppointmentCategory } from '@/lib/integrations/acuity'
+import { AcuityService, normalizeStoreName, AcuityAppointmentCategory, AvailabilityByEmployeeResult } from '@/lib/integrations/acuity'
 import { createClient } from '@/lib/supabase/server'
 import { Database } from '@/types/database'
 import { format, addMonths } from 'date-fns'
+import { isAuthorizedCronRequest } from '@/lib/utils/cron-auth'
 
 type AcuityAppointment = Database['public']['Tables']['acuity_appointments']['Row']
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
+
+    // Permitir acceso desde cron jobs autorizados sin autenticación de usuario
+    const isCronRequest = isAuthorizedCronRequest(request)
+    
+    // Si no es un cron request, verificar autenticación de usuario
+    if (!isCronRequest) {
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError || !user) {
+        return NextResponse.json(
+          { error: 'Unauthorized', details: 'User not authenticated' },
+          { status: 401 }
+        )
+      }
+    }
 
     // Obtener credenciales desde Supabase
     const { data: settingsData, error: settingsError } = await supabase
@@ -71,8 +86,9 @@ export async function POST(request: NextRequest) {
       console.log(`[Acuity Availability Sync] Appointment type "${type.name}" (ID: ${type.id}) -> Category: ${category}`)
     }
 
-    // 2. Obtener disponibilidad para cada tipo de cita
-    const availabilityData = new Map<string, {
+    // 2. Obtener disponibilidad por empleado para cada tipo de cita
+    const employeeAvailabilityData = new Map<string, AvailabilityByEmployeeResult>()
+    const storeAvailabilityData = new Map<string, {
       date: string
       storeName: string
       appointmentTypeID: number
@@ -82,38 +98,41 @@ export async function POST(request: NextRequest) {
 
     for (const [typeId, typeInfo] of appointmentTypeMap) {
       try {
-        console.log(`[Acuity Availability Sync] Fetching availability for type ${typeId} (${typeInfo.name})...`)
+        console.log(`[Acuity Availability Sync] Fetching availability by employee for type ${typeId} (${typeInfo.name})...`)
         
-        const availabilityResults = await acuityService.getAvailabilityByStore({
+        // Obtener disponibilidad por empleado
+        const employeeResults = await acuityService.getAvailabilityByEmployee({
           appointmentTypeID: typeId,
           appointmentTypeName: typeInfo.name,
           category: typeInfo.category,
-          months: monthsToSync, // Deprecated pero se mantiene por compatibilidad
           supabase: supabase,
           maxDays: maxDays,
         })
 
-        // Normalizar nombre de tienda y agrupar por fecha, tienda y categoría
-        // Cada resultado ya viene con la fecha, tipo y categoría, solo necesitamos normalizar el nombre
-        for (const result of availabilityResults) {
-          const normalizedStoreName = normalizeStoreName(result.appointmentTypeName)
-          const key = `${result.date}-${normalizedStoreName}-${result.category}`
+        // Guardar información por empleado
+        for (const employeeResult of employeeResults) {
+          const employeeKey = `${employeeResult.date}-${employeeResult.calendarName}-${employeeResult.category}`
+          employeeAvailabilityData.set(employeeKey, employeeResult)
 
-          if (!availabilityData.has(key)) {
-            availabilityData.set(key, {
-              date: result.date,
+          // También agregar por tienda
+          const normalizedStoreName = normalizeStoreName(employeeResult.appointmentTypeName)
+          const storeKey = `${employeeResult.date}-${normalizedStoreName}-${employeeResult.category}`
+
+          if (!storeAvailabilityData.has(storeKey)) {
+            storeAvailabilityData.set(storeKey, {
+              date: employeeResult.date,
               storeName: normalizedStoreName,
-              appointmentTypeID: result.appointmentTypeID,
-              appointmentCategory: result.category,
+              appointmentTypeID: employeeResult.appointmentTypeID,
+              appointmentCategory: employeeResult.category,
               totalSlots: 0,
             })
           }
 
-          const data = availabilityData.get(key)!
-          data.totalSlots += result.totalSlots
+          const storeData = storeAvailabilityData.get(storeKey)!
+          storeData.totalSlots += employeeResult.totalSlots
         }
 
-        console.log(`[Acuity Availability Sync] Processed ${availabilityResults.length} availability records for type ${typeId}`)
+        console.log(`[Acuity Availability Sync] Processed ${employeeResults.length} availability records by employee for type ${typeId}`)
       } catch (error) {
         console.error(`[Acuity Availability Sync] Error processing type ${typeId}:`, error)
         // Continuar con el siguiente tipo
@@ -130,62 +149,113 @@ export async function POST(request: NextRequest) {
     const todayStr = format(today, 'yyyy-MM-dd')
     const endDateStr = format(endDate, 'yyyy-MM-dd')
 
-    // Obtener todas las citas en el rango de fechas
+    // Obtener todas las citas en el rango de fechas con información de empleado
     const { data: appointments } = await supabase
       .from('acuity_appointments')
-      .select('datetime, appointment_type_id, appointment_type_name, appointment_category, status')
+      .select('datetime, appointment_type_id, appointment_type_name, appointment_category, status, calendar_id, calendar_name')
       .gte('datetime', todayStr)
       .lte('datetime', endDateStr)
       .neq('status', 'canceled')
 
-    // Contar citas reservadas por fecha, tienda y categoría
-    const bookedSlotsMap = new Map<string, number>()
+    // Contar citas reservadas por empleado (para acuity_availability)
+    const bookedSlotsByEmployeeMap = new Map<string, number>()
+    // Contar citas reservadas por tienda (para acuity_availability_by_store)
+    const bookedSlotsByStoreMap = new Map<string, number>()
+    
     if (appointments) {
       const appointmentsTyped = appointments as AcuityAppointment[]
       for (const apt of appointmentsTyped) {
         const appointmentDate = format(new Date(apt.datetime), 'yyyy-MM-dd')
+        const calendarName = apt.calendar_name || 'Unknown'
+        
+        // Por empleado
+        const employeeKey = `${appointmentDate}-${calendarName}-${apt.appointment_category}`
+        const employeeCount = bookedSlotsByEmployeeMap.get(employeeKey) || 0
+        bookedSlotsByEmployeeMap.set(employeeKey, employeeCount + 1)
+        
+        // Por tienda
         const normalizedStoreName = normalizeStoreName(apt.appointment_type_name)
-        const key = `${appointmentDate}-${normalizedStoreName}-${apt.appointment_category}`
-
-        const currentCount = bookedSlotsMap.get(key) || 0
-        bookedSlotsMap.set(key, currentCount + 1)
+        const storeKey = `${appointmentDate}-${normalizedStoreName}-${apt.appointment_category}`
+        const storeCount = bookedSlotsByStoreMap.get(storeKey) || 0
+        bookedSlotsByStoreMap.set(storeKey, storeCount + 1)
       }
     }
 
     // 4. Guardar en base de datos
     console.log('[Acuity Availability Sync] Saving to database...')
-    let savedCount = 0
+    
+    // 4a. Guardar por empleado en acuity_availability
+    let employeeSavedCount = 0
+    let skippedCount = 0
+    for (const [key, employeeData] of employeeAvailabilityData) {
+      // Validar que tenemos calendarID y calendarName válidos
+      if (!employeeData.calendarID || !employeeData.calendarName || employeeData.calendarName === 'Unknown') {
+        console.warn(`[Acuity Availability Sync] Skipping record with invalid calendar data: calendarID=${employeeData.calendarID}, calendarName=${employeeData.calendarName}`)
+        skippedCount++
+        continue
+      }
 
-    for (const [key, data] of availabilityData) {
-      const bookedSlots = bookedSlotsMap.get(key) || 0
-      const availableSlots = Math.max(0, data.totalSlots - bookedSlots)
+      const bookedSlots = bookedSlotsByEmployeeMap.get(key) || 0
+      const availableSlots = Math.max(0, employeeData.totalSlots - bookedSlots)
 
-      const availabilityId = `${data.date}-${data.storeName}-${data.appointmentCategory}`
+      const availabilityId = `${employeeData.date}-${employeeData.calendarID}-${employeeData.category}`
 
       await supabase
-        .from('acuity_availability_by_store')
+        .from('acuity_availability')
         .upsert({
           id: availabilityId,
-          date: data.date,
-          store_name: data.storeName,
-          appointment_type_id: data.appointmentTypeID,
-          appointment_category: data.appointmentCategory,
-          total_slots: data.totalSlots,
+          date: employeeData.date,
+          calendar_id: employeeData.calendarID,
+          calendar_name: employeeData.calendarName,
+          appointment_category: employeeData.category,
+          total_slots: employeeData.totalSlots,
           booked_slots: bookedSlots,
           available_slots: availableSlots,
         } as any, {
           onConflict: 'id',
         })
 
-      savedCount++
+      employeeSavedCount++
     }
 
-    console.log(`[Acuity Availability Sync] Saved ${savedCount} availability records`)
+    console.log(`[Acuity Availability Sync] Saved ${employeeSavedCount} availability records by employee`)
+    if (skippedCount > 0) {
+      console.warn(`[Acuity Availability Sync] Skipped ${skippedCount} records with invalid calendar data`)
+    }
+
+    // 4b. Guardar agregado por tienda en acuity_availability_by_store
+    let storeSavedCount = 0
+    for (const [key, storeData] of storeAvailabilityData) {
+      const bookedSlots = bookedSlotsByStoreMap.get(key) || 0
+      const availableSlots = Math.max(0, storeData.totalSlots - bookedSlots)
+
+      const availabilityId = `${storeData.date}-${storeData.storeName}-${storeData.appointmentCategory}`
+
+      await supabase
+        .from('acuity_availability_by_store')
+        .upsert({
+          id: availabilityId,
+          date: storeData.date,
+          store_name: storeData.storeName,
+          appointment_type_id: storeData.appointmentTypeID,
+          appointment_category: storeData.appointmentCategory,
+          total_slots: storeData.totalSlots,
+          booked_slots: bookedSlots,
+          available_slots: availableSlots,
+        } as any, {
+          onConflict: 'id',
+        })
+
+      storeSavedCount++
+    }
+
+    console.log(`[Acuity Availability Sync] Saved ${storeSavedCount} availability records by store`)
 
     return NextResponse.json({
       success: true,
-      message: 'Availability by store synced successfully',
-      records_synced: savedCount,
+      message: 'Availability synced successfully (by employee and by store)',
+      records_by_employee: employeeSavedCount,
+      records_by_store: storeSavedCount,
       days_synced: maxDays,
       note: 'Limited by Acuity "max days" scheduling limit (21 days)',
     })

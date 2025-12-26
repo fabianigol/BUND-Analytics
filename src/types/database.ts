@@ -726,7 +726,7 @@ export interface Database {
           snapshot_date: string
           store_name: string
           appointment_category: 'medición' | 'fitting'
-          period_type: 'weekly' | 'monthly' | 'quarterly'
+          period_type: 'daily' | 'weekly' | 'monthly' | 'quarterly'
           period_start: string
           period_end: string
           total_slots: number
@@ -740,7 +740,7 @@ export interface Database {
           snapshot_date: string
           store_name: string
           appointment_category: 'medición' | 'fitting'
-          period_type: 'weekly' | 'monthly' | 'quarterly'
+          period_type: 'daily' | 'weekly' | 'monthly' | 'quarterly'
           period_start: string
           period_end: string
           total_slots?: number

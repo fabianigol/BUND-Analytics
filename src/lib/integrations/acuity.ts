@@ -80,6 +80,16 @@ export interface AvailabilityByStoreResult {
   totalSlots: number
 }
 
+export interface AvailabilityByEmployeeResult {
+  date: string
+  calendarID: number
+  calendarName: string
+  appointmentTypeID: number
+  appointmentTypeName: string
+  category: AcuityAppointmentCategory
+  totalSlots: number
+}
+
 /**
  * Normaliza el nombre de una tienda eliminando variaciones y sufijos.
  * Ejemplos:
@@ -565,19 +575,18 @@ export class AcuityService {
   }
 
   /**
-   * Obtiene disponibilidad agregada por tienda
+   * Obtiene disponibilidad por empleado (calendar)
    * IMPORTANTE: Limitado a 21 días desde hoy (configuración de "máximo de días" en Acuity)
-   * La respuesta de /availability/times es un array directo de objetos con time y slotsAvailable
+   * Llama a /availability/times con calendarID específico para cada empleado
    */
-  async getAvailabilityByStore(params: {
+  async getAvailabilityByEmployee(params: {
     appointmentTypeID: number
     appointmentTypeName: string
     category: AcuityAppointmentCategory
-    months: number // DEPRECATED: Se limita automáticamente a 21 días
-    supabase: SupabaseClient // Supabase client para consultar calendarios
-    maxDays?: number // Opcional: límite de días (por defecto 21)
-  }): Promise<AvailabilityByStoreResult[]> {
-    const results: AvailabilityByStoreResult[] = []
+    supabase: SupabaseClient
+    maxDays?: number
+  }): Promise<AvailabilityByEmployeeResult[]> {
+    const results: AvailabilityByEmployeeResult[] = []
     const maxDays = params.maxDays || 21
     
     // Obtener calendarios (empleados) asociados a este tipo de cita
@@ -605,7 +614,6 @@ export class AcuityService {
     const endMonth = format(endDate, 'yyyy-MM')
     
     // Obtener todas las fechas disponibles dentro del rango válido
-    // Usar el mes de inicio y el mes de fin para cubrir todo el rango
     const monthsToQuery = new Set<string>()
     if (startMonth === endMonth) {
       monthsToQuery.add(startMonth)
@@ -626,7 +634,7 @@ export class AcuityService {
       allAvailableDates.push(...dates)
     }
     
-    // Filtrar fechas que estén dentro del rango válido (por si acaso)
+    // Filtrar fechas que estén dentro del rango válido
     const validDates = this.filterValidDates(allAvailableDates, maxDays)
       .map(d => d.date)
       .filter(dateStr => {
@@ -641,83 +649,107 @@ export class AcuityService {
 
     console.log(`[Acuity API] Found ${validDates.length} valid dates for appointment type ${params.appointmentTypeID}`)
 
-    // Crear un Set de calendarIDs válidos para filtrar después
-    const validCalendarIDs = new Set(
-      calendars
-        .map(c => c.acuity_calendar_id)
-        .filter((id): id is number => id !== null && id !== undefined)
-    )
+    // Filtrar calendarios con calendarID válido
+    const validCalendars = calendars.filter(c => c.acuity_calendar_id !== null && c.acuity_calendar_id !== undefined)
 
-    // Procesar fechas en lotes para evitar sobrecarga
-    const BATCH_SIZE = 5
-    const dateBatches: string[][] = []
-    for (let j = 0; j < validDates.length; j += BATCH_SIZE) {
-      dateBatches.push(validDates.slice(j, j + BATCH_SIZE))
-    }
-
-    for (const dateBatch of dateBatches) {
-      try {
-        // Procesar lote de fechas en paralelo
-        const batchPromises = dateBatch.map(async (date) => {
-          await this.sleep(100) // Rate limiting
+    // Para cada fecha y cada empleado, llamar a la API con calendarID específico
+    for (const date of validDates) {
+      for (const calendar of validCalendars) {
+        try {
+          await this.sleep(100) // Rate limiting entre llamadas
           
-          // Obtener disponibilidad para esta fecha (sin calendarID para obtener todos los slots)
+          // Llamar con calendarID específico para obtener slots de este empleado
           const availability = await this.getAvailability({
             date: date,
             appointmentTypeID: params.appointmentTypeID,
+            calendarID: calendar.acuity_calendar_id!,
             maxDays: maxDays,
           })
 
           // La respuesta es un array directo de AcuityTimeSlot
           if (!availability || availability.length === 0) {
-            return { date, slotsCount: 0 }
+            continue // Este empleado no tiene disponibilidad en esta fecha
           }
 
-          // Si los slots incluyen calendarID, filtrar por calendarios válidos
-          // Si no incluyen calendarID, contar todos los slots (asumiendo que todos son válidos)
-          let validSlots: AcuityTimeSlot[]
-          if (availability.some(slot => slot.calendarID !== undefined)) {
-            // Filtrar slots que pertenecen a calendarios válidos
-            validSlots = availability.filter(slot => 
-              slot.calendarID !== undefined && validCalendarIDs.has(slot.calendarID)
-            )
-          } else {
-            // Si no hay calendarID en los slots, contar todos (la API ya filtra por appointmentTypeID)
-            validSlots = availability
-          }
+          // Sumar slotsAvailable de todos los slots
+          const totalSlots = availability.reduce((sum, slot) => sum + slot.slotsAvailable, 0)
 
-          // Sumar slotsAvailable de todos los slots válidos
-          const totalSlots = validSlots.reduce((sum, slot) => sum + slot.slotsAvailable, 0)
-
-          return { date, slotsCount: totalSlots }
-        })
-
-        const batchResults = await Promise.all(batchPromises)
-        
-        // Agregar resultados por fecha
-        for (const { date, slotsCount } of batchResults) {
-          if (slotsCount > 0) {
-            const existingResult = results.find(r => r.date === date && r.appointmentTypeID === params.appointmentTypeID)
-            
-            if (existingResult) {
-              existingResult.totalSlots += slotsCount
-            } else {
-              results.push({
-                date,
-                appointmentTypeID: params.appointmentTypeID,
-                appointmentTypeName: params.appointmentTypeName,
-                category: params.category,
-                totalSlots: slotsCount,
-              })
+          if (totalSlots > 0) {
+            const result = {
+              date,
+              calendarID: calendar.acuity_calendar_id!,
+              calendarName: calendar.name,
+              appointmentTypeID: params.appointmentTypeID,
+              appointmentTypeName: params.appointmentTypeName,
+              category: params.category,
+              totalSlots,
             }
+            
+            // Validar que tenemos datos válidos
+            if (!result.calendarID || !result.calendarName) {
+              console.error(`[Acuity API] Invalid calendar data: calendarID=${result.calendarID}, calendarName=${result.calendarName}`)
+              continue
+            }
+            
+            results.push(result)
           }
+        } catch (error) {
+          console.error(`[Acuity API] Error fetching availability for date ${date} and calendar ${calendar.acuity_calendar_id}:`, error)
+          // Continuar con el siguiente empleado/fecha
         }
-      } catch (error) {
-        console.error(`[Acuity API] Error fetching availability for dates batch:`, error)
       }
     }
 
-    console.log(`[Acuity API] Processed ${results.length} availability records for type ${params.appointmentTypeID}`)
+    console.log(`[Acuity API] Processed ${results.length} availability records by employee for type ${params.appointmentTypeID}`)
+    return results
+  }
+
+  /**
+   * Obtiene disponibilidad agregada por tienda
+   * IMPORTANTE: Limitado a 21 días desde hoy (configuración de "máximo de días" en Acuity)
+   * Internamente usa getAvailabilityByEmployee y agrega por tienda
+   */
+  async getAvailabilityByStore(params: {
+    appointmentTypeID: number
+    appointmentTypeName: string
+    category: AcuityAppointmentCategory
+    months: number // DEPRECATED: Se limita automáticamente a 21 días
+    supabase: SupabaseClient // Supabase client para consultar calendarios
+    maxDays?: number // Opcional: límite de días (por defecto 21)
+  }): Promise<AvailabilityByStoreResult[]> {
+    const maxDays = params.maxDays || 21
+    
+    // Obtener disponibilidad por empleado
+    const employeeResults = await this.getAvailabilityByEmployee({
+      appointmentTypeID: params.appointmentTypeID,
+      appointmentTypeName: params.appointmentTypeName,
+      category: params.category,
+      supabase: params.supabase,
+      maxDays: maxDays,
+    })
+
+    // Agregar por fecha y tipo de cita (sumando slots de todos los empleados)
+    const storeResultsMap = new Map<string, AvailabilityByStoreResult>()
+    
+    for (const employeeResult of employeeResults) {
+      const key = `${employeeResult.date}-${employeeResult.appointmentTypeID}`
+      
+      if (!storeResultsMap.has(key)) {
+        storeResultsMap.set(key, {
+          date: employeeResult.date,
+          appointmentTypeID: employeeResult.appointmentTypeID,
+          appointmentTypeName: employeeResult.appointmentTypeName,
+          category: employeeResult.category,
+          totalSlots: 0,
+        })
+      }
+      
+      const storeResult = storeResultsMap.get(key)!
+      storeResult.totalSlots += employeeResult.totalSlots
+    }
+
+    const results = Array.from(storeResultsMap.values())
+    console.log(`[Acuity API] Processed ${results.length} availability records by store for type ${params.appointmentTypeID}`)
     return results
   }
 }

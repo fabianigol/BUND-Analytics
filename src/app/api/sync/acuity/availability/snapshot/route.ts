@@ -8,17 +8,35 @@ import {
   endOfMonth, 
   startOfQuarter, 
   endOfQuarter,
+  startOfDay,
+  endOfDay,
   subWeeks,
   subMonths,
   subQuarters,
+  subDays,
   format,
 } from 'date-fns'
+import { isAuthorizedCronRequest } from '@/lib/utils/cron-auth'
 
-type PeriodType = 'weekly' | 'monthly' | 'quarterly'
+type PeriodType = 'daily' | 'weekly' | 'monthly' | 'quarterly'
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
+
+    // Permitir acceso desde cron jobs autorizados sin autenticación de usuario
+    const isCronRequest = isAuthorizedCronRequest(request)
+    
+    // Si no es un cron request, verificar autenticación de usuario
+    if (!isCronRequest) {
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError || !user) {
+        return NextResponse.json(
+          { error: 'Unauthorized', details: 'User not authenticated' },
+          { status: 401 }
+        )
+      }
+    }
 
     // Obtener parámetros del request
     const body = await request.json().catch(() => ({}))
@@ -32,7 +50,13 @@ export async function POST(request: NextRequest) {
     let periodEnd: Date
     let snapshotDate: Date
 
-    if (periodType === 'weekly') {
+    if (periodType === 'daily') {
+      // Snapshot del día anterior
+      const yesterday = subDays(targetDate, 1)
+      periodStart = startOfDay(yesterday)
+      periodEnd = endOfDay(yesterday)
+      snapshotDate = startOfDay(targetDate) // Día actual
+    } else if (periodType === 'weekly') {
       // Snapshot de la semana anterior
       const lastWeek = subWeeks(targetDate, 1)
       periodStart = startOfWeek(lastWeek, { weekStartsOn: 1 }) // Lunes
@@ -59,11 +83,20 @@ export async function POST(request: NextRequest) {
     console.log(`[Acuity Availability Snapshot] Period: ${periodStartStr} to ${periodEndStr}, snapshot date: ${snapshotDateStr}`)
 
     // Obtener datos de disponibilidad del período desde acuity_availability_by_store
-    const { data: availabilityData, error: availabilityError } = await supabase
+    let availabilityQuery = supabase
       .from('acuity_availability_by_store')
       .select('*')
-      .gte('date', periodStartStr)
-      .lte('date', periodEndStr)
+    
+    // Para daily, usar eq en lugar de gte/lte para mejor rendimiento
+    if (periodType === 'daily') {
+      availabilityQuery = availabilityQuery.eq('date', periodStartStr)
+    } else {
+      availabilityQuery = availabilityQuery
+        .gte('date', periodStartStr)
+        .lte('date', periodEndStr)
+    }
+    
+    const { data: availabilityData, error: availabilityError } = await availabilityQuery
 
     if (availabilityError) {
       console.error('[Acuity Availability Snapshot] Error fetching availability data:', availabilityError)
