@@ -24,6 +24,9 @@ import {
   ChevronDown,
 } from 'lucide-react'
 import { formatNumber, formatCompactNumber } from '@/lib/utils/format'
+import Link from 'next/link'
+import { storeNameToSlug } from '@/lib/utils/storeHelpers'
+import Image from 'next/image'
 
 type CategoryFilter = 'all' | 'medición' | 'fitting'
 
@@ -155,7 +158,6 @@ interface AppointmentStats {
 export default function CitasPage() {
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all')
   const [loading, setLoading] = useState(true)
-  const [syncing, setSyncing] = useState(false)
   const [stats, setStats] = useState<Partial<AppointmentStats>>({})
   const [dailyStats, setDailyStats] = useState<Partial<AppointmentStats['daily']>>({})
   
@@ -301,20 +303,6 @@ export default function CitasPage() {
       alert(`Error al cargar estadísticas: ${error instanceof Error ? error.message : String(error)}`)
     } finally {
       setLoading(false)
-    }
-  }
-
-  const handleSync = async () => {
-    try {
-      setSyncing(true)
-      const response = await fetch('/api/sync/acuity', { method: 'POST' })
-      if (response.ok) {
-        await fetchStats()
-      }
-    } catch (error) {
-      console.error('Error syncing:', error)
-    } finally {
-      setSyncing(false)
     }
   }
 
@@ -494,19 +482,16 @@ export default function CitasPage() {
       />
 
       <div className="flex-1 space-y-6 p-6">
-        {/* Botón de sincronización */}
-        <div className="flex justify-end">
-          <Button
-            onClick={handleSync}
-            disabled={syncing}
-            variant="outline"
-            size="sm"
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${syncing ? 'animate-spin' : ''}`} />
-            {syncing ? 'Sincronizando...' : 'Sincronizar'}
-          </Button>
-        </div>
-        {/* Filtros por categoría y período */}
+        {/* Sistema de pestañas */}
+        <Tabs defaultValue="general" className="w-full">
+          <TabsList>
+            <TabsTrigger value="general">General</TabsTrigger>
+            <TabsTrigger value="clubs">Clubs</TabsTrigger>
+            <TabsTrigger value="comparativas">Comparativas</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="general" className="space-y-6 mt-6">
+            {/* Filtros por categoría y período */}
         <Card>
           <CardHeader>
             <CardTitle>Filtros</CardTitle>
@@ -955,6 +940,172 @@ export default function CitasPage() {
             </CardContent>
           </Card>
         )}
+          </TabsContent>
+
+          <TabsContent value="clubs" className="space-y-6 mt-6">
+            {/* Lista de clubs */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Clubs</CardTitle>
+                <CardDescription>Selecciona un club para ver sus estadísticas detalladas</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {loading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />
+                  </div>
+                ) : stats.upcoming?.byStore && stats.upcoming.byStore.length > 0 ? (
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {stats.upcoming.byStore.map((store) => {
+                      const storeSlug = storeNameToSlug(store.storeName)
+                      const storeOccupation = stats.occupation?.byStore.find(
+                        s => s.storeName === store.storeName
+                      )
+                      
+                      // Función para obtener la ruta de la imagen
+                      const getImagePath = (storeSlug: string): string => {
+                        const imageMap: Record<string, string> = {
+                          'zaragoza': 'ZARAGOZA.jpg',
+                          'malaga': 'MALAGA.jpg',
+                          'madrid': 'madrid.jpg',
+                          'barcelona': 'barcelona.jpg',
+                          'bilbao': 'bilbao.jpg',
+                          'murcia': 'murcia.jpg',
+                          'sevilla': 'sevilla.jpg',
+                          'cdmx': 'mexico.jpg',
+                        }
+                        const mappedName = imageMap[storeSlug.toLowerCase()]
+                        if (mappedName) {
+                          return `/clubs/${mappedName}`
+                        }
+                        return `/clubs/${storeSlug.toLowerCase()}.jpg`
+                      }
+
+                      const imagePath = getImagePath(storeSlug)
+                      const occupationPercentage = storeOccupation?.overall.percentage || 0
+
+                      return (
+                        <Card 
+                          key={store.storeName} 
+                          className="group cursor-pointer overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50"
+                        >
+                          {/* Imagen horizontal */}
+                          <div className="relative w-full h-48 overflow-hidden">
+                            <Image
+                              src={imagePath}
+                              alt={store.storeName}
+                              fill
+                              className="object-cover transition-transform duration-500 group-hover:scale-110"
+                              onError={(e) => {
+                                // Fallback a placeholder si la imagen no existe
+                                const target = e.target as HTMLImageElement
+                                target.src = `data:image/svg+xml,${encodeURIComponent(`
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400">
+                                    <defs>
+                                      <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                                      </linearGradient>
+                                    </defs>
+                                    <rect fill="url(#grad)" width="800" height="400"/>
+                                    <text fill="white" font-family="sans-serif" font-size="32" font-weight="bold" x="50%" y="50%" text-anchor="middle" dominant-baseline="middle">${store.storeName}</text>
+                                  </svg>
+                                `)}`
+                              }}
+                              unoptimized
+                            />
+                            {/* Overlay con gradiente */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                            {/* Nombre del club sobre la imagen */}
+                            <div className="absolute bottom-0 left-0 right-0 p-4">
+                              <h3 className="text-xl font-bold text-white drop-shadow-lg">
+                                {store.storeName.replace('The Bundclub ', '')}
+                              </h3>
+                            </div>
+                          </div>
+
+                          <CardContent className="p-6">
+                            <div className="space-y-5">
+                              {/* Métricas con iconos */}
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="relative p-4 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20 border border-blue-200/50 dark:border-blue-800/30">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <Calendar className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                                    <div className="text-xs font-medium text-blue-700 dark:text-blue-300 uppercase tracking-wide">
+                                      Total Citas
+                                    </div>
+                                  </div>
+                                  <div className="text-3xl font-bold text-blue-900 dark:text-blue-100">
+                                    {formatNumber(store.total)}
+                                  </div>
+                                </div>
+                                <div className="relative p-4 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-950/30 dark:to-purple-900/20 border border-purple-200/50 dark:border-purple-800/30">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <TrendingUp className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                                    <div className="text-xs font-medium text-purple-700 dark:text-purple-300 uppercase tracking-wide">
+                                      Ocupación
+                                    </div>
+                                  </div>
+                                  <div className="text-3xl font-bold text-purple-900 dark:text-purple-100">
+                                    {occupationPercentage}%
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Barra de ocupación visual */}
+                              <div className="space-y-2">
+                                <div className="flex justify-between text-xs text-muted-foreground">
+                                  <span>Ocupación</span>
+                                  <span className="font-medium">{occupationPercentage}%</span>
+                                </div>
+                                <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                  <div 
+                                    className="h-full bg-gradient-to-r from-purple-500 to-purple-600 dark:from-purple-400 dark:to-purple-500 transition-all duration-500 rounded-full"
+                                    style={{ width: `${Math.min(occupationPercentage, 100)}%` }}
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Botón de acción */}
+                              <Link href={`/citas/clubs/${storeSlug}`} className="block w-full">
+                                <Button 
+                                  className="w-full bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02]" 
+                                  variant="default"
+                                >
+                                  Ver Detalle
+                                  <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                </Button>
+                              </Link>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 text-muted-foreground">
+                    No hay datos de clubs disponibles. Sincroniza desde la página de integraciones.
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="comparativas" className="space-y-6 mt-6">
+            {/* Vista comparativa - placeholder */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Comparativas</CardTitle>
+                <CardDescription>Comparación entre clubs y periodos</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12 text-muted-foreground">
+                  Vista comparativa en desarrollo...
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   )
