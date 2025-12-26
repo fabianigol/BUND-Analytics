@@ -42,9 +42,12 @@ export async function POST(request: NextRequest) {
 
     // Obtener parámetros opcionales del request
     const body = await request.json().catch(() => ({}))
-    const monthsToSync = body.months || 3 // Por defecto, próximos 3 meses
+    // IMPORTANTE: Acuity limita las consultas a 21 días (configuración de "máximo de días")
+    // El parámetro months se ignora y se usa el límite de 21 días
+    const maxDays = body.maxDays || 21
+    const monthsToSync = body.months || 1 // Deprecated: se limita automáticamente a 21 días
 
-    console.log(`[Acuity Availability Sync] Starting sync for ${monthsToSync} months...`)
+    console.log(`[Acuity Availability Sync] Starting sync (limited to ${maxDays} days by Acuity scheduling limits)...`)
 
     // 1. Obtener todos los tipos de citas activos
     console.log('[Acuity Availability Sync] Fetching appointment types...')
@@ -85,8 +88,9 @@ export async function POST(request: NextRequest) {
           appointmentTypeID: typeId,
           appointmentTypeName: typeInfo.name,
           category: typeInfo.category,
-          months: monthsToSync,
+          months: monthsToSync, // Deprecated pero se mantiene por compatibilidad
           supabase: supabase,
+          maxDays: maxDays,
         })
 
         // Normalizar nombre de tienda y agrupar por fecha, tienda y categoría
@@ -120,7 +124,9 @@ export async function POST(request: NextRequest) {
     console.log('[Acuity Availability Sync] Calculating booked slots from appointments...')
     
     const today = new Date()
-    const endDate = addMonths(today, monthsToSync)
+    // Limitar a 21 días en lugar de meses
+    const endDate = new Date(today)
+    endDate.setDate(endDate.getDate() + maxDays)
     const todayStr = format(today, 'yyyy-MM-dd')
     const endDateStr = format(endDate, 'yyyy-MM-dd')
 
@@ -180,7 +186,8 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Availability by store synced successfully',
       records_synced: savedCount,
-      months_synced: monthsToSync,
+      days_synced: maxDays,
+      note: 'Limited by Acuity "max days" scheduling limit (21 days)',
     })
   } catch (error) {
     console.error('Acuity availability sync error:', error)

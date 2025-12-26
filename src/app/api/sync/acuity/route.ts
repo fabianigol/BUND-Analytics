@@ -351,49 +351,53 @@ export async function POST(request: NextRequest) {
 
       for (const typeInfo of appointmentTypeMap.values()) {
         try {
-          // La API de Acuity requiere el parámetro 'date' cuando se usa 'days'
-          // Dividir en rangos más pequeños (meses) para evitar problemas con rangos grandes
-          const endDateForAvailability = addDays(today, 365)
-          let currentDate = today
+          // IMPORTANTE: Acuity limita las consultas a 21 días (configuración de "máximo de días")
+          const maxDays = 21
+          const endDateForAvailability = addDays(today, maxDays)
+          let currentDate = new Date(today)
+          currentDate.setHours(0, 0, 0, 0)
           
           while (currentDate <= endDateForAvailability) {
-            // Procesar mes por mes para evitar problemas con rangos grandes
-            const monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0)
-            const rangeEnd = monthEnd < endDateForAvailability ? monthEnd : endDateForAvailability
-            
-            // Calcular días desde currentDate hasta rangeEnd
-            const daysInRange = Math.ceil((rangeEnd.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
+            const dateStr = format(currentDate, 'yyyy-MM-dd')
             
             const availability = await acuityService.getAvailability({
-              date: format(currentDate, 'yyyy-MM-dd'),
+              date: dateStr,
               appointmentTypeID: typeInfo.type.id,
+              maxDays: maxDays,
             })
 
-            console.log(`[Acuity Sync] Availability response for type ${typeInfo.type.id} from ${format(currentDate, 'yyyy-MM-dd')}:`, {
-              datesCount: availability.dates?.length || 0,
-              totalSlots: availability.dates?.reduce((sum, d) => sum + (d.slots?.length || 0), 0) || 0,
+            // La respuesta es un array directo de AcuityTimeSlot
+            const totalSlots = availability.reduce((sum, slot) => sum + slot.slotsAvailable, 0)
+            
+            console.log(`[Acuity Sync] Availability response for type ${typeInfo.type.id} from ${dateStr}:`, {
+              slotsCount: availability.length,
+              totalSlots: totalSlots,
             })
 
-            for (const dateData of availability.dates || []) {
-              const date = dateData.date
-              for (const slot of dateData.slots || []) {
-                const key = `${date}-${slot.calendar}-${typeInfo.category}`
-                const existing = availabilityData.get(key)
-                if (existing) {
-                  existing.slots++
-                } else {
-                  availabilityData.set(key, {
-                    date,
-                    calendarName: slot.calendar,
-                    category: typeInfo.category,
-                    slots: 1,
-                  })
-                }
+            // Procesar cada slot de disponibilidad
+            for (const slot of availability) {
+              // Extraer fecha del campo time (formato ISO: "2026-02-04T09:00:00-0500")
+              const slotDate = new Date(slot.time)
+              const slotDateStr = format(slotDate, 'yyyy-MM-dd')
+              const calendarName = slot.calendar || 'Unknown'
+              
+              const key = `${slotDateStr}-${calendarName}-${typeInfo.category}`
+              const existing = availabilityData.get(key)
+              
+              if (existing) {
+                existing.slots += slot.slotsAvailable
+              } else {
+                availabilityData.set(key, {
+                  date: slotDateStr,
+                  calendarName: calendarName,
+                  category: typeInfo.category,
+                  slots: slot.slotsAvailable,
+                })
               }
             }
             
-            // Avanzar al siguiente mes
-            currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
+            // Avanzar al siguiente día
+            currentDate.setDate(currentDate.getDate() + 1)
           }
         } catch (error) {
           console.error(`[Acuity Sync] Error fetching availability for type ${typeInfo.type.id}:`, error)
