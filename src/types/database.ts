@@ -682,6 +682,88 @@ export interface Database {
           updated_at?: string
         }
       }
+      acuity_availability_by_store: {
+        Row: {
+          id: string
+          date: string
+          store_name: string
+          appointment_type_id: number
+          appointment_category: 'medición' | 'fitting'
+          total_slots: number
+          booked_slots: number
+          available_slots: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          date: string
+          store_name: string
+          appointment_type_id: number
+          appointment_category: 'medición' | 'fitting'
+          total_slots?: number
+          booked_slots?: number
+          available_slots?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          date?: string
+          store_name?: string
+          appointment_type_id?: number
+          appointment_category?: 'medición' | 'fitting'
+          total_slots?: number
+          booked_slots?: number
+          available_slots?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      acuity_availability_history: {
+        Row: {
+          id: string
+          snapshot_date: string
+          store_name: string
+          appointment_category: 'medición' | 'fitting'
+          period_type: 'weekly' | 'monthly' | 'quarterly'
+          period_start: string
+          period_end: string
+          total_slots: number
+          booked_slots: number
+          available_slots: number
+          occupation_percentage: number
+          created_at: string
+        }
+        Insert: {
+          id: string
+          snapshot_date: string
+          store_name: string
+          appointment_category: 'medición' | 'fitting'
+          period_type: 'weekly' | 'monthly' | 'quarterly'
+          period_start: string
+          period_end: string
+          total_slots?: number
+          booked_slots?: number
+          available_slots?: number
+          occupation_percentage?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          snapshot_date?: string
+          store_name?: string
+          appointment_category?: 'medición' | 'fitting'
+          period_type?: 'weekly' | 'monthly' | 'quarterly'
+          period_start?: string
+          period_end?: string
+          total_slots?: number
+          booked_slots?: number
+          available_slots?: number
+          occupation_percentage?: number
+          created_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never

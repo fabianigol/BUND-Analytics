@@ -170,6 +170,7 @@ export default function IntegracionesPage() {
   })
   const [analyticsPropertyId, setAnalyticsPropertyId] = useState('')
   const [acuityCredentials, setAcuityCredentials] = useState({ userId: '', apiKey: '' })
+  const [shopifyCredentials, setShopifyCredentials] = useState({ shopDomain: '', accessToken: '' })
   const [connecting, setConnecting] = useState(false)
   const [openDialog, setOpenDialog] = useState<string | null>(null)
 
@@ -224,10 +225,11 @@ export default function IntegracionesPage() {
         }
       }
       
-      const [metaData, analyticsData, acuityData] = await Promise.all([
+      const [metaData, analyticsData, acuityData, shopifyData] = await Promise.all([
         fetchWithErrorHandling(`/api/integrations/meta?t=${timestamp}&_=${Math.random()}`),
         fetchWithErrorHandling(`/api/integrations/analytics?t=${timestamp}&_=${Math.random()}`),
         fetchWithErrorHandling(`/api/integrations/acuity?t=${timestamp}&_=${Math.random()}`),
+        fetchWithErrorHandling(`/api/integrations/shopify?t=${timestamp}&_=${Math.random()}`),
       ])
 
       const baseIntegrations: Integration[] = [
@@ -237,8 +239,9 @@ export default function IntegracionesPage() {
           description: 'Importa ventas, pedidos y datos de productos',
           iconImage: '/Logo Shopify.svg',
           iconColor: 'bg-green-100 text-green-600',
-          connected: false,
-          status: 'disconnected',
+          connected: shopifyData.connected || false,
+          lastSync: shopifyData.lastSync || undefined,
+          status: shopifyData.connected ? 'connected' : 'disconnected',
           docsUrl: 'https://shopify.dev/docs/api',
         },
         {
@@ -588,6 +591,93 @@ export default function IntegracionesPage() {
     }
   }
 
+  const handleConnectShopify = async () => {
+    if (!shopifyCredentials.shopDomain || !shopifyCredentials.accessToken) {
+      alert('Por favor, completa todos los campos')
+      return
+    }
+
+    try {
+      setConnecting(true)
+      const response = await fetch('/api/integrations/shopify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(shopifyCredentials),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Error al conectar Shopify')
+      }
+
+      const data = await response.json()
+
+      // Recargar integraciones
+      await loadIntegrations()
+      setOpenDialog(null)
+      setShopifyCredentials({ shopDomain: '', accessToken: '' })
+      alert('Shopify conectado correctamente')
+    } catch (error) {
+      console.error('Error connecting Shopify:', error)
+      alert(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`)
+    } finally {
+      setConnecting(false)
+    }
+  }
+
+  const handleDisconnectShopify = async () => {
+    if (!confirm('¿Estás seguro de que deseas desconectar Shopify?')) {
+      return
+    }
+
+    try {
+      const response = await fetch('/api/integrations/shopify', {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Error al desconectar Shopify')
+      }
+
+      // Recargar integraciones
+      await loadIntegrations()
+      alert('Shopify desconectado correctamente')
+    } catch (error) {
+      console.error('Error disconnecting Shopify:', error)
+      alert(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`)
+    }
+  }
+
+  const handleSyncShopify = async () => {
+    try {
+      setSyncing('shopify')
+      const response = await fetch('/api/sync/shopify', {
+        method: 'POST',
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Error al sincronizar')
+      }
+
+      const data = await response.json()
+
+      // Recargar integraciones para actualizar lastSync
+      await loadIntegrations()
+      
+      alert(`Sincronización completada:\n\n✅ ${data.records_synced || 0} pedido(s) sincronizado(s)`)
+    } catch (error) {
+      console.error('Error syncing Shopify:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
+      alert(`Error al sincronizar:\n\n${errorMessage}`)
+    } finally {
+      setSyncing(null)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex flex-col">
@@ -742,15 +832,51 @@ export default function IntegracionesPage() {
                           <>
                             <div className="space-y-2">
                               <Label>Shop Domain</Label>
-                              <Input placeholder="tu-tienda.myshopify.com" />
+                              <Input
+                                placeholder="tu-tienda.myshopify.com"
+                                value={shopifyCredentials.shopDomain}
+                                onChange={(e) =>
+                                  setShopifyCredentials({
+                                    ...shopifyCredentials,
+                                    shopDomain: e.target.value,
+                                  })
+                                }
+                              />
                             </div>
                             <div className="space-y-2">
                               <Label>Access Token</Label>
-                              <Input type="password" placeholder="shpat_..." />
+                              <Input
+                                type="password"
+                                placeholder="shpat_..."
+                                value={shopifyCredentials.accessToken}
+                                onChange={(e) =>
+                                  setShopifyCredentials({
+                                    ...shopifyCredentials,
+                                    accessToken: e.target.value,
+                                  })
+                                }
+                              />
                               <p className="text-xs text-muted-foreground">
                                 Crea una app privada en Shopify Admin → Apps → Develop apps
+                                <br />
+                                <strong>Permisos requeridos:</strong> read_orders, read_products
+                                <br />
+                                El Access Token debe comenzar con <code>shpat_</code> o <code>shpca_</code>
                               </p>
                             </div>
+                            {integration.connected && (
+                              <div className="rounded-lg bg-blue-50 p-3 text-sm text-blue-800">
+                                <strong>✓ Conectado</strong>
+                                <br />
+                                Shopify está conectado y listo para sincronizar datos.
+                                {integration.lastSync && (
+                                  <>
+                                    <br />
+                                    Última sincronización: {new Date(integration.lastSync).toLocaleString('es-ES')}
+                                  </>
+                                )}
+                              </div>
+                            )}
                           </>
                         )}
                         {integration.id === 'meta' && (
@@ -923,6 +1049,20 @@ export default function IntegracionesPage() {
                               integration.connected ? 'Actualizar' : 'Conectar'
                             )}
                           </Button>
+                        ) : integration.id === 'shopify' ? (
+                          <Button
+                            onClick={handleConnectShopify}
+                            disabled={connecting}
+                          >
+                            {connecting ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Conectando...
+                              </>
+                            ) : (
+                              integration.connected ? 'Actualizar' : 'Conectar'
+                            )}
+                          </Button>
                         ) : (
                           <Button disabled>Conectar</Button>
                         )}
@@ -965,6 +1105,20 @@ export default function IntegracionesPage() {
                       disabled={syncing === 'acuity'}
                     >
                       {syncing === 'acuity' ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <RefreshCw className="h-4 w-4" />
+                      )}
+                    </Button>
+                  )}
+                  {integration.connected && integration.id === 'shopify' && (
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleSyncShopify}
+                      disabled={syncing === 'shopify'}
+                    >
+                      {syncing === 'shopify' ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
                         <RefreshCw className="h-4 w-4" />

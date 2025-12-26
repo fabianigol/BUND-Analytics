@@ -8,3 +8,4 @@ ADD COLUMN IF NOT EXISTS image_url TEXT;
 -- Crear índice para mejorar búsquedas (opcional pero recomendado)
 CREATE INDEX IF NOT EXISTS idx_prompts_image_url ON public.prompts(image_url) WHERE image_url IS NOT NULL;
 
+

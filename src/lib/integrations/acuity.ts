@@ -1,3 +1,6 @@
+import { format } from 'date-fns'
+import { SupabaseClient } from '@supabase/supabase-js'
+
 const ACUITY_API_URL = 'https://acuityscheduling.com/api/v1'
 
 export type AcuityAppointmentCategory = 'medición' | 'fitting'
@@ -67,6 +70,38 @@ export interface AcuityAvailability {
       calendar: string
     }>
   }>
+}
+
+export interface AvailabilityByStoreResult {
+  date: string
+  appointmentTypeID: number
+  appointmentTypeName: string
+  category: AcuityAppointmentCategory
+  totalSlots: number
+}
+
+/**
+ * Normaliza el nombre de una tienda eliminando variaciones y sufijos.
+ * Ejemplos:
+ * - "The Bundclub Madrid + Añadir 1 persona más" → "The Bundclub Madrid"
+ * - "- The Bundclub Valencia -" → "The Bundclub Valencia"
+ * - "The Bundclub Madrid + Solo quiero informarme" → "The Bundclub Madrid"
+ */
+export function normalizeStoreName(storeName: string): string {
+  if (!storeName || storeName === 'Unknown') return storeName
+  
+  let normalized = storeName.trim()
+  
+  // Eliminar guiones al inicio y final
+  normalized = normalized.replace(/^-\s*/, '').replace(/\s*-$/, '')
+  
+  // Eliminar todo después de "+" (incluye variaciones como "+ Añadir X persona(s) más", "+ Solo quiero informarme", etc.)
+  const plusIndex = normalized.indexOf('+')
+  if (plusIndex !== -1) {
+    normalized = normalized.substring(0, plusIndex).trim()
+  }
+  
+  return normalized.trim() || storeName // Fallback al nombre original si queda vacío
 }
 
 export class AcuityService {
@@ -415,30 +450,20 @@ export class AcuityService {
 
   /**
    * Obtiene disponibilidad (horarios disponibles)
+   * Según documentación oficial: /availability/times solo acepta date (YYYY-MM-DD), appointmentTypeID, y opcionalmente calendarID
    */
   async getAvailability(params: {
-    date?: string // YYYY-MM-DD (opcional, si no se proporciona devuelve desde hoy)
-    appointmentTypeID?: number
-    calendarID?: number
-    month?: string // YYYY-MM
-    days?: number // Número de días desde la fecha
+    date: string // YYYY-MM-DD (obligatorio)
+    appointmentTypeID: number // Obligatorio
+    calendarID?: number // Opcional
   }): Promise<AcuityAvailability> {
-    const queryParams: Record<string, string | number> = {}
+    const queryParams: Record<string, string | number> = {
+      date: params.date,
+      appointmentTypeID: params.appointmentTypeID,
+    }
     
-    if (params.date) {
-      queryParams.date = params.date
-    }
-    if (params.appointmentTypeID) {
-      queryParams.appointmentTypeID = params.appointmentTypeID
-    }
     if (params.calendarID) {
       queryParams.calendarID = params.calendarID
-    }
-    if (params.month) {
-      queryParams.month = params.month
-    }
-    if (params.days) {
-      queryParams.days = params.days
     }
 
     return this.request<AcuityAvailability>('/availability/times', queryParams)
@@ -469,6 +494,149 @@ export class AcuityService {
     }
 
     return this.request<Array<{ date: string }>>('/availability/dates', queryParams)
+  }
+
+  /**
+   * Helper function para hacer delay entre llamadas (rate limiting)
+   */
+  private async sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms))
+  }
+
+  /**
+   * Obtiene disponibilidad agregada por tienda
+   * Llama a la API para cada calendarID (empleado) individualmente y agrega los resultados
+   */
+  async getAvailabilityByStore(params: {
+    appointmentTypeID: number
+    appointmentTypeName: string
+    category: AcuityAppointmentCategory
+    months: number // Número de meses a consultar desde hoy
+    supabase: SupabaseClient // Supabase client para consultar calendarios
+  }): Promise<AvailabilityByStoreResult[]> {
+    const results: AvailabilityByStoreResult[] = []
+    const today = new Date()
+    
+    // Obtener calendarios (empleados) asociados a este tipo de cita
+    const { data: calendars, error: calendarsError } = await params.supabase
+      .from('acuity_calendars')
+      .select('acuity_calendar_id, name, appointment_type_name')
+      .eq('appointment_type_id', params.appointmentTypeID)
+      .eq('is_active', true)
+
+    if (calendarsError) {
+      console.error(`[Acuity API] Error fetching calendars for appointment type ${params.appointmentTypeID}:`, calendarsError)
+      return []
+    }
+
+    if (!calendars || calendars.length === 0) {
+      console.log(`[Acuity API] No calendars found for appointment type ${params.appointmentTypeID}`)
+      return []
+    }
+
+    console.log(`[Acuity API] Found ${calendars.length} calendars for appointment type ${params.appointmentTypeID}`)
+    
+    // Para cada mes en el rango
+    for (let i = 0; i < params.months; i++) {
+      const monthDate = new Date(today.getFullYear(), today.getMonth() + i, 1)
+      const monthStr = `${monthDate.getFullYear()}-${String(monthDate.getMonth() + 1).padStart(2, '0')}`
+      
+      // Calcular primer día y último día del mes
+      const firstDayOfMonth = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1)
+      const lastDayOfMonth = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0)
+      
+      // OPTIMIZACIÓN 1: Obtener fechas UNA VEZ por mes/tipo (SIN calendarID - resuelve 0 resultados)
+      await this.sleep(200)
+      const availableDates = await this.getAvailableDates({
+        month: monthStr,
+        appointmentTypeID: params.appointmentTypeID,
+        // NO pasar calendarID - esto resuelve el problema de 0 resultados
+      })
+
+      if (!availableDates || availableDates.length === 0) {
+        continue // No hay fechas disponibles este mes
+      }
+
+      // Filtrar fechas dentro del mes
+      const datesInMonth = availableDates
+        .map(d => d.date)
+        .filter(dateStr => {
+          const dateObj = new Date(dateStr + 'T00:00:00')
+          return dateObj >= firstDayOfMonth && dateObj <= lastDayOfMonth
+        })
+
+      // Crear un Set de calendarIDs válidos para filtrar después
+      const validCalendarIDs = new Set(
+        calendars
+          .map(c => c.acuity_calendar_id)
+          .filter((id): id is number => id !== null && id !== undefined)
+      )
+
+      // OPTIMIZACIÓN 2: Procesar fechas en paralelo (SIN iterar por calendarios)
+      // Llamar /availability/times SIN calendarID para obtener TODOS los slots
+      // Luego filtrar por calendarID usando el campo de cada slot
+      const BATCH_SIZE = 5
+      const dateBatches: string[][] = []
+      for (let j = 0; j < datesInMonth.length; j += BATCH_SIZE) {
+        dateBatches.push(datesInMonth.slice(j, j + BATCH_SIZE))
+      }
+
+      for (const dateBatch of dateBatches) {
+        try {
+          // Procesar lote de fechas en paralelo
+          const batchPromises = dateBatch.map(async (date) => {
+            await this.sleep(100) // Rate limiting reducido
+            
+            // NO pasar calendarID - obtener TODOS los slots de TODOS los empleados
+            const availability = await this.getAvailability({
+              date: date,
+              appointmentTypeID: params.appointmentTypeID,
+              // calendarID omitido - esto permite obtener slots de todos los empleados
+            })
+
+            if (!availability.dates || availability.dates.length === 0) {
+              return { date, slotsCount: 0 }
+            }
+
+            // Cada fecha solo tiene un objeto con todos los slots
+            const slots = availability.dates[0]?.slots || []
+            
+            // Filtrar slots que pertenecen a calendarios de esta tienda
+            const validSlots = slots.filter(slot => 
+              validCalendarIDs.has(slot.calendarID)
+            )
+
+            return { date, slotsCount: validSlots.length }
+          })
+
+          const batchResults = await Promise.all(batchPromises)
+          
+          // Agregar resultados por fecha
+          for (const { date, slotsCount } of batchResults) {
+            if (slotsCount > 0) {
+              const existingResult = results.find(r => r.date === date && r.appointmentTypeID === params.appointmentTypeID)
+              
+              if (existingResult) {
+                existingResult.totalSlots += slotsCount
+              } else {
+                results.push({
+                  date,
+                  appointmentTypeID: params.appointmentTypeID,
+                  appointmentTypeName: params.appointmentTypeName,
+                  category: params.category,
+                  totalSlots: slotsCount,
+                })
+              }
+            }
+          }
+        } catch (error) {
+          console.error(`[Acuity API] Error fetching availability for dates batch:`, error)
+        }
+      }
+    }
+
+    console.log(`[Acuity API] Processed ${results.length} availability records for type ${params.appointmentTypeID}`)
+    return results
   }
 }
 

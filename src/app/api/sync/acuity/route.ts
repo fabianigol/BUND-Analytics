@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { AcuityService, createAcuityServiceFromSupabase, AcuityAppointmentCategory } from '@/lib/integrations/acuity'
+import { AcuityService, createAcuityServiceFromSupabase, AcuityAppointmentCategory, normalizeStoreName } from '@/lib/integrations/acuity'
 import { createClient } from '@/lib/supabase/server'
 import { Database } from '@/types/database'
-import { format, addDays, startOfMonth, endOfMonth, subMonths, parseISO } from 'date-fns'
+import { format, addDays, startOfMonth, endOfMonth, subMonths, parseISO, addMonths } from 'date-fns'
 
 export async function POST(request: NextRequest) {
   try {
@@ -366,7 +366,6 @@ export async function POST(request: NextRequest) {
             
             const availability = await acuityService.getAvailability({
               date: format(currentDate, 'yyyy-MM-dd'),
-              days: Math.min(daysInRange, 30), // Máximo 30 días por petición
               appointmentTypeID: typeInfo.type.id,
             })
 
@@ -443,6 +442,111 @@ export async function POST(request: NextRequest) {
       }
 
       console.log(`[Acuity Sync] Processed ${availabilityProcessed} availability records`)
+
+      // 7b. Sincronizar disponibilidad agregada por tienda (nueva funcionalidad)
+      console.log('[Acuity Sync] Syncing availability by store...')
+      
+      const monthsToSyncByStore = 3 // Sincronizar próximos 3 meses para disponibilidad por tienda
+      const availabilityByStoreData = new Map<string, {
+        date: string
+        storeName: string
+        appointmentTypeID: number
+        appointmentCategory: AcuityAppointmentCategory
+        totalSlots: number
+      }>()
+
+      for (const [typeId, typeInfo] of appointmentTypeMap) {
+        try {
+          console.log(`[Acuity Sync] Fetching availability by store for type ${typeId} (${typeInfo.type.name})...`)
+          
+          const availabilityResults = await acuityService.getAvailabilityByStore({
+            appointmentTypeID: typeId,
+            appointmentTypeName: typeInfo.type.name,
+            category: typeInfo.category,
+            months: monthsToSyncByStore,
+            supabase: supabase,
+          })
+
+          // Normalizar nombre de tienda y agrupar por fecha, tienda y categoría
+          for (const result of availabilityResults) {
+            const normalizedStoreName = normalizeStoreName(result.appointmentTypeName)
+            const key = `${result.date}-${normalizedStoreName}-${result.category}`
+
+            if (!availabilityByStoreData.has(key)) {
+              availabilityByStoreData.set(key, {
+                date: result.date,
+                storeName: normalizedStoreName,
+                appointmentTypeID: result.appointmentTypeID,
+                appointmentCategory: result.category,
+                totalSlots: 0,
+              })
+            }
+
+            const data = availabilityByStoreData.get(key)!
+            data.totalSlots += result.totalSlots
+          }
+
+          console.log(`[Acuity Sync] Processed ${availabilityResults.length} availability by store records for type ${typeId}`)
+        } catch (error) {
+          console.error(`[Acuity Sync] Error processing availability by store for type ${typeId}:`, error)
+          // Continuar con el siguiente tipo
+        }
+      }
+
+      // Calcular slots reservados desde acuity_appointments para disponibilidad por tienda
+      const endDateByStore = addMonths(today, monthsToSyncByStore)
+      const todayStr = format(today, 'yyyy-MM-dd')
+      const endDateStrByStore = format(endDateByStore, 'yyyy-MM-dd')
+
+      const { data: appointmentsForStoreAvailability } = await supabase
+        .from('acuity_appointments')
+        .select('datetime, appointment_type_id, appointment_type_name, appointment_category, status')
+        .gte('datetime', todayStr)
+        .lte('datetime', endDateStrByStore)
+        .neq('status', 'canceled')
+
+      // Contar citas reservadas por fecha, tienda y categoría
+      const bookedSlotsMapByStore = new Map<string, number>()
+      if (appointmentsForStoreAvailability) {
+        type AcuityAppointment = Database['public']['Tables']['acuity_appointments']['Row']
+        const appointmentsTyped = appointmentsForStoreAvailability as AcuityAppointment[]
+        for (const apt of appointmentsTyped) {
+          const appointmentDate = format(new Date(apt.datetime), 'yyyy-MM-dd')
+          const normalizedStoreName = normalizeStoreName(apt.appointment_type_name)
+          const key = `${appointmentDate}-${normalizedStoreName}-${apt.appointment_category}`
+
+          const currentCount = bookedSlotsMapByStore.get(key) || 0
+          bookedSlotsMapByStore.set(key, currentCount + 1)
+        }
+      }
+
+      // Guardar disponibilidad por tienda en BD
+      let availabilityByStoreProcessed = 0
+      for (const [key, data] of availabilityByStoreData) {
+        const bookedSlots = bookedSlotsMapByStore.get(key) || 0
+        const availableSlots = Math.max(0, data.totalSlots - bookedSlots)
+
+        const availabilityId = `${data.date}-${data.storeName}-${data.appointmentCategory}`
+
+        await supabase
+          .from('acuity_availability_by_store')
+          .upsert({
+            id: availabilityId,
+            date: data.date,
+            store_name: data.storeName,
+            appointment_type_id: data.appointmentTypeID,
+            appointment_category: data.appointmentCategory,
+            total_slots: data.totalSlots,
+            booked_slots: bookedSlots,
+            available_slots: availableSlots,
+          } as any, {
+            onConflict: 'id',
+          })
+
+        availabilityByStoreProcessed++
+      }
+
+      console.log(`[Acuity Sync] Processed ${availabilityByStoreProcessed} availability by store records`)
 
       // 8. Actualizar conteos mensuales desde fecha de conexión hasta endDate (365 días)
       console.log('[Acuity Sync] Updating monthly appointment counts...')
@@ -547,7 +651,7 @@ export async function POST(request: NextRequest) {
           // @ts-ignore - TypeScript can't infer the correct type for chained Supabase queries
           .update({
             status: 'success',
-            records_synced: appointmentsProcessed + availabilityProcessed,
+            records_synced: appointmentsProcessed + availabilityProcessed + availabilityByStoreProcessed,
             completed_at: new Date().toISOString(),
           } as any)
           .eq('id', (syncLog as any).id)
@@ -565,7 +669,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: 'Acuity data synced successfully',
-        records_synced: appointmentsProcessed + availabilityProcessed,
+        records_synced: appointmentsProcessed + availabilityProcessed + availabilityByStoreProcessed,
         appointments: {
           total: appointmentsProcessed,
           inserted: appointmentsInserted,
@@ -573,6 +677,9 @@ export async function POST(request: NextRequest) {
         },
         availability: {
           records: availabilityProcessed,
+        },
+        availability_by_store: {
+          records: availabilityByStoreProcessed,
         },
         months_processed: monthsToProcess.length,
       })
