@@ -448,7 +448,29 @@ export default function IntegracionesPage() {
       if (!response.ok) {
         const errorText = await response.text()
         console.error('[UI] Error response:', errorText)
-        throw new Error(`Error ${response.status}: ${errorText}`)
+        
+        // Try to parse error as JSON to get structured error message
+        let errorData: any = {}
+        try {
+          errorData = JSON.parse(errorText)
+        } catch {
+          // If not JSON, use the text as error message
+          errorData = { error: errorText, details: errorText }
+        }
+        
+        // Check if token was revoked
+        if (errorData.requiresReconnect || errorData.error?.includes('Token') || errorData.error?.includes('token')) {
+          // Reload integrations to update connection status
+          await loadIntegrations()
+          
+          throw new Error(
+            errorData.details || 
+            errorData.error || 
+            'El token de Google Analytics ha expirado. Por favor, reconecta Google Analytics desde la página de integraciones.'
+          )
+        }
+        
+        throw new Error(`Error ${response.status}: ${errorData.details || errorData.error || errorText}`)
       }
 
       const contentType = response.headers.get('content-type')
@@ -464,7 +486,14 @@ export default function IntegracionesPage() {
       if (!response.ok) {
         let errorMsg = data.error || 'Error al sincronizar'
         
-        if (data.details) {
+        // Check if token was revoked
+        if (data.requiresReconnect || data.error?.includes('Token') || data.error?.includes('token')) {
+          // Reload integrations to update connection status
+          await loadIntegrations()
+          
+          errorMsg = data.details || 
+            'El token de Google Analytics ha expirado o ha sido revocado. Por favor, reconecta Google Analytics desde la página de integraciones.'
+        } else if (data.details) {
           // Handle different types of details
           if (typeof data.details === 'string') {
             errorMsg = `${errorMsg}\n\nDetalles: ${data.details}`

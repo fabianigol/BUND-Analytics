@@ -130,6 +130,7 @@ export class ShopifyService {
         currency: string
         financial_status: string
         fulfillment_status: string | null
+        tags?: string // Shopify devuelve tags como string separado por comas
         customer: { email: string; first_name: string; last_name: string }
         line_items: Array<{
           id: number
@@ -164,6 +165,7 @@ export class ShopifyService {
     currency: string
     financial_status: string
     fulfillment_status: string | null
+    tags?: string // Shopify devuelve tags como string separado por comas
     customer: { email: string; first_name: string; last_name: string }
     line_items: Array<{
       id: number
@@ -236,6 +238,7 @@ export class ShopifyService {
           currency: string
           financial_status: string
           fulfillment_status: string | null
+          tags?: string // Shopify devuelve tags como string separado por comas
           customer: { email: string; first_name: string; last_name: string }
           line_items: Array<{
             id: number
@@ -319,6 +322,7 @@ export class ShopifyService {
         currency: string
         financial_status: string
         fulfillment_status: string | null
+        tags?: string // Shopify devuelve tags como string separado por comas
         customer: { email: string; first_name: string; last_name: string }
         line_items: Array<{
           id: number
@@ -443,6 +447,67 @@ export class ShopifyService {
     return result.data
   }
 
+  /**
+   * Obtiene datos de Analytics de Shopify
+   * Requiere permiso: read_analytics
+   * Nota: Shopify Analytics API puede variar según versión. Esta implementación usa Reports API.
+   */
+  async getAnalytics(params?: {
+    startDate?: string
+    endDate?: string
+  }) {
+    const searchParams = new URLSearchParams()
+    if (params?.startDate) searchParams.set('start_date', params.startDate)
+    if (params?.endDate) searchParams.set('end_date', params.endDate)
+
+    const query = searchParams.toString() ? `?${searchParams}` : ''
+    
+    try {
+      const result = await this.request<{
+        reports: Array<{
+          id: number
+          name: string
+          category: string
+          [key: string]: unknown
+        }>
+      }>(`/reports.json${query}`)
+      return result.data
+    } catch (error) {
+      console.error('[Shopify] Error fetching analytics:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Obtiene datos de funnel de conversión desde checkouts
+   * Nota: Requiere acceso a Checkouts API
+   */
+  async getAnalyticsFunnel(params?: {
+    startDate?: string
+    endDate?: string
+  }) {
+    const searchParams = new URLSearchParams()
+    if (params?.startDate) searchParams.set('created_at_min', params.startDate)
+    if (params?.endDate) searchParams.set('created_at_max', params.endDate)
+
+    try {
+      const checkoutsResult = await this.request<{
+        checkouts: Array<{
+          id: number
+          created_at: string
+          abandoned_checkout_url: string | null
+          completed_at: string | null
+          [key: string]: unknown
+        }>
+      }>(`/checkouts.json${searchParams.toString() ? `?${searchParams}` : ''}`)
+      
+      return checkoutsResult.data
+    } catch (error) {
+      console.warn('[Shopify] Checkouts API may not be available:', error)
+      return { checkouts: [] }
+    }
+  }
+
   // Transform Shopify API data to our internal format
   transformOrder(apiOrder: {
     id: number
@@ -453,6 +518,7 @@ export class ShopifyService {
     currency: string
     financial_status: string
     fulfillment_status: string | null
+    tags?: string // Shopify devuelve tags como string separado por comas
     customer: { email: string; first_name: string; last_name: string }
     line_items: Array<{
       id: number
@@ -465,6 +531,11 @@ export class ShopifyService {
     created_at: string
     processed_at: string
   }): Omit<ShopifyOrder, 'id'> {
+    // Convertir tags de string a array (Shopify devuelve "tag1, tag2, tag3")
+    const tagsArray = apiOrder.tags 
+      ? apiOrder.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
+      : undefined
+
     return {
       order_number: `#${apiOrder.order_number}`,
       total_price: parseFloat(apiOrder.total_price),
@@ -485,6 +556,7 @@ export class ShopifyService {
       })),
       created_at: apiOrder.created_at,
       processed_at: apiOrder.processed_at,
+      tags: tagsArray,
     }
   }
 }

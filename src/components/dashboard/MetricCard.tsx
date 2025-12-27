@@ -50,22 +50,22 @@ export function MetricCard({
   }
 
   return (
-    <Card className={cn('overflow-hidden transition-shadow hover:shadow-md', className)}>
+    <Card className={cn('overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] animate-in fade-in slide-in-from-bottom-2', className)}>
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <p className="text-sm font-medium text-muted-foreground">{title}</p>
             <div className="mt-2 flex items-baseline gap-2">
-              <h3 className="text-2xl font-bold tracking-tight">{value}</h3>
+              <h3 className="text-2xl font-bold tracking-tight transition-all duration-300">{value}</h3>
               {change !== undefined && (
                 simpleChange ? (
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-xs text-muted-foreground transition-opacity duration-300">
                     {change > 0 ? '+' : ''}{change.toFixed(1)}%
                   </span>
                 ) : (
                   <span
                     className={cn(
-                      'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium',
+                      'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium transition-all duration-300',
                       getTrendColor()
                     )}
                   >
@@ -76,13 +76,13 @@ export function MetricCard({
               )}
             </div>
             {(changeLabel || subtitle) && (
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 text-xs text-muted-foreground transition-opacity duration-300">
                 {changeLabel || subtitle}
               </p>
             )}
           </div>
           {Icon && (
-            <div className={cn('rounded-lg p-2.5', iconColor)}>
+            <div className={cn('rounded-lg p-2.5 transition-transform duration-300 hover:scale-110', iconColor)}>
               <Icon className="h-5 w-5" />
             </div>
           )}

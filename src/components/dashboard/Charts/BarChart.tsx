@@ -85,7 +85,7 @@ export function BarChart({
               margin={{ 
                 top: 10, 
                 right: isMobile ? 5 : 10, 
-                left: horizontal ? (isMobile ? 60 : 80) : (isMobile ? 40 : 0), 
+                left: horizontal ? (isMobile ? 5 : 10) : (isMobile ? 40 : 0), 
                 bottom: showLegend ? 10 : (isMobile ? 50 : 20)
               }}
             >
@@ -112,7 +112,8 @@ export function BarChart({
                     axisLine={false}
                     tickLine={false}
                     tick={{ fill: 'var(--muted-foreground)', fontSize: isMobile ? 10 : 12 }}
-                    width={isMobile ? 60 : 80}
+                    width={isMobile ? 90 : 140}
+                    interval={0}
                   />
                 </>
               ) : (

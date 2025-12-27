@@ -124,6 +124,7 @@ export async function POST(request: NextRequest) {
             customer_email: transformedOrder.customer_email,
             customer_name: transformedOrder.customer_name,
             line_items: transformedOrder.line_items as any,
+            tags: transformedOrder.tags || null, // Guardar tags como array o null
             created_at: transformedOrder.created_at,
             processed_at: transformedOrder.processed_at,
             updated_at: new Date().toISOString(),

@@ -42,6 +42,7 @@ export interface ShopifyOrder {
   line_items: ShopifyLineItem[];
   created_at: string;
   processed_at: string;
+  tags?: string[];
 }
 
 export interface ShopifyLineItem {
@@ -63,6 +64,104 @@ export interface ShopifyProduct {
   variants_count: number;
   total_inventory: number;
   created_at: string;
+}
+
+export interface ShopifyCustomer {
+  email: string;
+  name: string;
+  totalSpent: number; // LTV (Lifetime Value)
+  orderCount: number;
+  lastOrderDate: string;
+  status: 'active' | 'inactive';
+  isVip: boolean;
+  isNew: boolean; // Primer pedido en período
+  isRecurring: boolean; // Más de 1 pedido
+  city?: string | null; // Ciudad/ubicación del cliente
+}
+
+export interface ShopifyCustomerMetrics {
+  totalCustomers: number;
+  totalCustomersChange?: number;
+  totalCustomersChangeHistorical?: number;
+  previousTotalCustomers?: number | null;
+  historicalTotalCustomers?: number | null;
+  newCustomers: number;
+  newCustomersChange?: number;
+  previousNewCustomers?: number | null;
+  recurringCustomers: number;
+  recurringCustomersChange?: number;
+  previousRecurringCustomers?: number | null;
+  retentionRate: number; // Porcentaje
+  retentionRateChange?: number;
+  previousRetentionRate?: number | null;
+  averageCustomerValue: number;
+  averageCustomerValueChange?: number;
+  previousAverageCustomerValue?: number | null;
+  vipCustomersCount: number;
+}
+
+export interface ShopifyLocationMetrics {
+  location: string;
+  revenue: number;
+  orders: number;
+  averageOrderValue: number;
+  percentageOfTotal: number;
+  roas?: number; // ROAS para esta ubicación
+  topCustomers?: Array<{
+    name: string;
+    email: string;
+    revenue: number;
+  }>;
+  topComplements?: Array<{
+    name: string;
+    revenue: number;
+    sales: number;
+  }>;
+  monthlyRevenue?: Array<{
+    date: string;
+    value: number;
+  }>;
+  dailyRevenue?: Array<{
+    date: string;
+    value: number;
+  }>;
+  employees?: ShopifyEmployeeMetrics[];
+}
+
+export interface ShopifyEmployeeMetrics {
+  employee: string;
+  location: string;
+  revenue: number;
+  orders: number;
+  percentageOfTotal: number;
+}
+
+export interface ShopifyAnalytics {
+  conversionRate: number; // Porcentaje
+  checkoutAbandonmentRate: number; // Porcentaje
+  averageCheckoutTime: number; // Minutos
+  conversionRateByPeriod?: Array<{
+    date: string;
+    conversionRate: number;
+  }>;
+}
+
+export interface ShopifyAnalyticsFunnel {
+  visitors: number;
+  addedToCart: number;
+  reachedCheckout: number;
+  completedCheckout: number;
+  stages: Array<{
+    stage: string;
+    count: number;
+    percentage: number;
+  }>;
+}
+
+export interface ShopifyHeatmapData {
+  dayOfWeek: number; // 0-6 (Sunday-Saturday)
+  hour: number; // 0-23
+  value: number;
 }
 
 // Meta Ads Types

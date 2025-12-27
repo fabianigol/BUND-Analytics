@@ -11,7 +11,34 @@ export async function POST(request: NextRequest) {
 
     // Obtener credenciales desde Supabase
     console.log('[Analytics Sync] Creating service from Supabase...')
-    const analyticsService = await createGoogleAnalyticsServiceFromSupabase(supabase)
+    
+    // Callback to save refreshed tokens to database
+    const saveRefreshedToken = async (tokenData: { accessToken: string; expiresAt?: Date }) => {
+      // Get existing settings to preserve refresh_token and property_id
+      const { data: existing } = await supabase
+        .from('integration_settings')
+        .select('settings')
+        .eq('integration', 'analytics')
+        .single()
+
+      const existingSettings = (existing as any)?.settings || {}
+
+      await (supabase
+        .from('integration_settings') as any)
+        .update({
+          settings: {
+            ...existingSettings,
+            access_token: tokenData.accessToken,
+            expires_at: tokenData.expiresAt?.toISOString() || null,
+          },
+          updated_at: new Date().toISOString(),
+        } as any)
+        .eq('integration', 'analytics')
+      
+      console.log('[Analytics Sync] Refreshed token saved to database')
+    }
+    
+    const analyticsService = await createGoogleAnalyticsServiceFromSupabase(supabase, saveRefreshedToken)
     
     if (!analyticsService) {
       console.error('[Analytics Sync] Service creation failed - not connected or missing credentials')
@@ -75,7 +102,30 @@ export async function POST(request: NextRequest) {
         console.log('[Analytics Sync] Overview metrics fetched:', overviewMetrics)
       } catch (error) {
         console.error('[Analytics Sync] Error fetching overview metrics:', error)
-        throw new Error(`Error fetching overview metrics: ${error instanceof Error ? error.message : String(error)}`)
+        
+        // Check if error is due to revoked token
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        if (errorMessage.includes('TOKEN_REVOKED') || errorMessage.includes('invalid_grant')) {
+          // Mark integration as disconnected
+          await (supabase
+            .from('integration_settings') as any)
+            .update({
+              connected: false,
+              updated_at: new Date().toISOString(),
+            } as any)
+            .eq('integration', 'analytics')
+          
+          return NextResponse.json(
+            { 
+              error: 'Token de acceso expirado o revocado', 
+              details: 'El token de Google Analytics ha expirado o ha sido revocado. Por favor, reconecta Google Analytics desde la página de integraciones.',
+              requiresReconnect: true
+            },
+            { status: 401 }
+          )
+        }
+        
+        throw new Error(`Error fetching overview metrics: ${errorMessage}`)
       }
       
       console.log('[Analytics Sync] Fetching traffic sources...')
@@ -85,7 +135,30 @@ export async function POST(request: NextRequest) {
         console.log('[Analytics Sync] Traffic sources fetched:', trafficSources.length, 'sources')
       } catch (error) {
         console.error('[Analytics Sync] Error fetching traffic sources:', error)
-        throw new Error(`Error fetching traffic sources: ${error instanceof Error ? error.message : String(error)}`)
+        
+        // Check if error is due to revoked token
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        if (errorMessage.includes('TOKEN_REVOKED') || errorMessage.includes('invalid_grant')) {
+          // Mark integration as disconnected
+          await (supabase
+            .from('integration_settings') as any)
+            .update({
+              connected: false,
+              updated_at: new Date().toISOString(),
+            } as any)
+            .eq('integration', 'analytics')
+          
+          return NextResponse.json(
+            { 
+              error: 'Token de acceso expirado o revocado', 
+              details: 'El token de Google Analytics ha expirado o ha sido revocado. Por favor, reconecta Google Analytics desde la página de integraciones.',
+              requiresReconnect: true
+            },
+            { status: 401 }
+          )
+        }
+        
+        throw new Error(`Error fetching traffic sources: ${errorMessage}`)
       }
       
       console.log('[Analytics Sync] Fetching top pages...')
@@ -95,7 +168,30 @@ export async function POST(request: NextRequest) {
         console.log('[Analytics Sync] Top pages fetched:', topPages.length, 'pages')
       } catch (error) {
         console.error('[Analytics Sync] Error fetching top pages:', error)
-        throw new Error(`Error fetching top pages: ${error instanceof Error ? error.message : String(error)}`)
+        
+        // Check if error is due to revoked token
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        if (errorMessage.includes('TOKEN_REVOKED') || errorMessage.includes('invalid_grant')) {
+          // Mark integration as disconnected
+          await (supabase
+            .from('integration_settings') as any)
+            .update({
+              connected: false,
+              updated_at: new Date().toISOString(),
+            } as any)
+            .eq('integration', 'analytics')
+          
+          return NextResponse.json(
+            { 
+              error: 'Token de acceso expirado o revocado', 
+              details: 'El token de Google Analytics ha expirado o ha sido revocado. Por favor, reconecta Google Analytics desde la página de integraciones.',
+              requiresReconnect: true
+            },
+            { status: 401 }
+          )
+        }
+        
+        throw new Error(`Error fetching top pages: ${errorMessage}`)
       }
 
       console.log('[Analytics Sync] Fetching device breakdown...')
@@ -341,8 +437,8 @@ export async function POST(request: NextRequest) {
       }
 
       // Update last_sync timestamp
-      await supabase
-        .from('integration_settings')
+      await (supabase
+        .from('integration_settings') as any)
         // @ts-ignore - TypeScript can't infer the correct type for chained Supabase queries
         .update({
           last_sync: new Date().toISOString(),
@@ -369,8 +465,8 @@ export async function POST(request: NextRequest) {
             ? JSON.stringify(syncError)
             : String(syncError)
         
-        await supabase
-          .from('sync_logs')
+        await (supabase
+          .from('sync_logs') as any)
           // @ts-ignore - TypeScript can't infer the correct type for chained Supabase queries
           .update({
             status: 'failed',

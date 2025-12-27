@@ -29,13 +29,15 @@ export class GoogleAnalyticsService {
   private expiresAt?: Date
   private clientId?: string
   private clientSecret?: string
+  private onTokenRefreshed?: (tokenData: { accessToken: string; expiresAt?: Date }) => Promise<void>
 
-  constructor(config: GAConfig & { refreshToken?: string; expiresAt?: string; clientId?: string; clientSecret?: string }) {
+  constructor(config: GAConfig & { refreshToken?: string; expiresAt?: string; clientId?: string; clientSecret?: string; onTokenRefreshed?: (tokenData: { accessToken: string; expiresAt?: Date }) => Promise<void> }) {
     this.propertyId = config.propertyId
     this.accessToken = config.accessToken
     this.refreshToken = config.refreshToken
     this.clientId = config.clientId
     this.clientSecret = config.clientSecret
+    this.onTokenRefreshed = config.onTokenRefreshed
     
     if (config.expiresAt) {
       this.expiresAt = new Date(config.expiresAt)
@@ -47,7 +49,7 @@ export class GoogleAnalyticsService {
     // Check if token is expired or will expire in the next 5 minutes
     if (this.expiresAt && new Date() >= new Date(this.expiresAt.getTime() - 5 * 60 * 1000)) {
       if (!this.refreshToken || !this.clientId || !this.clientSecret) {
-        throw new Error('Token expired and no refresh token available')
+        throw new Error('Token expired and no refresh token available. Please reconnect Google Analytics.')
       }
 
       const response = await fetch('https://oauth2.googleapis.com/token', {
@@ -64,8 +66,21 @@ export class GoogleAnalyticsService {
       })
 
       if (!response.ok) {
-        const errorData = await response.text()
-        throw new Error(`Failed to refresh token: ${errorData}`)
+        const errorText = await response.text()
+        let errorData: any
+        try {
+          errorData = JSON.parse(errorText)
+        } catch {
+          errorData = { error: 'unknown_error', error_description: errorText }
+        }
+
+        // Check if token was revoked or expired
+        if (errorData.error === 'invalid_grant') {
+          const errorMessage = errorData.error_description || 'Token has been expired or revoked'
+          throw new Error(`TOKEN_REVOKED: ${errorMessage}. Please reconnect Google Analytics from the integrations page.`)
+        }
+
+        throw new Error(`Failed to refresh token: ${errorText}`)
       }
 
       const tokenData = await response.json()
@@ -75,8 +90,19 @@ export class GoogleAnalyticsService {
         this.expiresAt = new Date(Date.now() + tokenData.expires_in * 1000)
       }
 
-      // Note: The new token is stored in memory for this request
-      // The token will be persisted on the next sync or configuration update
+      // Save refreshed token to database if callback is provided
+      if (this.onTokenRefreshed) {
+        try {
+          await this.onTokenRefreshed({
+            accessToken: this.accessToken,
+            expiresAt: this.expiresAt,
+          })
+          console.log('[GA Service] Refreshed token saved to database')
+        } catch (error) {
+          console.error('[GA Service] Error saving refreshed token:', error)
+          // Don't throw - token is still valid in memory for this request
+        }
+      }
     }
 
     return this.accessToken
@@ -84,7 +110,13 @@ export class GoogleAnalyticsService {
 
   // Create authenticated client
   private async getClient(): Promise<BetaAnalyticsDataClient> {
-    const token = await this.ensureValidToken()
+    let token: string
+    try {
+      token = await this.ensureValidToken()
+    } catch (error) {
+      // Re-throw token errors as-is (they already have proper error messages)
+      throw error
+    }
     
     console.log('[GA Service] Creating authenticated client with token')
     console.log('[GA Service] Property ID:', this.propertyId)
@@ -110,12 +142,30 @@ export class GoogleAnalyticsService {
     const authWrapper = {
       getClient: async () => oauth2Client,
       getAccessToken: async () => {
-        const credentials = await oauth2Client.getAccessToken()
-        return credentials.token || token
+        try {
+          const credentials = await oauth2Client.getAccessToken()
+          return credentials.token || token
+        } catch (error: any) {
+          // Check if it's a token error
+          const errorMessage = error?.message || String(error)
+          if (errorMessage.includes('invalid_grant') || errorMessage.includes('Token has been expired')) {
+            throw new Error('TOKEN_REVOKED: Token has been expired or revoked. Please reconnect Google Analytics from the integrations page.')
+          }
+          throw error
+        }
       },
       getUniverseDomain: () => 'googleapis.com',
       request: async (opts: any) => {
-        return oauth2Client.request(opts)
+        try {
+          return await oauth2Client.request(opts)
+        } catch (error: any) {
+          // Check if it's a token error
+          const errorMessage = error?.message || String(error)
+          if (errorMessage.includes('invalid_grant') || errorMessage.includes('Token has been expired')) {
+            throw new Error('TOKEN_REVOKED: Token has been expired or revoked. Please reconnect Google Analytics from the integrations page.')
+          }
+          throw error
+        }
       },
       // Additional methods that might be needed
       getProjectId: async () => null,
@@ -529,7 +579,8 @@ export class GoogleAnalyticsService {
 
 // Factory function to create service instance from Supabase settings
 export async function createGoogleAnalyticsServiceFromSupabase(
-  supabase: Awaited<ReturnType<typeof import('@/lib/supabase/server').createClient>>
+  supabase: Awaited<ReturnType<typeof import('@/lib/supabase/server').createClient>>,
+  onTokenRefreshed?: (tokenData: { accessToken: string; expiresAt?: Date }) => Promise<void>
 ): Promise<GoogleAnalyticsService | null> {
   const { data, error } = await supabase
     .from('integration_settings')
@@ -561,6 +612,7 @@ export async function createGoogleAnalyticsServiceFromSupabase(
     expiresAt: settings.expires_at,
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    onTokenRefreshed,
   })
 }
 
