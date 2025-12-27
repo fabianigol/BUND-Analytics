@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
@@ -10,6 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { createClient } from '@/lib/supabase/client'
+import { checkIsAdmin } from '@/lib/utils/user'
 import {
   ChevronLeft,
   ChevronRight,
@@ -23,6 +24,7 @@ interface NavItem {
   iconImage?: string
   emoji?: string
   badge?: number
+  sectionName?: string // Nombre de la sección para verificar permisos
 }
 
 const mainNavItems: NavItem[] = [
@@ -30,36 +32,43 @@ const mainNavItems: NavItem[] = [
     title: 'Dashboard',
     href: '/',
     emoji: '📊',
+    sectionName: 'dashboard',
   },
   {
     title: 'Citas',
     href: '/citas',
     iconImage: '/Logo Acuity Scheduling.png',
+    sectionName: 'citas',
   },
   {
     title: 'Ventas',
     href: '/ventas',
     iconImage: '/Logo Shopify.svg',
+    sectionName: 'ventas',
   },
   {
     title: 'Paid Media',
     href: '/ads',
     iconImage: '/Logo Meta.png',
+    sectionName: 'paid-media',
   },
   {
     title: 'Analytics',
     href: '/analytics',
     iconImage: '/Logo Google Analytics 4.png',
+    sectionName: 'analytics',
   },
   {
     title: 'Reportes',
     href: '/reportes',
     emoji: '📄',
+    sectionName: 'reportes',
   },
   {
     title: 'Recursos',
     href: '/recursos',
     emoji: '📚',
+    sectionName: 'recursos',
   },
 ]
 
@@ -68,30 +77,82 @@ const adminNavItems: NavItem[] = [
     title: 'Usuarios',
     href: '/usuarios',
     emoji: '👥',
+    sectionName: 'usuarios',
   },
   {
     title: 'Integraciones',
     href: '/integraciones',
     emoji: '🔌',
+    sectionName: 'integraciones',
   },
   {
     title: 'Configuración',
     href: '/settings',
     emoji: '⚙️',
+    sectionName: 'configuracion',
   },
 ]
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [userPermissions, setUserPermissions] = useState<string[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
+
+  useEffect(() => {
+    const loadPermissions = async () => {
+      try {
+        const adminCheck = await checkIsAdmin()
+        setIsAdmin(adminCheck)
+
+        if (!adminCheck) {
+          // Cargar permisos del usuario
+          const { data: { user } } = await supabase.auth.getUser()
+          if (user) {
+            const { data: permissions } = await (supabase as any)
+              .from('user_sidebar_permissions')
+              .select('section_name')
+              .eq('user_id', user.id)
+
+            if (permissions) {
+              setUserPermissions((permissions as any[]).map((p: any) => p.section_name))
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading permissions:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadPermissions()
+  }, [supabase])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
     router.push('/login')
     router.refresh()
   }
+
+  // Función para verificar si el usuario tiene acceso a una sección
+  const hasAccess = (item: NavItem): boolean => {
+    // Los administradores tienen acceso a todo
+    if (isAdmin) return true
+    
+    // Si no tiene sectionName, siempre permitir (casos especiales)
+    if (!item.sectionName) return true
+    
+    // Verificar si tiene permiso para esta sección
+    return userPermissions.includes(item.sectionName)
+  }
+
+  // Filtrar items según permisos
+  const filteredMainItems = mainNavItems.filter(hasAccess)
+  const filteredAdminItems = isAdmin ? adminNavItems : adminNavItems.filter(hasAccess)
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -141,37 +202,50 @@ export function Sidebar() {
 
         {/* Navigation */}
         <ScrollArea className="flex-1 px-3 py-4">
-          <nav className="flex flex-col gap-1">
-            {!collapsed && (
-              <span className="mb-2 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Principal
-              </span>
-            )}
-            {mainNavItems.map((item) => (
-              <NavLink
-                key={item.href}
-                item={item}
-                isActive={pathname === item.href}
-                collapsed={collapsed}
-              />
-            ))}
+          {isLoading ? (
+            <div className="flex items-center justify-center py-4">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            </div>
+          ) : (
+            <nav className="flex flex-col gap-1">
+              {filteredMainItems.length > 0 && (
+                <>
+                  {!collapsed && (
+                    <span className="mb-2 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      Principal
+                    </span>
+                  )}
+                  {filteredMainItems.map((item) => (
+                    <NavLink
+                      key={item.href}
+                      item={item}
+                      isActive={pathname === item.href}
+                      collapsed={collapsed}
+                    />
+                  ))}
+                </>
+              )}
 
-            <Separator className="my-4 bg-sidebar-border" />
-
-            {!collapsed && (
-              <span className="mb-2 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Administración
-              </span>
-            )}
-            {adminNavItems.map((item) => (
-              <NavLink
-                key={item.href}
-                item={item}
-                isActive={pathname === item.href}
-                collapsed={collapsed}
-              />
-            ))}
-          </nav>
+              {filteredAdminItems.length > 0 && (
+                <>
+                  <Separator className="my-4 bg-sidebar-border" />
+                  {!collapsed && (
+                    <span className="mb-2 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      Administración
+                    </span>
+                  )}
+                  {filteredAdminItems.map((item) => (
+                    <NavLink
+                      key={item.href}
+                      item={item}
+                      isActive={pathname === item.href}
+                      collapsed={collapsed}
+                    />
+                  ))}
+                </>
+              )}
+            </nav>
+          )}
         </ScrollArea>
 
         {/* Footer */}

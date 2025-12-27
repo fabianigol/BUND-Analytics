@@ -1658,3 +1658,1081 @@
 🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
 👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
  GET /ventas 200 in 5.8s (compile: 1237ms, proxy.ts: 3.5s, render: 1073ms)
+🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ventas 200 in 3.4s (compile: 2.3s, proxy.ts: 506ms, render: 543ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ ○ Compiling /usuarios ...
+ GET /usuarios 200 in 5.9s (compile: 5.4s, proxy.ts: 437ms, render: 111ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ ○ Compiling /settings ...
+ GET /settings 200 in 5.9s (compile: 4.2s, proxy.ts: 1546ms, render: 212ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 2.7s (compile: 1137ms, proxy.ts: 769ms, render: 777ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 823ms (compile: 30ms, proxy.ts: 719ms, render: 74ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 116ms (compile: 2ms, proxy.ts: 87ms, render: 26ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 1514ms (compile: 970ms, proxy.ts: 279ms, render: 265ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 900ms (compile: 123ms, proxy.ts: 710ms, render: 67ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 190ms (compile: 3ms, proxy.ts: 165ms, render: 22ms)
+ ⨯ ./src/app/(dashboard)/settings/page.tsx:34:1
+Module not found: Can't resolve '@/hooks/use-toast'
+  32 | import { createClient } from '@/lib/supabase/client'
+  33 | import { checkIsAdmin, uploadAvatar, getUserRole } from '@/lib/utils/user'
+> 34 | import { useToast } from '@/hooks/use-toast'
+     | ^
+  35 |
+  36 | export default function SettingsPage() {
+  37 |   const [isDark, setIsDark] = useState(false)
+
+https://nextjs.org/docs/messages/module-not-found
+ ⨯ ./src/app/(dashboard)/settings/page.tsx:34:1
+Module not found: Can't resolve '@/hooks/use-toast'
+  32 | import { createClient } from '@/lib/supabase/client'
+  33 | import { checkIsAdmin, uploadAvatar, getUserRole } from '@/lib/utils/user'
+> 34 | import { useToast } from '@/hooks/use-toast'
+     | ^
+  35 |
+  36 | export default function SettingsPage() {
+  37 |   const [isDark, setIsDark] = useState(false)
+
+https://nextjs.org/docs/messages/module-not-found
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 1764ms (compile: 213ms, proxy.ts: 272ms, render: 1279ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 331ms (compile: 86ms, proxy.ts: 211ms, render: 35ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 186ms (compile: 48ms, proxy.ts: 116ms, render: 22ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 165ms (compile: 47ms, proxy.ts: 100ms, render: 18ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 222ms (compile: 35ms, proxy.ts: 169ms, render: 18ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 264ms (compile: 80ms, proxy.ts: 148ms, render: 36ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 152ms (compile: 50ms, proxy.ts: 84ms, render: 18ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 168ms (compile: 52ms, proxy.ts: 86ms, render: 29ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 180ms (compile: 36ms, proxy.ts: 118ms, render: 25ms)
+ ⨯ ./src/components/ui/checkbox.tsx:4:1
+Module not found: Can't resolve '@radix-ui/react-checkbox'
+  2 |
+  3 | import * as React from 'react'
+> 4 | import * as CheckboxPrimitive from '@radix-ui/react-checkbox'
+    | ^
+  5 | import { Check } from 'lucide-react'
+  6 |
+  7 | import { cn } from '@/lib/utils'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./src/app/(dashboard)/usuarios/page.tsx
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ ○ Compiling /_error ...
+ GET /usuarios 500 in 30.9s (compile: 29.9s, proxy.ts: 234ms, render: 828ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 12.3s (compile: 7.8s, proxy.ts: 4.1s, render: 445ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 342ms (compile: 32ms, proxy.ts: 203ms, render: 107ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 798ms (compile: 4ms, proxy.ts: 728ms, render: 66ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 2.8s (compile: 12ms, proxy.ts: 142ms, render: 2.6s)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 6.4s (compile: 1532ms, proxy.ts: 4.0s, render: 778ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 737ms (compile: 340ms, proxy.ts: 328ms, render: 68ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 2.1s (compile: 569ms, proxy.ts: 814ms, render: 676ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 1136ms (compile: 81ms, proxy.ts: 980ms, render: 76ms)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 9.4s (compile: 1963ms, proxy.ts: 6.5s, render: 906ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ ○ Compiling /api/dashboard ...
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Raw availability data: {
+  count: 8,
+  sample: [
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 5,
+      total: 6
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 4,
+      available: 0,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub CDMX (Polanco)',
+      normalized: 'Cdmx',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 3
+    },
+    {
+      store_name: 'The Bundclub CDMX (Polanco)',
+      normalized: 'Cdmx',
+      category: 'medición',
+      booked: 4,
+      available: 12,
+      total: 16
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'medición',
+      booked: 2,
+      available: 10,
+      total: 12
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [ 'Sevilla', 'Málaga', 'Cdmx', 'Madrid' ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2025-12-27',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Raw availability data: {
+  count: 8,
+  sample: [
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 5,
+      total: 6
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 4,
+      available: 0,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub CDMX (Polanco)',
+      normalized: 'Cdmx',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 3
+    },
+    {
+      store_name: 'The Bundclub CDMX (Polanco)',
+      normalized: 'Cdmx',
+      category: 'medición',
+      booked: 4,
+      available: 12,
+      total: 16
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'medición',
+      booked: 2,
+      available: 10,
+      total: 12
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [ 'Sevilla', 'Málaga', 'Cdmx', 'Madrid' ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2025-12-27',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 925,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-01', 14392.160000000002 ]
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 925,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-01', 14392.160000000002 ]
+  ]
+}
+ GET /api/dashboard 200 in 8.9s (compile: 75ms, proxy.ts: 6.6s, render: 2.3s)
+ GET /api/dashboard 200 in 32.8s (compile: 28.4s, proxy.ts: 524ms, render: 3.9s)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 669ms (compile: 308ms, proxy.ts: 293ms, render: 68ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 1692ms (compile: 576ms, proxy.ts: 1034ms, render: 82ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 4.3s (compile: 1332ms, proxy.ts: 1034ms, render: 1937ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 381ms (compile: 17ms, proxy.ts: 323ms, render: 41ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 105ms (compile: 2ms, proxy.ts: 93ms, render: 9ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 112ms (compile: 3ms, proxy.ts: 93ms, render: 16ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 227ms (compile: 5ms, proxy.ts: 206ms, render: 15ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 172ms (compile: 4ms, proxy.ts: 144ms, render: 24ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 235ms (compile: 11ms, proxy.ts: 139ms, render: 85ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 726ms (compile: 14ms, proxy.ts: 654ms, render: 57ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 1257ms (compile: 101ms, proxy.ts: 923ms, render: 233ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 1222ms (compile: 252ms, proxy.ts: 487ms, render: 482ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 9.3s (compile: 199ms, proxy.ts: 3.8s, render: 5.3s)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 2.0s (compile: 116ms, proxy.ts: 1716ms, render: 205ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+Error: fetch failed
+    at context.fetch (/Users/juanfabianidelaiglesia/Downloads/2º BUSINESS/BUND-Analytics/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:120:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:106:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:96:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1288:82)
+    at SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1174:26)
+    at async SupabaseAuthClient._getUser (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1278:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1262:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1119:28) {
+  
+}
+👤 User status: { hasUser: false, email: undefined }
+🔒 Redirecting to login
+🔍 Middleware Debug: { url: '/login', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+✅ User logged in, redirecting to dashboard
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 1777ms (compile: 1383ms, proxy.ts: 113ms, render: 281ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ ○ Compiling /api/dashboard ...
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Raw availability data: {
+  count: 8,
+  sample: [
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 5,
+      total: 6
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 4,
+      available: 0,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub CDMX (Polanco)',
+      normalized: 'Cdmx',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 3
+    },
+    {
+      store_name: 'The Bundclub CDMX (Polanco)',
+      normalized: 'Cdmx',
+      category: 'medición',
+      booked: 4,
+      available: 12,
+      total: 16
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'medición',
+      booked: 2,
+      available: 10,
+      total: 12
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [ 'Sevilla', 'Málaga', 'Cdmx', 'Madrid' ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2025-12-27',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 925,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-01', 14392.160000000002 ]
+  ]
+}
+[Dashboard] Raw availability data: {
+  count: 8,
+  sample: [
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 5,
+      total: 6
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 4,
+      available: 0,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub CDMX (Polanco)',
+      normalized: 'Cdmx',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 3
+    },
+    {
+      store_name: 'The Bundclub CDMX (Polanco)',
+      normalized: 'Cdmx',
+      category: 'medición',
+      booked: 4,
+      available: 12,
+      total: 16
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'medición',
+      booked: 2,
+      available: 10,
+      total: 12
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [ 'Sevilla', 'Málaga', 'Cdmx', 'Madrid' ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2025-12-27',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 925,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-01', 14392.160000000002 ]
+  ]
+}
+ GET /api/dashboard 200 in 42s (compile: 22.5s, proxy.ts: 14.4s, render: 5.3s)
+ GET /api/dashboard 200 in 63s (compile: 56s, proxy.ts: 2.3s, render: 5.3s)
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 2.3s (compile: 275ms, proxy.ts: 644ms, render: 1410ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Raw availability data: {
+  count: 8,
+  sample: [
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 5,
+      total: 6
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 4,
+      available: 0,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub CDMX (Polanco)',
+      normalized: 'Cdmx',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 3
+    },
+    {
+      store_name: 'The Bundclub CDMX (Polanco)',
+      normalized: 'Cdmx',
+      category: 'medición',
+      booked: 4,
+      available: 12,
+      total: 16
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'medición',
+      booked: 2,
+      available: 10,
+      total: 12
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [ 'Sevilla', 'Málaga', 'Cdmx', 'Madrid' ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2025-12-27',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 925,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-01', 14392.160000000002 ]
+  ]
+}
+ GET /api/dashboard 200 in 3.7s (compile: 19ms, proxy.ts: 1169ms, render: 2.5s)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Raw availability data: {
+  count: 8,
+  sample: [
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 5,
+      total: 6
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 4,
+      available: 0,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub CDMX (Polanco)',
+      normalized: 'Cdmx',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 3
+    },
+    {
+      store_name: 'The Bundclub CDMX (Polanco)',
+      normalized: 'Cdmx',
+      category: 'medición',
+      booked: 4,
+      available: 12,
+      total: 16
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'medición',
+      booked: 2,
+      available: 10,
+      total: 12
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [ 'Sevilla', 'Málaga', 'Cdmx', 'Madrid' ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2025-12-27',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 925,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-01', 14392.160000000002 ]
+  ]
+}
+ GET /api/dashboard 200 in 3.9s (compile: 13ms, proxy.ts: 993ms, render: 2.8s)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings?tab=profile 200 in 389ms (compile: 63ms, proxy.ts: 232ms, render: 94ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings?tab=profile 200 in 501ms (compile: 227ms, proxy.ts: 239ms, render: 35ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings?tab=profile 200 in 770ms (compile: 60ms, proxy.ts: 430ms, render: 280ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings?tab=profile 200 in 263ms (compile: 15ms, proxy.ts: 112ms, render: 136ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings?tab=profile 200 in 686ms (compile: 295ms, proxy.ts: 298ms, render: 93ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings?tab=profile 200 in 1357ms (compile: 55ms, proxy.ts: 456ms, render: 847ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 6.0s (compile: 4.1s, proxy.ts: 1684ms, render: 164ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 234ms (compile: 4ms, proxy.ts: 195ms, render: 35ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 523ms (compile: 85ms, proxy.ts: 319ms, render: 119ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 1221ms (compile: 406ms, proxy.ts: 692ms, render: 123ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 287ms (compile: 69ms, proxy.ts: 171ms, render: 47ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 1727ms (compile: 754ms, proxy.ts: 420ms, render: 552ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 1193ms (compile: 281ms, proxy.ts: 319ms, render: 593ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 966ms (compile: 312ms, proxy.ts: 400ms, render: 255ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 567ms (compile: 12ms, proxy.ts: 503ms, render: 52ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 123ms (compile: 2ms, proxy.ts: 107ms, render: 14ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 2.4s (compile: 852ms, proxy.ts: 1037ms, render: 523ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 456ms (compile: 227ms, proxy.ts: 139ms, render: 90ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 1254ms (compile: 22ms, proxy.ts: 308ms, render: 924ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 3.6s (compile: 690ms, proxy.ts: 423ms, render: 2.5s)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 433ms (compile: 16ms, proxy.ts: 356ms, render: 60ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 123ms (compile: 2ms, proxy.ts: 107ms, render: 14ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 20.1s (compile: 9.8s, proxy.ts: 9.8s, render: 425ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 544ms (compile: 58ms, proxy.ts: 355ms, render: 131ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 1798ms (compile: 861ms, proxy.ts: 324ms, render: 612ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 4.5s (compile: 96ms, proxy.ts: 883ms, render: 3.5s)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 3.1s (compile: 1403ms, proxy.ts: 811ms, render: 919ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 1721ms (compile: 825ms, proxy.ts: 647ms, render: 249ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 2.2s (compile: 1275ms, proxy.ts: 855ms, render: 79ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 380ms (compile: 116ms, proxy.ts: 190ms, render: 74ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 354ms (compile: 147ms, proxy.ts: 160ms, render: 48ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 2.2s (compile: 117ms, proxy.ts: 1296ms, render: 766ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 1937ms (compile: 207ms, proxy.ts: 583ms, render: 1148ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 885ms (compile: 207ms, proxy.ts: 189ms, render: 489ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 625ms (compile: 264ms, proxy.ts: 264ms, render: 97ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 436ms (compile: 147ms, proxy.ts: 166ms, render: 123ms)
+🔍 Middleware Debug: { url: '/settings', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /settings 200 in 198ms (compile: 42ms, proxy.ts: 131ms, render: 25ms)

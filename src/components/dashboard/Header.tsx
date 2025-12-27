@@ -62,15 +62,23 @@ export function Header({ title, subtitle }: HeaderProps) {
               avatar_url: string | null
             }>()
 
-          if (error && error.code !== 'PGRST116') {
-            console.error('Error fetching user profile:', error)
-            // Si no hay perfil, usar datos del auth
-            setUserProfile({
-              full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuario',
-              email: user.email || '',
-              avatar_url: user.user_metadata?.avatar_url || null,
-            })
-          } else if (profile) {
+          // Ignorar errores vacíos {} completamente
+          // Solo loguear si hay un mensaje real de error
+          const shouldLog = error && 
+                           typeof error === 'object' && 
+                           Object.keys(error).length > 0 &&
+                           (error.message?.trim() || 
+                            (error.code?.trim() && error.code !== 'PGRST116') ||
+                            error.details?.trim() ||
+                            error.hint?.trim())
+          
+          // Solo loguear si hay un mensaje real
+          if (shouldLog && error.message?.trim()) {
+            console.error('Error fetching user profile:', error.message)
+          }
+          // Si no cumple las condiciones, ignorar completamente (objeto vacío o sin información útil)
+          
+          if (profile) {
             setUserProfile({
               full_name: profile.full_name,
               email: profile.email || user.email || '',
@@ -235,11 +243,11 @@ export function Header({ title, subtitle }: HeaderProps) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push('/settings?tab=profile')}>
               <User className="mr-2 h-4 w-4" />
               Mi perfil
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push('/settings')}>
               <Settings className="mr-2 h-4 w-4" />
               Configuración
             </DropdownMenuItem>
