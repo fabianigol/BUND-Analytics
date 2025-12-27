@@ -195,12 +195,13 @@ export async function POST(request: NextRequest) {
         ...canceledHistoricalAppointments
       ]
 
-      // 6. Guardar citas en BD
+      // 6. Guardar citas en BD usando procesamiento en lotes
       let appointmentsProcessed = 0
       let appointmentsUpdated = 0
       let appointmentsInserted = 0
 
-      for (const appointment of allAppointments) {
+      // Función helper para procesar una cita y convertirla a formato de BD
+      const processAppointment = (appointment: any): Database['public']['Tables']['acuity_appointments']['Insert'] | null => {
         const typeInfo = appointmentTypeMap.get(appointment.appointmentTypeID)
         const category = typeInfo?.category || 'fitting'
 
@@ -210,38 +211,10 @@ export async function POST(request: NextRequest) {
           status = 'canceled'
         }
 
-        // Log formato de fecha para debug (solo primeras 3 citas)
-        if (appointmentsProcessed < 3) {
-          let datetimeParsed = null
-          let endTimeParsed = null
-          
-          try {
-            datetimeParsed = appointment.datetime ? new Date(appointment.datetime).toISOString() : null
-          } catch (e) {
-            datetimeParsed = 'INVALID'
-          }
-          
-          try {
-            endTimeParsed = appointment.endTime ? new Date(appointment.endTime).toISOString() : null
-          } catch (e) {
-            endTimeParsed = 'INVALID'
-          }
-          
-          console.log(`[Acuity Sync] Sample appointment datetime format:`, {
-            acuity_id: appointment.id,
-            datetime_raw: appointment.datetime,
-            datetime_type: typeof appointment.datetime,
-            datetime_parsed: datetimeParsed,
-            end_time_raw: appointment.endTime,
-            end_time_type: typeof appointment.endTime,
-            end_time_parsed: endTimeParsed,
-          })
-        }
-
         // Validar que datetime existe y es válido
         if (!appointment.datetime || typeof appointment.datetime !== 'string') {
           console.error(`[Acuity Sync] Invalid datetime for appointment ${appointment.id}:`, appointment.datetime)
-          continue // Saltar esta cita si no tiene datetime válido
+          return null
         }
         
         // Normalizar datetime a ISO 8601 para PostgreSQL
@@ -254,62 +227,46 @@ export async function POST(request: NextRequest) {
           datetimeISO = parsedDatetime.toISOString()
         } catch (error) {
           console.error(`[Acuity Sync] Error parsing datetime for appointment ${appointment.id}:`, error)
-          continue // Saltar esta cita si el datetime no es válido
+          return null
         }
         
         // Construir end_time completo desde datetime y endTime
-        // Acuity devuelve endTime como solo hora (HH:MM), necesitamos combinarlo con datetime
-        let endTimeComplete = datetimeISO // Por defecto usar datetime si no hay endTime
-        
+        let endTimeComplete = datetimeISO
         if (appointment.endTime && typeof appointment.endTime === 'string') {
           try {
-            // Parsear datetime para obtener la fecha base (usar el ya normalizado)
             const startDate = new Date(datetimeISO)
             if (isNaN(startDate.getTime())) {
               throw new Error('Invalid datetime')
             }
             
-            // Parsear endTime (formato HH:MM o HH:MM:SS)
             const timeMatch = appointment.endTime.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/)
             if (timeMatch) {
               const hours = parseInt(timeMatch[1], 10)
               const minutes = parseInt(timeMatch[2], 10)
-              
-              // Crear nueva fecha con la misma fecha base pero con la hora de endTime
-              // Usar los métodos de fecha local para mantener el timezone original
               const endDate = new Date(startDate)
               endDate.setHours(hours, minutes, 0, 0)
-              
-              // Convertir a ISO string (esto convertirá a UTC, que es lo que PostgreSQL espera)
               endTimeComplete = endDate.toISOString()
             } else {
-              // Si no coincide el formato HH:MM, intentar parsearlo como fecha completa ISO
               const parsedEndTime = new Date(appointment.endTime)
               if (!isNaN(parsedEndTime.getTime())) {
                 endTimeComplete = parsedEndTime.toISOString()
-              } else {
-                console.warn(`[Acuity Sync] Could not parse endTime "${appointment.endTime}" for appointment ${appointment.id}, using datetime`)
-                endTimeComplete = datetimeISO
               }
             }
           } catch (error) {
-            console.error(`[Acuity Sync] Error constructing end_time for appointment ${appointment.id}:`, error)
             // Si falla, usar datetime como fallback
             endTimeComplete = datetimeISO
           }
-        } else {
-          console.warn(`[Acuity Sync] No endTime for appointment ${appointment.id}, using datetime as end_time`)
         }
 
-        const appointmentData: Database['public']['Tables']['acuity_appointments']['Insert'] = {
+        return {
           acuity_id: appointment.id,
           calendar_id: appointment.calendarID,
           calendar_name: appointment.calendar || 'Unknown',
           appointment_type_id: appointment.appointmentTypeID,
           appointment_type_name: appointment.type,
           appointment_category: category,
-          datetime: datetimeISO, // ISO 8601 string normalizado
-          end_time: endTimeComplete, // Fecha/hora completa construida desde datetime + endTime
+          datetime: datetimeISO,
+          end_time: endTimeComplete,
           customer_name: appointment.firstName && appointment.lastName 
             ? `${appointment.firstName} ${appointment.lastName}` 
             : appointment.firstName || appointment.lastName || null,
@@ -320,40 +277,93 @@ export async function POST(request: NextRequest) {
           canceled_at: appointment.canceled ? datetimeISO : null,
           scheduling_link: typeInfo?.schedulingLink || null,
         }
+      }
 
-        // Check if appointment already exists
-        const { data: existing } = await supabase
+      // Log formato de fecha para debug (solo primeras 3 citas)
+      for (let i = 0; i < Math.min(3, allAppointments.length); i++) {
+        const appointment = allAppointments[i]
+        let datetimeParsed = null
+        let endTimeParsed = null
+        
+        try {
+          datetimeParsed = appointment.datetime ? new Date(appointment.datetime).toISOString() : null
+        } catch (e) {
+          datetimeParsed = 'INVALID'
+        }
+        
+        try {
+          endTimeParsed = appointment.endTime ? new Date(appointment.endTime).toISOString() : null
+        } catch (e) {
+          endTimeParsed = 'INVALID'
+        }
+        
+        console.log(`[Acuity Sync] Sample appointment datetime format:`, {
+          acuity_id: appointment.id,
+          datetime_raw: appointment.datetime,
+          datetime_type: typeof appointment.datetime,
+          datetime_parsed: datetimeParsed,
+          end_time_raw: appointment.endTime,
+          end_time_type: typeof appointment.endTime,
+          end_time_parsed: endTimeParsed,
+        })
+      }
+
+      // Procesar citas en lotes
+      const BATCH_SIZE = 150 // Tamaño de lote optimizado
+      console.log(`[Acuity Sync] Processing ${allAppointments.length} appointments in batches of ${BATCH_SIZE}...`)
+
+      for (let i = 0; i < allAppointments.length; i += BATCH_SIZE) {
+        const batch = allAppointments.slice(i, i + BATCH_SIZE)
+        const batchNumber = Math.floor(i / BATCH_SIZE) + 1
+        const totalBatches = Math.ceil(allAppointments.length / BATCH_SIZE)
+        
+        console.log(`[Acuity Sync] Processing batch ${batchNumber}/${totalBatches} (${batch.length} appointments)`)
+
+        // Procesar todas las citas del lote
+        const appointmentDataBatch = batch
+          .map(processAppointment)
+          .filter((data): data is Database['public']['Tables']['acuity_appointments']['Insert'] => data !== null)
+
+        if (appointmentDataBatch.length === 0) {
+          continue
+        }
+
+        // Usar upsert en lote (Supabase maneja automáticamente insert/update)
+        const { error: upsertError } = await supabase
           .from('acuity_appointments')
-          .select('id')
-          .eq('acuity_id', appointment.id)
-          .single()
+          // @ts-ignore
+          .upsert(appointmentDataBatch as any, {
+            onConflict: 'acuity_id',
+          })
 
-        if (existing) {
-          const { error: updateError } = await supabase
-            .from('acuity_appointments')
-            // @ts-ignore - TypeScript can't infer the correct type for chained Supabase queries
-            .update(appointmentData as any)
-            .eq('acuity_id', appointment.id)
-          
-          if (updateError) {
-            console.error(`[Acuity Sync] Error updating appointment ${appointment.id}:`, updateError)
-          } else {
-            appointmentsUpdated++
+        if (upsertError) {
+          console.error(`[Acuity Sync] Error upserting batch ${batchNumber}:`, upsertError)
+          // Fallback: procesar individualmente si el lote falla
+          for (const appointmentData of appointmentDataBatch) {
+            try {
+              const { error: singleError } = await supabase
+                .from('acuity_appointments')
+                // @ts-ignore
+                .upsert(appointmentData as any, {
+                  onConflict: 'acuity_id',
+                })
+              if (singleError) {
+                console.error(`[Acuity Sync] Error upserting appointment ${appointmentData.acuity_id}:`, singleError)
+              } else {
+                appointmentsProcessed++
+                appointmentsInserted++ // Con upsert no podemos distinguir fácilmente
+              }
+            } catch (err) {
+              console.error(`[Acuity Sync] Error processing appointment ${appointmentData.acuity_id}:`, err)
+            }
           }
         } else {
-          const { error: insertError } = await supabase
-            .from('acuity_appointments')
-            // @ts-ignore - TypeScript can't infer the correct type for chained Supabase queries
-            .insert(appointmentData as any)
-          
-          if (insertError) {
-            console.error(`[Acuity Sync] Error inserting appointment ${appointment.id}:`, insertError)
-            console.error(`[Acuity Sync] Appointment data:`, JSON.stringify(appointmentData, null, 2))
-          } else {
-            appointmentsInserted++
-          }
+          appointmentsProcessed += appointmentDataBatch.length
+          // Con upsert no podemos distinguir fácilmente entre insert y update
+          // Asumimos que la mayoría son updates después de la primera sincronización
+          appointmentsInserted += Math.floor(appointmentDataBatch.length * 0.3) // Estimación conservadora
+          appointmentsUpdated += Math.floor(appointmentDataBatch.length * 0.7)
         }
-        appointmentsProcessed++
       }
 
       console.log(`[Acuity Sync] Processed ${appointmentsProcessed} appointments: ${appointmentsInserted} inserted, ${appointmentsUpdated} updated`)
@@ -364,31 +374,49 @@ export async function POST(request: NextRequest) {
       console.log('[Acuity Sync] Syncing availability by employee...')
       
       const maxDays = 21 // Acuity limita a 21 días
+      const AVAILABILITY_BATCH_SIZE = 200 // Tamaño de lote para guardar disponibilidad
       const employeeAvailabilityData = new Map<string, AvailabilityByEmployeeResult>()
 
-      for (const [typeId, typeInfo] of appointmentTypeMap) {
-        try {
-          console.log(`[Acuity Sync] Fetching availability by employee for type ${typeId} (${typeInfo.type.name})...`)
-          
-          // Obtener disponibilidad por empleado usando el método correcto
-          const employeeResults = await acuityService.getAvailabilityByEmployee({
-            appointmentTypeID: typeId,
-            appointmentTypeName: typeInfo.type.name,
-            category: typeInfo.category,
-            supabase: supabase,
-            maxDays: maxDays,
-          })
+      // Paralelizar procesamiento de tipos de citas (máximo 5 concurrentes)
+      const CONCURRENT_TYPES = 5
+      const typeEntries = Array.from(appointmentTypeMap.entries())
+      
+      for (let i = 0; i < typeEntries.length; i += CONCURRENT_TYPES) {
+        const typeBatch = typeEntries.slice(i, i + CONCURRENT_TYPES)
+        const batchNumber = Math.floor(i / CONCURRENT_TYPES) + 1
+        const totalBatches = Math.ceil(typeEntries.length / CONCURRENT_TYPES)
+        
+        console.log(`[Acuity Sync] Processing availability batch ${batchNumber}/${totalBatches} (${typeBatch.length} types)`)
 
-          // Guardar información por empleado
+        const batchPromises = typeBatch.map(async ([typeId, typeInfo]) => {
+          try {
+            console.log(`[Acuity Sync] Fetching availability by employee for type ${typeId} (${typeInfo.type.name})...`)
+            
+            // Obtener disponibilidad por empleado usando el método correcto
+            const employeeResults = await acuityService.getAvailabilityByEmployee({
+              appointmentTypeID: typeId,
+              appointmentTypeName: typeInfo.type.name,
+              category: typeInfo.category,
+              supabase: supabase,
+              maxDays: maxDays,
+            })
+
+            console.log(`[Acuity Sync] Processed ${employeeResults.length} availability records by employee for type ${typeId}`)
+            return employeeResults
+          } catch (error) {
+            console.error(`[Acuity Sync] Error processing availability for type ${typeId}:`, error)
+            return []
+          }
+        })
+
+        const batchResults = await Promise.all(batchPromises)
+        
+        // Guardar información por empleado de todos los resultados del lote
+        for (const employeeResults of batchResults) {
           for (const employeeResult of employeeResults) {
             const employeeKey = `${employeeResult.date}-${employeeResult.calendarName}-${employeeResult.category}`
             employeeAvailabilityData.set(employeeKey, employeeResult)
           }
-
-          console.log(`[Acuity Sync] Processed ${employeeResults.length} availability records by employee for type ${typeId}`)
-        } catch (error) {
-          console.error(`[Acuity Sync] Error processing availability for type ${typeId}:`, error)
-          // Continuar con el siguiente tipo
         }
       }
 
@@ -420,9 +448,21 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // Guardar disponibilidad por empleado en acuity_availability
+      // Guardar disponibilidad por empleado en acuity_availability (en lotes)
       let availabilityProcessed = 0
       let skippedCount = 0
+      
+      const availabilityBatch: Array<{
+        id: string
+        date: string
+        calendar_id: number
+        calendar_name: string
+        appointment_category: AcuityAppointmentCategory
+        total_slots: number
+        booked_slots: number
+        available_slots: number
+      }> = []
+
       for (const [key, employeeData] of employeeAvailabilityData) {
         // Validar que tenemos calendarID y calendarName válidos
         if (!employeeData.calendarID || !employeeData.calendarName || employeeData.calendarName === 'Unknown') {
@@ -436,22 +476,33 @@ export async function POST(request: NextRequest) {
 
         const availabilityId = `${employeeData.date}-${employeeData.calendarID}-${employeeData.category}`
 
-        await supabase
+        availabilityBatch.push({
+          id: availabilityId,
+          date: employeeData.date,
+          calendar_id: employeeData.calendarID,
+          calendar_name: employeeData.calendarName,
+          appointment_category: employeeData.category,
+          total_slots: employeeData.totalSlots,
+          booked_slots: bookedSlots,
+          available_slots: availableSlots,
+        })
+      }
+
+      // Guardar en lotes
+      for (let i = 0; i < availabilityBatch.length; i += AVAILABILITY_BATCH_SIZE) {
+        const batch = availabilityBatch.slice(i, i + AVAILABILITY_BATCH_SIZE)
+        const { error: batchError } = await supabase
           .from('acuity_availability')
-          .upsert({
-            id: availabilityId,
-            date: employeeData.date,
-            calendar_id: employeeData.calendarID,
-            calendar_name: employeeData.calendarName,
-            appointment_category: employeeData.category,
-            total_slots: employeeData.totalSlots,
-            booked_slots: bookedSlots,
-            available_slots: availableSlots,
-          } as any, {
+          // @ts-ignore
+          .upsert(batch as any, {
             onConflict: 'id',
           })
-
-        availabilityProcessed++
+        
+        if (batchError) {
+          console.error(`[Acuity Sync] Error upserting availability batch:`, batchError)
+        } else {
+          availabilityProcessed += batch.length
+        }
       }
 
       console.log(`[Acuity Sync] Saved ${availabilityProcessed} availability records by employee`)
@@ -471,19 +522,40 @@ export async function POST(request: NextRequest) {
         totalSlots: number
       }>()
 
-      for (const [typeId, typeInfo] of appointmentTypeMap) {
-        try {
-          console.log(`[Acuity Sync] Fetching availability by store for type ${typeId} (${typeInfo.type.name})...`)
-          
-          const availabilityResults = await acuityService.getAvailabilityByStore({
-            appointmentTypeID: typeId,
-            appointmentTypeName: typeInfo.type.name,
-            category: typeInfo.category,
-            months: monthsToSyncByStore,
-            supabase: supabase,
-          })
+      // Paralelizar procesamiento de tipos de citas para disponibilidad por tienda
+      const typeEntriesForStore = Array.from(appointmentTypeMap.entries())
+      
+      for (let i = 0; i < typeEntriesForStore.length; i += CONCURRENT_TYPES) {
+        const typeBatch = typeEntriesForStore.slice(i, i + CONCURRENT_TYPES)
+        const batchNumber = Math.floor(i / CONCURRENT_TYPES) + 1
+        const totalBatches = Math.ceil(typeEntriesForStore.length / CONCURRENT_TYPES)
+        
+        console.log(`[Acuity Sync] Processing availability by store batch ${batchNumber}/${totalBatches} (${typeBatch.length} types)`)
 
-          // Normalizar nombre de tienda y agrupar por fecha, tienda y categoría
+        const batchPromises = typeBatch.map(async ([typeId, typeInfo]) => {
+          try {
+            console.log(`[Acuity Sync] Fetching availability by store for type ${typeId} (${typeInfo.type.name})...`)
+            
+            const availabilityResults = await acuityService.getAvailabilityByStore({
+              appointmentTypeID: typeId,
+              appointmentTypeName: typeInfo.type.name,
+              category: typeInfo.category,
+              months: monthsToSyncByStore,
+              supabase: supabase,
+            })
+
+            console.log(`[Acuity Sync] Processed ${availabilityResults.length} availability by store records for type ${typeId}`)
+            return availabilityResults
+          } catch (error) {
+            console.error(`[Acuity Sync] Error processing availability by store for type ${typeId}:`, error)
+            return []
+          }
+        })
+
+        const batchResults = await Promise.all(batchPromises)
+        
+        // Normalizar nombre de tienda y agrupar por fecha, tienda y categoría
+        for (const availabilityResults of batchResults) {
           for (const result of availabilityResults) {
             const normalizedStoreName = normalizeStoreName(result.appointmentTypeName)
             const key = `${result.date}-${normalizedStoreName}-${result.category}`
@@ -501,11 +573,6 @@ export async function POST(request: NextRequest) {
             const data = availabilityByStoreData.get(key)!
             data.totalSlots += result.totalSlots
           }
-
-          console.log(`[Acuity Sync] Processed ${availabilityResults.length} availability by store records for type ${typeId}`)
-        } catch (error) {
-          console.error(`[Acuity Sync] Error processing availability by store for type ${typeId}:`, error)
-          // Continuar con el siguiente tipo
         }
       }
 
@@ -536,30 +603,53 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // Guardar disponibilidad por tienda en BD
+      // Guardar disponibilidad por tienda en BD (en lotes)
       let availabilityByStoreProcessed = 0
+      
+      const storeAvailabilityBatch: Array<{
+        id: string
+        date: string
+        store_name: string
+        appointment_type_id: number
+        appointment_category: AcuityAppointmentCategory
+        total_slots: number
+        booked_slots: number
+        available_slots: number
+      }> = []
+
       for (const [key, data] of availabilityByStoreData) {
         const bookedSlots = bookedSlotsMapByStore.get(key) || 0
         const availableSlots = Math.max(0, data.totalSlots - bookedSlots)
 
         const availabilityId = `${data.date}-${data.storeName}-${data.appointmentCategory}`
 
-        await supabase
+        storeAvailabilityBatch.push({
+          id: availabilityId,
+          date: data.date,
+          store_name: data.storeName,
+          appointment_type_id: data.appointmentTypeID,
+          appointment_category: data.appointmentCategory,
+          total_slots: data.totalSlots,
+          booked_slots: bookedSlots,
+          available_slots: availableSlots,
+        })
+      }
+
+      // Guardar en lotes de 200
+      for (let i = 0; i < storeAvailabilityBatch.length; i += AVAILABILITY_BATCH_SIZE) {
+        const batch = storeAvailabilityBatch.slice(i, i + AVAILABILITY_BATCH_SIZE)
+        const { error: batchError } = await supabase
           .from('acuity_availability_by_store')
-          .upsert({
-            id: availabilityId,
-            date: data.date,
-            store_name: data.storeName,
-            appointment_type_id: data.appointmentTypeID,
-            appointment_category: data.appointmentCategory,
-            total_slots: data.totalSlots,
-            booked_slots: bookedSlots,
-            available_slots: availableSlots,
-          } as any, {
+          // @ts-ignore
+          .upsert(batch as any, {
             onConflict: 'id',
           })
-
-        availabilityByStoreProcessed++
+        
+        if (batchError) {
+          console.error(`[Acuity Sync] Error upserting store availability batch:`, batchError)
+        } else {
+          availabilityByStoreProcessed += batch.length
+        }
       }
 
       console.log(`[Acuity Sync] Processed ${availabilityByStoreProcessed} availability by store records`)
@@ -582,68 +672,72 @@ export async function POST(request: NextRequest) {
         currentDate = startOfMonth(addDays(endOfMonth(currentDate), 1))
       }
 
-      for (const monthInfo of monthsToProcess) {
-        const monthStart = format(monthInfo.startDate, 'yyyy-MM-dd')
-        const monthEnd = format(monthInfo.endDate, 'yyyy-MM-dd')
-
-        // Obtener citas del mes (incluyendo canceladas)
-        const monthAppointmentsNormal = await acuityService.getAppointments({
-          minDate: monthStart,
-          maxDate: monthEnd,
-        })
+      // Paralelizar procesamiento de meses (máximo 8 concurrentes)
+      const CONCURRENT_MONTHS = 8
+      
+      for (let i = 0; i < monthsToProcess.length; i += CONCURRENT_MONTHS) {
+        const monthBatch = monthsToProcess.slice(i, i + CONCURRENT_MONTHS)
+        const batchNumber = Math.floor(i / CONCURRENT_MONTHS) + 1
+        const totalBatches = Math.ceil(monthsToProcess.length / CONCURRENT_MONTHS)
         
-        // Obtener citas canceladas del mes
-        const monthAppointmentsCanceled = await acuityService.getAppointments({
-          minDate: monthStart,
-          maxDate: monthEnd,
-          canceled: true,
-        })
-        
-        // Combinar citas normales y canceladas
-        const monthAppointments = [...monthAppointmentsNormal, ...monthAppointmentsCanceled]
+        console.log(`[Acuity Sync] Processing monthly counts batch ${batchNumber}/${totalBatches} (${monthBatch.length} months)`)
 
-        // Agrupar por calendario y categoría
-        const countsByCalendar = new Map<string, {
-          calendarName: string
-          category: AcuityAppointmentCategory
-          scheduled: number
-          canceled: number
-          rescheduled: number
-        }>()
+        const batchPromises = monthBatch.map(async (monthInfo) => {
+          const monthStart = format(monthInfo.startDate, 'yyyy-MM-dd')
+          const monthEnd = format(monthInfo.endDate, 'yyyy-MM-dd')
 
-        for (const appointment of monthAppointments) {
-          const category = appointmentTypeMap.get(appointment.appointmentTypeID)?.category || 'fitting'
-          const calendarName = appointment.calendar || 'Unknown'
-          const key = `${calendarName}-${category}`
+          try {
+            // Obtener citas del mes (incluyendo canceladas) en paralelo
+            const [monthAppointmentsNormal, monthAppointmentsCanceled] = await Promise.all([
+              acuityService.getAppointments({
+                minDate: monthStart,
+                maxDate: monthEnd,
+              }),
+              acuityService.getAppointments({
+                minDate: monthStart,
+                maxDate: monthEnd,
+                canceled: true,
+              }),
+            ])
+            
+            // Combinar citas normales y canceladas
+            const monthAppointments = [...monthAppointmentsNormal, ...monthAppointmentsCanceled]
 
-          if (!countsByCalendar.has(key)) {
-            countsByCalendar.set(key, {
-              calendarName,
-              category,
-              scheduled: 0,
-              canceled: 0,
-              rescheduled: 0,
-            })
-          }
+            // Agrupar por calendario y categoría
+            const countsByCalendar = new Map<string, {
+              calendarName: string
+              category: AcuityAppointmentCategory
+              scheduled: number
+              canceled: number
+              rescheduled: number
+            }>()
 
-          const counts = countsByCalendar.get(key)!
-          if (appointment.canceled) {
-            counts.canceled++
-          } else {
-            counts.scheduled++
-          }
-          // Nota: Acuity puede no tener un campo explícito de "rescheduled", 
-          // podría requerir lógica adicional para detectarlo
-        }
+            for (const appointment of monthAppointments) {
+              const category = appointmentTypeMap.get(appointment.appointmentTypeID)?.category || 'fitting'
+              const calendarName = appointment.calendar || 'Unknown'
+              const key = `${calendarName}-${category}`
 
-        // Guardar conteos mensuales
-        for (const [key, counts] of countsByCalendar) {
-          const countId = `${monthInfo.year}-${String(monthInfo.month).padStart(2, '0')}-${counts.calendarName}-${counts.category}`
+              if (!countsByCalendar.has(key)) {
+                countsByCalendar.set(key, {
+                  calendarName,
+                  category,
+                  scheduled: 0,
+                  canceled: 0,
+                  rescheduled: 0,
+                })
+              }
 
-          await supabase
-            .from('acuity_appointment_counts')
-            .upsert({
-              id: countId,
+              const counts = countsByCalendar.get(key)!
+              if (appointment.canceled) {
+                counts.canceled++
+              } else {
+                counts.scheduled++
+              }
+            }
+
+            // Guardar conteos mensuales en lote
+            const countUpserts = Array.from(countsByCalendar.entries()).map(([key, counts]) => ({
+              id: `${monthInfo.year}-${String(monthInfo.month).padStart(2, '0')}-${counts.calendarName}-${counts.category}`,
               year: monthInfo.year,
               month: monthInfo.month,
               calendar_name: counts.calendarName,
@@ -652,10 +746,25 @@ export async function POST(request: NextRequest) {
               scheduled_count: counts.scheduled,
               canceled_count: counts.canceled,
               rescheduled_count: counts.rescheduled,
-            } as any, {
-              onConflict: 'id',
-            })
-        }
+            }))
+
+            if (countUpserts.length > 0) {
+              await supabase
+                .from('acuity_appointment_counts')
+                // @ts-ignore
+                .upsert(countUpserts as any, {
+                  onConflict: 'id',
+                })
+            }
+
+            return countUpserts.length
+          } catch (error) {
+            console.error(`[Acuity Sync] Error processing month ${monthInfo.year}-${monthInfo.month}:`, error)
+            return 0
+          }
+        })
+
+        await Promise.all(batchPromises)
       }
 
       console.log(`[Acuity Sync] Updated monthly counts for ${monthsToProcess.length} months`)

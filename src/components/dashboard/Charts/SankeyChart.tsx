@@ -141,10 +141,14 @@ export function SankeyChart({
             callbacks: {
               label: (context: any) => {
                 const flow = context.raw
-                return `${flow.from} → ${flow.to}: ${flow.flow.toLocaleString('es-ES', {
-                  style: 'currency',
-                  currency: 'EUR',
-                })}`
+                const value = typeof flow.flow === 'number' ? flow.flow : Number(flow.flow) || 0
+                // Formatear números grandes
+                if (value >= 1000000) {
+                  return `${flow.from} → ${flow.to}: ${(value / 1000000).toFixed(1)}M`
+                } else if (value >= 1000) {
+                  return `${flow.from} → ${flow.to}: ${(value / 1000).toFixed(1)}k`
+                }
+                return `${flow.from} → ${flow.to}: ${value.toLocaleString('es-ES')}`
               },
             },
           },

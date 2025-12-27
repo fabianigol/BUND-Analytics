@@ -1,170 +1,226 @@
 'use client'
 
-import Link from 'next/link'
-import { 
-  LayoutDashboard, 
-  Calendar, 
-  ShoppingCart, 
-  Megaphone, 
-  BarChart3, 
-  FileText,
-  Settings,
-  LogOut,
-  TrendingUp,
-  Users,
-  DollarSign,
-  Target
-} from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Header } from '@/components/dashboard/Header'
+import { KPIHorizontalCard } from '@/components/dashboard/KPIHorizontalCard'
+import { OccupationCard } from '@/components/dashboard/OccupationCard'
+import { IntelligentAlerts } from '@/components/dashboard/IntelligentAlerts'
+import { VIPCustomersTable } from '@/components/dashboard/VIPCustomersTable'
+import { FunnelSankeyChart } from '@/components/dashboard/FunnelSankeyChart'
+import { SalesVsInvestmentChart } from '@/components/dashboard/SalesVsInvestmentChart'
+import { RefreshCw } from 'lucide-react'
+import { DollarSign, Megaphone, Calendar, Target } from 'lucide-react'
+import { formatCurrency, formatNumber } from '@/lib/utils/format'
 
-const metrics = [
-  { title: 'Ingresos Totales', value: '€45,678', change: '+8.3%', icon: DollarSign, color: 'bg-emerald-500' },
-  { title: 'Citas del Mes', value: '156', change: '+12.5%', icon: Calendar, color: 'bg-blue-500' },
-  { title: 'ROAS General', value: '3.24x', change: '+4.5%', icon: Target, color: 'bg-purple-500' },
-  { title: 'Sesiones Web', value: '23.4K', change: '+9.8%', icon: Users, color: 'bg-amber-500' },
-]
-
-const menuItems = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, active: true },
-  { name: 'Citas', href: '/citas', icon: Calendar },
-  { name: 'Ventas', href: '/ventas', icon: ShoppingCart },
-  { name: 'Paid Media', href: '/ads', icon: Megaphone },
-  { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-  { name: 'Reportes', href: '/reportes', icon: FileText },
-]
+interface DashboardData {
+  kpis: {
+    salesToday: number
+    salesMonth: number
+    adsSpendToday: number
+    adsSpendMonth: number
+    appointmentsToday: number
+    appointmentsMonth: number
+    roasAccumulated: number
+  }
+  funnel: {
+    nodes: Array<{ id: string; name: string; value: number; level: number; color?: string }>
+    links: Array<{ source: string; target: string; value: number }>
+  }
+  salesVsInvestment: Array<{ date: string; ventas: number; inversion: number }>
+  storeOccupation: Array<{
+    storeName: string
+    medicion: { booked: number; total: number; percentage: number }
+    fitting: { booked: number; total: number; percentage: number }
+  }>
+  topVIPCustomers: Array<{
+    email: string
+    name: string
+    city: string | null
+    ltv: number
+    orderCount: number
+    hasNextAppointment: boolean
+    nextAppointmentDate?: string
+  }>
+  alerts: Array<{ type: 'success' | 'warning' | 'info' | 'error'; message: string }>
+  period: 'daily' | 'weekly' | 'monthly'
+}
 
 export default function DashboardPage() {
+  const [data, setData] = useState<DashboardData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [period, setPeriod] = useState<'daily' | 'weekly' | 'monthly'>('daily')
+
+  const loadData = async (selectedPeriod: 'daily' | 'weekly' | 'monthly' = period) => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      console.log('[Dashboard] Loading data for period:', selectedPeriod)
+      const response = await fetch(`/api/dashboard?period=${selectedPeriod}`)
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('[Dashboard] API Error:', response.status, errorText)
+        throw new Error(`Error al cargar datos del dashboard (${response.status})`)
+      }
+
+      const result = await response.json()
+      console.log('[Dashboard] API Response:', result)
+      
+      if (result.success) {
+        setData(result.data)
+      } else {
+        throw new Error(result.error || 'Error desconocido')
+      }
+    } catch (err: any) {
+      console.error('[Dashboard] Error loading dashboard data:', err)
+      setError(err.message || 'Error al cargar datos')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handlePeriodChange = (newPeriod: 'daily' | 'weekly' | 'monthly') => {
+    setPeriod(newPeriod)
+    loadData(newPeriod)
+  }
+
+  if (loading) {
+    return (
+      <div className="flex flex-col">
+        <Header title="Dashboard" subtitle="Vista general del rendimiento" />
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="text-center">
+            <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">Cargando datos del dashboard...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col">
+        <Header title="Dashboard" subtitle="Vista general del rendimiento" />
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="text-center max-w-md">
+            <p className="text-sm text-red-600 mb-2 font-semibold">Error al cargar datos</p>
+            <p className="text-xs text-muted-foreground mb-4">{error}</p>
+            <p className="text-xs text-muted-foreground mb-4">
+              Abre la consola del navegador (F12) para ver más detalles del error.
+            </p>
+            <button
+              onClick={() => loadData()}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
+            >
+              Reintentar
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!data) {
+    return (
+      <div className="flex flex-col">
+        <Header title="Dashboard" subtitle="Vista general del rendimiento" />
+        <div className="flex-1 flex items-center justify-center p-6">
+          <p className="text-sm text-muted-foreground">No hay datos disponibles</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-slate-50 flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-slate-200 flex flex-col">
-        <div className="p-6 border-b border-slate-200">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-[#1E3A5F] flex items-center justify-center">
-              <span className="text-xl font-bold text-white">B</span>
-            </div>
-            <span className="text-xl font-semibold text-slate-900">BUND</span>
-          </div>
+    <div className="flex flex-col">
+      <Header title="Dashboard" subtitle="Vista general del rendimiento" />
+
+      <div className="flex-1 space-y-6 p-6">
+        {/* Barra Horizontal Superior - 4 KPIs */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <KPIHorizontalCard
+            title="Ventas Totales"
+            valueYesterday={data.kpis.salesToday}
+            valueMonth={data.kpis.salesMonth}
+            icon={<DollarSign className="h-5 w-5 text-emerald-600" />}
+            iconBgColor="bg-emerald-100"
+            formatValue={formatCurrency}
+          />
+          <KPIHorizontalCard
+            title="Coste en Ads"
+            valueYesterday={data.kpis.adsSpendToday}
+            valueMonth={data.kpis.adsSpendMonth}
+            icon={<Megaphone className="h-5 w-5 text-blue-600" />}
+            iconBgColor="bg-blue-100"
+            formatValue={formatCurrency}
+          />
+          <KPIHorizontalCard
+            title="Citas Agendadas"
+            valueYesterday={data.kpis.appointmentsToday}
+            valueMonth={data.kpis.appointmentsMonth}
+            icon={<Calendar className="h-5 w-5 text-amber-600" />}
+            iconBgColor="bg-amber-100"
+            formatValue={formatNumber}
+          />
+          <KPIHorizontalCard
+            title="ROAS Acumulado"
+            valueYesterday={data.kpis.roasAccumulated}
+            valueMonth={data.kpis.roasAccumulated}
+            icon={<Target className="h-5 w-5 text-purple-600" />}
+            iconBgColor="bg-purple-100"
+            formatValue={(v) => `${v.toFixed(2)}x`}
+          />
         </div>
 
-        <nav className="flex-1 p-4">
-          <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-4 px-3">
-            Principal
-          </p>
-          <ul className="space-y-1">
-            {menuItems.map((item) => (
-              <li key={item.name}>
-                <Link
-                  href={item.href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    item.active
-                      ? 'bg-[#1E3A5F] text-white'
-                      : 'text-slate-600 hover:bg-slate-100'
-                  }`}
-                >
-                  <item.icon className="h-5 w-5" />
-                  {item.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-4 px-3 mt-8">
-            Configuración
-          </p>
-          <ul className="space-y-1">
-            <li>
-              <Link
-                href="/settings"
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors"
-              >
-                <Settings className="h-5 w-5" />
-                Ajustes
-              </Link>
-            </li>
-          </ul>
-        </nav>
-
-        <div className="p-4 border-t border-slate-200">
-          <Link
-            href="/login"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors"
-          >
-            <LogOut className="h-5 w-5" />
-            Cerrar sesión
-          </Link>
+        {/* Gráficas Principales */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <FunnelSankeyChart
+            nodes={data.funnel.nodes}
+            links={data.funnel.links}
+            currentPeriod={period}
+            onPeriodChange={handlePeriodChange}
+          />
+          <SalesVsInvestmentChart data={data.salesVsInvestment} />
         </div>
-      </aside>
 
-      {/* Main Content */}
-      <main className="flex-1">
-        {/* Header */}
-        <header className="bg-white border-b border-slate-200 px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
-              <p className="text-sm text-slate-500">Vista general del rendimiento de marketing</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <button className="px-4 py-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
-                Sincronizar
-              </button>
-              <div className="h-10 w-10 rounded-full bg-[#1E3A5F] flex items-center justify-center text-white font-medium">
-                JF
-              </div>
+        {/* KPI Cards de Ocupación por Tienda */}
+        {data.storeOccupation.length > 0 && (
+          <div>
+            <h2 className="text-lg font-semibold mb-4">Ocupación por Tienda (Hoy)</h2>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {data.storeOccupation.map((store) => (
+                <OccupationCard
+                  key={store.storeName}
+                  storeName={store.storeName}
+                  medicion={store.medicion}
+                  fitting={store.fitting}
+                />
+              ))}
             </div>
           </div>
-        </header>
+        )}
 
-        {/* Content */}
-        <div className="p-8">
-          {/* Metrics Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {metrics.map((metric) => (
-              <div key={metric.title} className="bg-white rounded-xl border border-slate-200 p-6">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-sm text-slate-500 mb-1">{metric.title}</p>
-                    <p className="text-2xl font-semibold text-slate-900">{metric.value}</p>
-                    <p className="text-sm text-emerald-600 mt-1 flex items-center gap-1">
-                      <TrendingUp className="h-4 w-4" />
-                      {metric.change}
-                    </p>
-                  </div>
-                  <div className={`${metric.color} p-3 rounded-xl`}>
-                    <metric.icon className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-              </div>
-            ))}
+        {/* Bloque Inferior: Alertas y Tabla VIP */}
+        <div className="grid gap-6 lg:grid-cols-3">
+          {/* Alertas Inteligentes */}
+          <div className="lg:col-span-1">
+            <IntelligentAlerts alerts={data.alerts} />
           </div>
 
-          {/* Charts placeholder */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl border border-slate-200 p-6">
-              <h3 className="text-lg font-medium text-slate-900 mb-4">Ingresos - Últimos 30 días</h3>
-              <div className="h-64 flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-200 rounded-lg">
-                <div className="text-center">
-                  <BarChart3 className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <p>Gráfico de ingresos</p>
-                  <p className="text-sm">Conecta las APIs para ver datos reales</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl border border-slate-200 p-6">
-              <h3 className="text-lg font-medium text-slate-900 mb-4">Rendimiento de Campañas</h3>
-              <div className="h-64 flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-200 rounded-lg">
-                <div className="text-center">
-                  <TrendingUp className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <p>Gráfico de campañas</p>
-                  <p className="text-sm">Conecta Meta Ads para ver datos</p>
-                </div>
-              </div>
-            </div>
+          {/* Tabla Top 10 Clientes VIP */}
+          <div className="lg:col-span-2">
+            <VIPCustomersTable customers={data.topVIPCustomers} />
           </div>
         </div>
-      </main>
+      </div>
     </div>
   )
 }
-

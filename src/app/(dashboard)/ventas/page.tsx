@@ -56,6 +56,9 @@ interface Metrics {
   ordersChangeHistorical?: number
   historicalOrders?: number | null
   previousOrdersCount?: number | null
+  ordersFromMedicion?: number
+  ordersFromFitting?: number
+  ordersWithoutAppointment?: number
   averageOrderValue: number
   aovChange: number
   aovChangeHistorical?: number

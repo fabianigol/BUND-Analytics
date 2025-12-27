@@ -126,7 +126,8 @@ export class AcuityService {
     this.authHeader = `Basic ${Buffer.from(`${config.userId}:${config.apiKey}`).toString('base64')}`
   }
 
-  private async request<T>(endpoint: string, params?: Record<string, string | number>): Promise<T> {
+  private async request<T>(endpoint: string, params?: Record<string, string | number>, retryCount: number = 0): Promise<T> {
+    const MAX_RETRIES = 3
     const searchParams = new URLSearchParams()
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
@@ -145,6 +146,16 @@ export class AcuityService {
         'Content-Type': 'application/json',
       },
     })
+
+    // Manejar rate limiting (429) con reintentos
+    if (response.status === 429 && retryCount < MAX_RETRIES) {
+      const retryAfter = response.headers.get('Retry-After')
+      const waitTime = retryAfter ? parseInt(retryAfter, 10) * 1000 : Math.pow(2, retryCount) * 1000 // Backoff exponencial
+      
+      console.warn(`[Acuity API] Rate limit exceeded (429). Retrying after ${waitTime}ms (attempt ${retryCount + 1}/${MAX_RETRIES})`)
+      await this.sleep(waitTime)
+      return this.request<T>(endpoint, params, retryCount + 1)
+    }
 
     if (!response.ok) {
       let errorMessage = response.statusText
@@ -535,6 +546,36 @@ export class AcuityService {
   }
 
   /**
+   * Helper function para controlar concurrencia en procesamiento paralelo
+   * Procesa un array de tareas con un límite de concurrencia
+   */
+  private async processWithConcurrency<T, R>(
+    items: T[],
+    concurrency: number,
+    processor: (item: T) => Promise<R>
+  ): Promise<R[]> {
+    const results: R[] = []
+    
+    for (let i = 0; i < items.length; i += concurrency) {
+      const batch = items.slice(i, i + concurrency)
+      const batchResults = await Promise.all(
+        batch.map(item => processor(item).catch(error => {
+          console.error(`[Acuity API] Error in concurrent processing:`, error)
+          throw error
+        }))
+      )
+      results.push(...batchResults)
+      
+      // Pequeño delay entre lotes para evitar sobrecargar la API
+      if (i + concurrency < items.length) {
+        await this.sleep(50) // Reducido de 100-200ms a 50ms
+      }
+    }
+    
+    return results
+  }
+
+  /**
    * Calcula el rango válido de fechas basado en el límite de "máximo de días" de Acuity
    * Por defecto, Acuity limita las consultas a 21 días desde hoy (configurable en el dashboard)
    * @param maxDays Número máximo de días permitidos (por defecto 21)
@@ -624,15 +665,18 @@ export class AcuityService {
     
     let allAvailableDates: Array<{ date: string }> = []
     
-    for (const month of monthsToQuery) {
-      await this.sleep(200) // Rate limiting
+    // Procesar meses en paralelo (solo hay 1-2 meses típicamente)
+    const monthPromises = Array.from(monthsToQuery).map(async (month) => {
       const dates = await this.getAvailableDates({
         month: month,
         appointmentTypeID: params.appointmentTypeID,
         maxDays: maxDays,
       })
-      allAvailableDates.push(...dates)
-    }
+      return dates
+    })
+    
+    const monthResults = await Promise.all(monthPromises)
+    allAvailableDates = monthResults.flat()
     
     // Filtrar fechas que estén dentro del rango válido
     const validDates = this.filterValidDates(allAvailableDates, maxDays)
@@ -652,12 +696,23 @@ export class AcuityService {
     // Filtrar calendarios con calendarID válido
     const validCalendars = calendars.filter(c => c.acuity_calendar_id !== null && c.acuity_calendar_id !== undefined)
 
-    // Para cada fecha y cada empleado, llamar a la API con calendarID específico
+    // Crear todas las combinaciones de fecha + empleado para procesar en paralelo
+    const dateCalendarPairs: Array<{ date: string; calendar: typeof validCalendars[0] }> = []
     for (const date of validDates) {
       for (const calendar of validCalendars) {
+        dateCalendarPairs.push({ date, calendar })
+      }
+    }
+
+    console.log(`[Acuity API] Processing ${dateCalendarPairs.length} date-calendar combinations with concurrency control...`)
+
+    // Procesar en paralelo con control de concurrencia (12-15 requests simultáneas)
+    const CONCURRENT_REQUESTS = 12
+    const processedResults = await this.processWithConcurrency(
+      dateCalendarPairs,
+      CONCURRENT_REQUESTS,
+      async ({ date, calendar }) => {
         try {
-          await this.sleep(100) // Rate limiting entre llamadas
-          
           // Llamar con calendarID específico para obtener slots de este empleado
           const availability = await this.getAvailability({
             date: date,
@@ -668,7 +723,7 @@ export class AcuityService {
 
           // La respuesta es un array directo de AcuityTimeSlot
           if (!availability || availability.length === 0) {
-            continue // Este empleado no tiene disponibilidad en esta fecha
+            return null // Este empleado no tiene disponibilidad en esta fecha
           }
 
           // Sumar slotsAvailable de todos los slots
@@ -688,15 +743,24 @@ export class AcuityService {
             // Validar que tenemos datos válidos
             if (!result.calendarID || !result.calendarName) {
               console.error(`[Acuity API] Invalid calendar data: calendarID=${result.calendarID}, calendarName=${result.calendarName}`)
-              continue
+              return null
             }
             
-            results.push(result)
+            return result
           }
+          
+          return null
         } catch (error) {
           console.error(`[Acuity API] Error fetching availability for date ${date} and calendar ${calendar.acuity_calendar_id}:`, error)
-          // Continuar con el siguiente empleado/fecha
+          return null
         }
+      }
+    )
+
+    // Filtrar resultados nulos y agregar a results
+    for (const result of processedResults) {
+      if (result) {
+        results.push(result)
       }
     }
 

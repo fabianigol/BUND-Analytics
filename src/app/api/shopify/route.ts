@@ -131,10 +131,10 @@ async function getMetrics(
   const previousPeriodEnd = new Date(periodStart)
   previousPeriodEnd.setHours(23, 59, 59, 999)
 
-  // Obtener datos del período actual
+  // Obtener datos del período actual (incluyendo customer_email para relacionar con citas)
   const { data: currentData, error: currentError } = await supabase
     .from('shopify_orders')
-    .select('total_price, financial_status, line_items')
+    .select('total_price, financial_status, line_items, customer_email, created_at')
     .gte('created_at', periodStart.toISOString())
     .lte('created_at', periodEnd.toISOString())
 
@@ -145,7 +145,7 @@ async function getMetrics(
   // Obtener datos del período anterior para comparación
   const { data: previousData, error: previousError } = await supabase
     .from('shopify_orders')
-    .select('total_price, financial_status, line_items')
+    .select('total_price, financial_status, line_items, customer_email, created_at')
     .gte('created_at', previousPeriodStart.toISOString())
     .lte('created_at', previousPeriodEnd.toISOString())
 
@@ -156,11 +156,81 @@ async function getMetrics(
   const currentOrders = (currentData || []) as Database['public']['Tables']['shopify_orders']['Row'][]
   const previousOrders = (previousData || []) as Database['public']['Tables']['shopify_orders']['Row'][]
 
+  // Relacionar pedidos con citas de Acuity para determinar si vienen de medición o fitting
+  // Estrategia optimizada: obtener todas las citas relevantes de una vez
+  const customerEmails = [...new Set(currentOrders.map(o => o.customer_email).filter(Boolean))]
+  
+  // Obtener todas las citas de los clientes que tienen pedidos en el período
+  // Buscar citas desde 30 días antes del inicio del período hasta 7 días después del final
+  const appointmentsSearchStart = subDays(periodStart, 30)
+  const appointmentsSearchEnd = new Date(periodEnd)
+  appointmentsSearchEnd.setDate(appointmentsSearchEnd.getDate() + 7)
+
+  const { data: allAppointments } = await supabase
+    .from('acuity_appointments')
+    .select('customer_email, appointment_category, datetime')
+    .in('customer_email', customerEmails)
+    .gte('datetime', appointmentsSearchStart.toISOString())
+    .lte('datetime', appointmentsSearchEnd.toISOString())
+    .neq('status', 'canceled')
+    .order('datetime', { ascending: false })
+
+  // Crear un mapa de email -> cita más reciente antes del pedido
+  const appointmentsByEmail = new Map<string, { category: 'medición' | 'fitting'; datetime: string }>()
+  
+  if (allAppointments && allAppointments.length > 0) {
+    // Agrupar por email y mantener solo la cita más reciente antes de cada pedido
+    currentOrders.forEach(order => {
+      if (!order.customer_email) return
+      
+      const orderDate = parseISO(order.created_at)
+      const relevantAppointments = (allAppointments as any[])
+        .filter((apt: any) => 
+          apt.customer_email === order.customer_email &&
+          parseISO(apt.datetime) <= orderDate &&
+          parseISO(apt.datetime) >= subDays(orderDate, 30)
+        )
+        .sort((a: any, b: any) => parseISO(b.datetime).getTime() - parseISO(a.datetime).getTime())
+      
+      if (relevantAppointments.length > 0) {
+        const latestAppointment = relevantAppointments[0]
+        appointmentsByEmail.set(order.customer_email, {
+          category: latestAppointment.appointment_category as 'medición' | 'fitting',
+          datetime: latestAppointment.datetime,
+        })
+      }
+    })
+  }
+
+  // Asignar tipo de cita a cada pedido
+  const ordersWithAppointmentType = currentOrders.map(order => {
+    if (!order.customer_email) {
+      return { order, appointmentType: null as 'medición' | 'fitting' | null }
+    }
+    
+    const appointment = appointmentsByEmail.get(order.customer_email)
+    return {
+      order,
+      appointmentType: appointment ? appointment.category : null,
+    }
+  })
+
   // Calcular métricas del período actual
   const totalRevenue = currentOrders.reduce((sum, order) => sum + (Number(order.total_price) || 0), 0)
   const totalOrders = currentOrders.length
   const paidOrders = currentOrders.filter(o => o.financial_status === 'paid')
   const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0
+
+  // Contar pedidos por tipo de cita
+  const ordersFromMedicion = ordersWithAppointmentType.filter(
+    (item) => item.appointmentType === 'medición'
+  ).length
+  const ordersFromFitting = ordersWithAppointmentType.filter(
+    (item) => item.appointmentType === 'fitting'
+  ).length
+  const ordersWithoutAppointment = ordersWithAppointmentType.filter(
+    (item) => item.appointmentType === null
+  ).length
 
   // Calcular productos vendidos (suma de cantidades en line_items)
   let totalProductsSold = 0
@@ -287,6 +357,10 @@ async function getMetrics(
       ordersChangeHistorical: Math.round(ordersChangeHistorical * 100) / 100,
       historicalOrders: averageHistoricalOrdersForPeriod > 0 ? Math.round(averageHistoricalOrdersForPeriod) : null,
       previousOrdersCount: previousOrdersCount > 0 ? previousOrdersCount : null,
+      // Desglose de pedidos por tipo de cita
+      ordersFromMedicion,
+      ordersFromFitting,
+      ordersWithoutAppointment,
       averageOrderValue: Math.round(averageOrderValue * 100) / 100,
       aovChange: Math.round(aovChange * 100) / 100,
       aovChangeHistorical: Math.round(aovChangeHistorical * 100) / 100,
