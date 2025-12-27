@@ -31,6 +31,7 @@ export function LocationBentoCard({ location, className }: LocationBentoCardProp
     'Valencia': { primary: '#ec4899', gradient: '#f472b6', bg: 'bg-pink-50' },
     'Murcia': { primary: '#06b6d4', gradient: '#22d3ee', bg: 'bg-cyan-50' },
     'Zaragoza': { primary: '#f97316', gradient: '#fb923c', bg: 'bg-orange-50' },
+    'online': { primary: '#6366f1', gradient: '#818cf8', bg: 'bg-indigo-50' },
   }
 
   const colors = locationColors[location.location] || {

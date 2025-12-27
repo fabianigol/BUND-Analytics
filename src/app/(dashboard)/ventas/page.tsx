@@ -106,6 +106,47 @@ export default function VentasPage() {
   const [locations, setLocations] = useState<ShopifyLocationMetrics[]>([])
   const [locationsLoading, setLocationsLoading] = useState(false)
   
+  // Estados para pestaña de Pedidos online
+  const [ordersOnline, setOrdersOnline] = useState<ShopifyOrder[]>([])
+  const [metricsOnline, setMetricsOnline] = useState<Metrics | null>(null)
+  const [topProductsOnline, setTopProductsOnline] = useState<Array<{ name: string; sales: number; revenue: number }>>([])
+  const [salesChartDataOnline, setSalesChartDataOnline] = useState<{ date: string; value: number }[]>([])
+  const [monthlyRevenueDataOnline, setMonthlyRevenueDataOnline] = useState<{ date: string; value: number }[]>([])
+  const [topComplementsOnline, setTopComplementsOnline] = useState<Array<{ name: string; sales: number; revenue: number }>>([])
+  const [searchTermOnline, setSearchTermOnline] = useState('')
+  const [statusFilterOnline, setStatusFilterOnline] = useState('all')
+  const [loadingOnline, setLoadingOnline] = useState(false)
+  
+  // Estados para análisis de horarios y días
+  const [timeAnalysisData, setTimeAnalysisData] = useState<{
+    hourly: Array<{ hour: number; hourLabel: string; revenue: number; orders: number }>
+    daily: Array<{ day: number; dayName: string; revenue: number; orders: number }>
+  } | null>(null)
+  
+  // Estados para segmentación de clientes online
+  const [customerSegmentation, setCustomerSegmentation] = useState<{
+    totalCustomers: number
+    newCustomers: number
+    recurringCustomers: number
+    retentionRate: number
+    newCustomersRevenue: number
+    recurringCustomersRevenue: number
+    averageNewCustomerValue: number
+    averageRecurringCustomerValue: number
+    averageLTV: number
+  } | null>(null)
+  
+  // Estados para la calculadora de rentabilidad
+  const [calculatorValues, setCalculatorValues] = useState({
+    averageOrderValue: 126.00,
+    productCost: 12.54,
+    paymentCommissions: 2.10, // porcentaje
+    shippingCost: 5.00,
+    fulfillmentCost: 0.00,
+    returnRate: 4.00, // porcentaje
+    taxes: 21.00, // porcentaje (IVA)
+  })
+  
   // Estados para filtro de fechas - Por defecto: desde el día 1 del mes actual hasta hoy
   const [dateFilterType, setDateFilterType] = useState<DateFilterType>('thisMonth')
   const [customStartDate, setCustomStartDate] = useState<string>(() => {
@@ -181,6 +222,7 @@ export default function VentasPage() {
   useEffect(() => {
     if (dateRange || dateFilterType !== 'custom') {
       loadData()
+      loadDataOnline()
     }
   }, [dateRange, productsFilterType, complementsFilterType])
 
@@ -302,6 +344,88 @@ export default function VentasPage() {
     }
   }
 
+  // Cargar datos de pedidos online
+  const loadDataOnline = async () => {
+    try {
+      setLoadingOnline(true)
+      setError(null)
+
+      // Construir parámetros de fecha para las peticiones
+      const dateParams = dateRange 
+        ? `&startDate=${dateRange.start}&endDate=${dateRange.end}`
+        : ''
+
+      // Calcular días para el gráfico
+      let days = 30
+      if (dateRange) {
+        const start = parseISO(dateRange.start)
+        const end = parseISO(dateRange.end)
+        days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+      }
+
+      // Cargar métricas, pedidos, productos, gráficos, datos mensuales y complementos con onlineOnly=true
+      const productsFilter = productsFilterType === 'monthly' ? dateParams : ''
+      const complementsFilter = complementsFilterType === 'monthly' ? dateParams : ''
+      const onlineParam = '&onlineOnly=true'
+      
+      const [metricsRes, ordersRes, productsRes, chartsRes, monthlyRes, complementsRes, timeAnalysisRes, segmentationRes] = await Promise.all([
+        fetch(`/api/shopify?type=metrics${dateParams}${onlineParam}`),
+        fetch(`/api/shopify?type=orders&limit=100${dateParams}${onlineParam}`),
+        fetch(`/api/shopify?type=products&limit=10${productsFilter}&filterType=${productsFilterType}${onlineParam}`),
+        fetch(`/api/shopify?type=charts${dateParams}&days=${days}${onlineParam}`),
+        fetch(`/api/shopify?type=monthly-revenue&months=12${onlineParam}`),
+        fetch(`/api/shopify?type=complements&limit=10${complementsFilter}&filterType=${complementsFilterType}${onlineParam}`),
+        fetch(`/api/shopify?type=online-time-analysis${dateParams}`),
+        fetch(`/api/shopify?type=online-customer-segmentation${dateParams}`),
+      ])
+
+      if (!metricsRes.ok || !ordersRes.ok || !productsRes.ok || !chartsRes.ok) {
+        throw new Error('Error al cargar datos de pedidos online')
+      }
+
+      const [metricsData, ordersData, productsData, chartsData, monthlyData, complementsData, timeAnalysisDataRes, segmentationDataRes] = await Promise.all([
+        metricsRes.json(),
+        ordersRes.json(),
+        productsRes.json(),
+        chartsRes.json(),
+        monthlyRes.ok ? monthlyRes.json() : Promise.resolve({ success: true, data: [] }),
+        complementsRes.ok ? complementsRes.json() : Promise.resolve({ success: true, data: [] }),
+        timeAnalysisRes.ok ? timeAnalysisRes.json() : Promise.resolve({ success: true, data: { hourly: [], daily: [] } }),
+        segmentationRes.ok ? segmentationRes.json() : Promise.resolve({ success: true, data: null }),
+      ])
+
+      if (metricsData.success) {
+        setMetricsOnline(metricsData.data)
+      }
+      if (ordersData.success) {
+        setOrdersOnline(ordersData.data || [])
+      }
+      if (productsData.success) {
+        setTopProductsOnline(productsData.data || [])
+      }
+      if (chartsData.success) {
+        setSalesChartDataOnline(chartsData.data || [])
+      }
+      if (monthlyData.success) {
+        setMonthlyRevenueDataOnline(monthlyData.data || [])
+      }
+      if (complementsData.success) {
+        setTopComplementsOnline(complementsData.data || [])
+      }
+      if (timeAnalysisDataRes.success) {
+        setTimeAnalysisData(timeAnalysisDataRes.data)
+      }
+      if (segmentationDataRes.success && segmentationDataRes.data) {
+        setCustomerSegmentation(segmentationDataRes.data)
+      }
+    } catch (err: any) {
+      console.error('Error loading online orders data:', err)
+      setError(err.message || 'Error al cargar datos de pedidos online')
+    } finally {
+      setLoadingOnline(false)
+    }
+  }
+
   // Cargar datos de clientes
   const loadCustomersData = async () => {
     try {
@@ -398,6 +522,21 @@ export default function VentasPage() {
     })
   }, [orders, searchTerm, statusFilter])
 
+  const hasOrdersOnline = ordersOnline.length > 0
+  const hasProductsOnline = topProductsOnline.length > 0
+  const hasChartDataOnline = salesChartDataOnline.length > 0
+
+  const filteredOrdersOnline = useMemo(() => {
+    return ordersOnline.filter((order) => {
+      const matchesSearch =
+        order.customer_name?.toLowerCase().includes(searchTermOnline.toLowerCase()) ||
+        order.order_number?.toLowerCase().includes(searchTermOnline.toLowerCase()) ||
+        order.customer_email?.toLowerCase().includes(searchTermOnline.toLowerCase())
+      const matchesStatus = statusFilterOnline === 'all' || order.financial_status === statusFilterOnline
+      return matchesSearch && matchesStatus
+    })
+  }, [ordersOnline, searchTermOnline, statusFilterOnline])
+
   // Colores verdes para las gráficas
   const greenColors = [
     '#10b981', // emerald-500
@@ -414,6 +553,67 @@ export default function VentasPage() {
     value: p.revenue,
     color: greenColors[index % greenColors.length],
   }))
+
+  const topProductsChartOnline = topProductsOnline.map((p, index) => ({
+    name: p.name,
+    value: p.revenue,
+    color: greenColors[index % greenColors.length],
+  }))
+
+  // Calcular valores derivados de la calculadora
+  const calculatorResults = useMemo(() => {
+    const { averageOrderValue, productCost, paymentCommissions, shippingCost, fulfillmentCost, returnRate, taxes } = calculatorValues
+    
+    // AOV sin IVA
+    const aovWithoutTax = averageOrderValue / (1 + taxes / 100)
+    
+    // IVA a pagar
+    const taxAmount = averageOrderValue - aovWithoutTax
+    
+    // Comisiones de pago en euros
+    const paymentCommissionsAmount = averageOrderValue * (paymentCommissions / 100)
+    
+    // Costo de devoluciones (promedio)
+    const returnCost = (productCost + shippingCost + fulfillmentCost) * (returnRate / 100)
+    
+    // Costos totales
+    const totalCosts = productCost + paymentCommissionsAmount + shippingCost + fulfillmentCost + returnCost + taxAmount
+    
+    // Porcentaje de costo
+    const costPercentage = (totalCosts / averageOrderValue) * 100
+    
+    // Beneficio bruto
+    const grossProfit = averageOrderValue - totalCosts
+    const grossProfitPercentage = (grossProfit / averageOrderValue) * 100
+    
+    // ROAS de equilibrio (churn rate)
+    const breakEvenROAS = (100 / grossProfitPercentage) || 0
+    
+    // Por cada 1€ gastado en publicidad debe generar al menos
+    const minRevenuePerEuro = breakEvenROAS / 100
+    
+    // CAC máximo (Customer Acquisition Cost máximo)
+    const maxCAC = grossProfit
+    
+    // ROI (Return on Investment) - asumiendo un ROAS dado
+    const currentROAS = metricsOnline?.roas || 0
+    const roi = currentROAS > 0 ? ((currentROAS * grossProfitPercentage / 100) - 1) * 100 : 0
+    
+    return {
+      aovWithoutTax,
+      taxAmount,
+      paymentCommissionsAmount,
+      returnCost,
+      totalCosts,
+      costPercentage,
+      grossProfit,
+      grossProfitPercentage,
+      breakEvenROAS,
+      minRevenuePerEuro,
+      maxCAC,
+      roi,
+    }
+  }, [calculatorValues, metricsOnline?.roas])
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -511,6 +711,10 @@ export default function VentasPage() {
             <TabsTrigger value="pedidos">
               <ShoppingCart className="h-4 w-4 mr-2" />
               Pedidos
+            </TabsTrigger>
+            <TabsTrigger value="pedidos-online">
+              <ShoppingCart className="h-4 w-4 mr-2" />
+              Pedidos online
             </TabsTrigger>
             <TabsTrigger value="clientes">
               <Users className="h-4 w-4 mr-2" />
@@ -894,6 +1098,646 @@ export default function VentasPage() {
                   <TableRow>
                     <TableCell colSpan={8} className="text-center text-sm text-muted-foreground">
                       Sin pedidos aún. Conecta Shopify para ver ventas reales.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+          </TabsContent>
+
+          {/* Pestaña: Pedidos online */}
+          <TabsContent value="pedidos-online" className="space-y-6 mt-6">
+            {/* Quick Stats */}
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+              <QuickStatCard
+                title="Ingresos Totales"
+                value={metricsOnline?.totalRevenue ? formatCurrency(metricsOnline.totalRevenue) : '—'}
+                emoji="💰"
+                emojiBgColor="bg-emerald-100"
+                previousPeriodValue={metricsOnline?.previousRevenue || null}
+                previousPeriodChange={metricsOnline?.revenueChange}
+                historicalValue={metricsOnline?.historicalRevenue || null}
+                historicalChange={metricsOnline?.revenueChangeHistorical}
+                formatValue={(v) => formatCurrency(v)}
+              />
+              <QuickStatCard
+                title="Total Pedidos"
+                value={metricsOnline?.totalOrders ? formatNumber(metricsOnline.totalOrders) : '—'}
+                emoji="🛒"
+                emojiBgColor="bg-blue-100"
+                previousPeriodValue={metricsOnline?.previousOrdersCount || null}
+                previousPeriodChange={metricsOnline?.ordersChange}
+                historicalValue={metricsOnline?.historicalOrders || null}
+                historicalChange={metricsOnline?.ordersChangeHistorical}
+                formatValue={(v) => formatNumber(v)}
+              />
+              <QuickStatCard
+                title="Valor Medio Pedido"
+                value={metricsOnline?.averageOrderValue ? formatCurrency(metricsOnline.averageOrderValue) : '—'}
+                emoji="📊"
+                emojiBgColor="bg-purple-100"
+                previousPeriodValue={metricsOnline?.previousAOV || null}
+                previousPeriodChange={metricsOnline?.aovChange}
+                historicalValue={metricsOnline?.historicalAOV || null}
+                historicalChange={metricsOnline?.aovChangeHistorical}
+                formatValue={(v) => formatCurrency(v)}
+              />
+              <QuickStatCard
+                title="ROAS"
+                value={metricsOnline?.roas ? metricsOnline.roas.toFixed(2) : '—'}
+                emoji="📈"
+                emojiBgColor="bg-rose-100"
+                previousPeriodValue={metricsOnline?.previousROAS || null}
+                previousPeriodChange={metricsOnline?.roasChange}
+                historicalValue={null}
+                historicalChange={undefined}
+                formatValue={(v) => v.toFixed(2)}
+              />
+            </div>
+
+        {/* Charts - Diario y Mensual Anual */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Gráfica de Evolución Diaria */}
+          {hasChartDataOnline ? (
+            <AreaChart
+              title={`Ingresos Diarios - ${periodLabel}`}
+              data={salesChartDataOnline.map(d => ({ date: d.date, value: d.value }))}
+              height={280}
+              formatValue={(v) => formatCurrency(v)}
+              color="#10b981"
+              gradientColor="#059669"
+            />
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base font-medium">Ingresos Diarios - {periodLabel}</CardTitle>
+                <CardDescription>Sin datos. Sincroniza Shopify para ver el histórico.</CardDescription>
+              </CardHeader>
+            </Card>
+          )}
+
+          {/* Gráfica de Evolución Mensual Anual (Barras) */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base font-medium">Evolución Mensual de Ventas (Últimos 12 meses)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {monthlyRevenueDataOnline.length > 0 ? (
+                <BarChart
+                  title=""
+                  data={monthlyRevenueDataOnline.map(d => ({ name: d.date, value: d.value }))}
+                  height={280}
+                  formatValue={(v) => formatCurrency(v)}
+                  color="#10b981"
+                  horizontal={false}
+                  xAxisKey="name"
+                />
+              ) : (
+                <div className="flex items-center justify-center h-[280px] text-sm text-muted-foreground">
+                  Sin datos. Sincroniza Shopify para ver el histórico.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Top Productos y Top Complementos */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Top Productos */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base font-medium">Top Productos por Ingresos</CardTitle>
+                <div className="flex gap-2">
+                  <Button
+                    variant={productsFilterType === 'monthly' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setProductsFilterType('monthly')}
+                  >
+                    Mensual
+                  </Button>
+                  <Button
+                    variant={productsFilterType === 'total' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setProductsFilterType('total')}
+                  >
+                    Total
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {hasProductsOnline ? (
+                <BarChart
+                  title=""
+                  data={topProductsChartOnline}
+                  horizontal
+                  height={280}
+                  formatValue={(v) => formatCurrency(v)}
+                  color="#10b981"
+                />
+              ) : (
+                <div className="flex items-center justify-center h-[280px] text-sm text-muted-foreground">
+                  Sin datos de productos. Sincroniza Shopify.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Top Complementos */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base font-medium">Top Complementos por Ingresos</CardTitle>
+                <div className="flex gap-2">
+                  <Button
+                    variant={complementsFilterType === 'monthly' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setComplementsFilterType('monthly')}
+                  >
+                    Mensual
+                  </Button>
+                  <Button
+                    variant={complementsFilterType === 'total' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setComplementsFilterType('total')}
+                  >
+                    Total
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="px-2">
+              {topComplementsOnline.length > 0 ? (
+                <BarChart
+                  title=""
+                  data={topComplementsOnline.map((c, index) => ({
+                    name: c.name,
+                    value: c.revenue,
+                    color: greenColors[index % greenColors.length],
+                  }))}
+                  horizontal
+                  height={280}
+                  formatValue={(v) => formatCurrency(v)}
+                  color="#10b981"
+                />
+              ) : (
+                <div className="flex items-center justify-center h-[280px] text-sm text-muted-foreground">
+                  Sin datos de complementos. Sincroniza Shopify.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Calculadora de Rentabilidad */}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-bold">Calculadora de Rentabilidad</CardTitle>
+              <CardDescription>
+                Calcula los costes y beneficios de tus pedidos online. Edita los campos con fondo azul.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Campos Editables */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">COGs y Beneficios</h3>
+                
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {/* Valor promedio del pedido */}
+                  <div className="space-y-2">
+                    <Label htmlFor="aov-online" className="text-sm">Valor promedio del pedido</Label>
+                    <Input
+                      id="aov-online"
+                      type="number"
+                      step="0.01"
+                      value={calculatorValues.averageOrderValue}
+                      onChange={(e) => setCalculatorValues(prev => ({ ...prev, averageOrderValue: parseFloat(e.target.value) || 0 }))}
+                      className="bg-blue-50 border-blue-200 focus:border-blue-400 focus:ring-blue-400"
+                    />
+                    <p className="text-xs text-muted-foreground">¿Cuál es el valor promedio del pedido en tu e-commerce?</p>
+                  </div>
+
+                  {/* Costo de productos */}
+                  <div className="space-y-2">
+                    <Label htmlFor="productCost-online" className="text-sm">Costo de los productos (promedio)</Label>
+                    <Input
+                      id="productCost-online"
+                      type="number"
+                      step="0.01"
+                      value={calculatorValues.productCost}
+                      onChange={(e) => setCalculatorValues(prev => ({ ...prev, productCost: parseFloat(e.target.value) || 0 }))}
+                      className="bg-blue-50 border-blue-200 focus:border-blue-400 focus:ring-blue-400"
+                    />
+                    <p className="text-xs text-muted-foreground">¿Cuánto gastas para producir un artículo?</p>
+                  </div>
+
+                  {/* Comisiones de pago */}
+                  <div className="space-y-2">
+                    <Label htmlFor="paymentCommissions-online" className="text-sm">Comisiones promedio de tarjeta/PayPal (%)</Label>
+                    <Input
+                      id="paymentCommissions-online"
+                      type="number"
+                      step="0.01"
+                      value={calculatorValues.paymentCommissions}
+                      onChange={(e) => setCalculatorValues(prev => ({ ...prev, paymentCommissions: parseFloat(e.target.value) || 0 }))}
+                      className="bg-blue-50 border-blue-200 focus:border-blue-400 focus:ring-blue-400"
+                    />
+                    <p className="text-xs text-muted-foreground">Shopify/Stripe/PayPal fees</p>
+                  </div>
+
+                  {/* Costo de envío */}
+                  <div className="space-y-2">
+                    <Label htmlFor="shippingCost-online" className="text-sm">Costo promedio de envío</Label>
+                    <Input
+                      id="shippingCost-online"
+                      type="number"
+                      step="0.01"
+                      value={calculatorValues.shippingCost}
+                      onChange={(e) => setCalculatorValues(prev => ({ ...prev, shippingCost: parseFloat(e.target.value) || 0 }))}
+                      className="bg-blue-50 border-blue-200 focus:border-blue-400 focus:ring-blue-400"
+                    />
+                  </div>
+
+                  {/* Costo de fulfillment */}
+                  <div className="space-y-2">
+                    <Label htmlFor="fulfillmentCost-online" className="text-sm">Costo de fulfillment por unidad</Label>
+                    <Input
+                      id="fulfillmentCost-online"
+                      type="number"
+                      step="0.01"
+                      value={calculatorValues.fulfillmentCost}
+                      onChange={(e) => setCalculatorValues(prev => ({ ...prev, fulfillmentCost: parseFloat(e.target.value) || 0 }))}
+                      className="bg-blue-50 border-blue-200 focus:border-blue-400 focus:ring-blue-400"
+                    />
+                    <p className="text-xs text-muted-foreground">Picking, empaquetado y almacenamiento</p>
+                  </div>
+
+                  {/* Tasa de devoluciones */}
+                  <div className="space-y-2">
+                    <Label htmlFor="returnRate-online" className="text-sm">Tasa de devoluciones (%)</Label>
+                    <Input
+                      id="returnRate-online"
+                      type="number"
+                      step="0.01"
+                      value={calculatorValues.returnRate}
+                      onChange={(e) => setCalculatorValues(prev => ({ ...prev, returnRate: parseFloat(e.target.value) || 0 }))}
+                      className="bg-blue-50 border-blue-200 focus:border-blue-400 focus:ring-blue-400"
+                    />
+                    <p className="text-xs text-muted-foreground">¿Cuántas personas devuelven tus artículos?</p>
+                  </div>
+
+                  {/* Impuestos */}
+                  <div className="space-y-2">
+                    <Label htmlFor="taxes-online" className="text-sm">Impuestos y aranceles (%)</Label>
+                    <Input
+                      id="taxes-online"
+                      type="number"
+                      step="0.01"
+                      value={calculatorValues.taxes}
+                      onChange={(e) => setCalculatorValues(prev => ({ ...prev, taxes: parseFloat(e.target.value) || 0 }))}
+                      className="bg-blue-50 border-blue-200 focus:border-blue-400 focus:ring-blue-400"
+                    />
+                    <p className="text-xs text-muted-foreground">Principalmente IVA + fronteras internacionales</p>
+                  </div>
+                </div>
+
+                {/* Valores Calculados */}
+                <div className="grid gap-4 md:grid-cols-2 pt-4 border-t">
+                  <div className="space-y-1">
+                    <Label className="text-sm text-muted-foreground">Valor promedio del pedido actualizado (sin IVA)</Label>
+                    <p className="text-lg font-semibold">{formatCurrency(calculatorResults.aovWithoutTax)}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-sm text-muted-foreground">IVA + aranceles a pagar</Label>
+                    <p className="text-lg font-semibold">{formatCurrency(calculatorResults.taxAmount)}</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Resultados */}
+          <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-2 border-blue-200 dark:border-blue-800">
+            <CardHeader>
+              <CardTitle className="text-xl font-bold text-blue-900 dark:text-blue-100">RESULTADOS</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="space-y-1 p-3 bg-white/50 dark:bg-gray-900/50 rounded-lg">
+                  <Label className="text-xs text-muted-foreground">Costos totales de producto, fulfillment e impuestos</Label>
+                  <p className="text-xl font-bold">{formatCurrency(calculatorResults.totalCosts)}</p>
+                </div>
+                <div className="space-y-1 p-3 bg-white/50 dark:bg-gray-900/50 rounded-lg">
+                  <Label className="text-xs text-muted-foreground">Porcentaje de costo</Label>
+                  <p className="text-xl font-bold">{calculatorResults.costPercentage.toFixed(2)}%</p>
+                </div>
+                <div className="space-y-1 p-3 bg-white/50 dark:bg-gray-900/50 rounded-lg">
+                  <Label className="text-xs text-muted-foreground">Beneficio bruto</Label>
+                  <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{calculatorResults.grossProfitPercentage.toFixed(2)}%</p>
+                  <p className="text-xs text-muted-foreground">Qué queda después de todos los gastos</p>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-blue-200 dark:border-blue-800">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                  <div className="space-y-1 p-3 bg-emerald-100/50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                    <Label className="text-xs text-muted-foreground">ROAS de equilibrio</Label>
+                    <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">{calculatorResults.breakEvenROAS.toFixed(0)}%</p>
+                    <p className="text-xs text-muted-foreground">Retorno mínimo para alcanzar el punto de equilibrio</p>
+                  </div>
+                  <div className="space-y-1 p-3 bg-emerald-100/50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                    <Label className="text-xs text-muted-foreground">Por cada 1€ gastado en publicidad debes generar al menos</Label>
+                    <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">{formatCurrency(calculatorResults.minRevenuePerEuro)}</p>
+                    <p className="text-xs text-muted-foreground">Para alcanzar el punto de equilibrio</p>
+                  </div>
+                  <div className="space-y-1 p-3 bg-amber-100/50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                    <Label className="text-xs text-muted-foreground">CAC máximo</Label>
+                    <p className="text-2xl font-bold text-amber-700 dark:text-amber-300">{formatCurrency(calculatorResults.maxCAC)}</p>
+                    <p className="text-xs text-muted-foreground">Costo máximo de adquisición de cliente</p>
+                  </div>
+                  <div className="space-y-1 p-3 bg-blue-100/50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <Label className="text-xs text-muted-foreground">ROI actual</Label>
+                    <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+                      {calculatorResults.roi > 0 ? '+' : ''}{calculatorResults.roi.toFixed(1)}%
+                    </p>
+                    <p className="text-xs text-muted-foreground">Basado en ROAS actual: {metricsOnline?.roas?.toFixed(2) || '—'}</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Análisis de Horarios y Días de la Semana */}
+        {timeAnalysisData && (
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Análisis por Hora del Día */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base font-medium">Análisis por Hora del Día</CardTitle>
+                <CardDescription>Distribución de pedidos e ingresos por hora (24h)</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {timeAnalysisData.hourly && timeAnalysisData.hourly.length > 0 ? (
+                  <BarChart
+                    title=""
+                    data={timeAnalysisData.hourly.map(item => ({
+                      name: item.hourLabel,
+                      value: item.revenue,
+                    }))}
+                    height={300}
+                    formatValue={(v) => formatCurrency(v)}
+                    color="#6366f1"
+                    horizontal={false}
+                    xAxisKey="name"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-[300px] text-sm text-muted-foreground">
+                    Sin datos de horarios
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Análisis por Día de la Semana */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base font-medium">Análisis por Día de la Semana</CardTitle>
+                <CardDescription>Distribución de pedidos e ingresos por día</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {timeAnalysisData.daily && timeAnalysisData.daily.length > 0 ? (
+                  <BarChart
+                    title=""
+                    data={timeAnalysisData.daily.map(item => ({
+                      name: item.dayName,
+                      value: item.revenue,
+                    }))}
+                    height={300}
+                    formatValue={(v) => formatCurrency(v)}
+                    color="#8b5cf6"
+                    horizontal={false}
+                    xAxisKey="name"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-[300px] text-sm text-muted-foreground">
+                    Sin datos de días
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Segmentación de Clientes Online */}
+        {customerSegmentation && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-bold">Segmentación de Clientes Online</CardTitle>
+              <CardDescription>
+                Análisis de nuevos clientes vs clientes recurrentes en pedidos online
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                <div className="space-y-2 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <Label className="text-sm text-muted-foreground">Total Clientes Online</Label>
+                  <p className="text-3xl font-bold text-blue-700 dark:text-blue-300">
+                    {formatNumber(customerSegmentation.totalCustomers)}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Clientes con pedidos en el período</p>
+                </div>
+
+                <div className="space-y-2 p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                  <Label className="text-sm text-muted-foreground">Nuevos Clientes</Label>
+                  <p className="text-3xl font-bold text-emerald-700 dark:text-emerald-300">
+                    {formatNumber(customerSegmentation.newCustomers)}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {customerSegmentation.totalCustomers > 0
+                      ? `${((customerSegmentation.newCustomers / customerSegmentation.totalCustomers) * 100).toFixed(1)}% del total`
+                      : '0% del total'}
+                  </p>
+                  <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                    {formatCurrency(customerSegmentation.newCustomersRevenue)} en ingresos
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    AOV: {formatCurrency(customerSegmentation.averageNewCustomerValue)}
+                  </p>
+                </div>
+
+                <div className="space-y-2 p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                  <Label className="text-sm text-muted-foreground">Clientes Recurrentes</Label>
+                  <p className="text-3xl font-bold text-purple-700 dark:text-purple-300">
+                    {formatNumber(customerSegmentation.recurringCustomers)}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {customerSegmentation.totalCustomers > 0
+                      ? `${((customerSegmentation.recurringCustomers / customerSegmentation.totalCustomers) * 100).toFixed(1)}% del total`
+                      : '0% del total'}
+                  </p>
+                  <p className="text-sm font-semibold text-purple-600 dark:text-purple-400">
+                    {formatCurrency(customerSegmentation.recurringCustomersRevenue)} en ingresos
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    AOV: {formatCurrency(customerSegmentation.averageRecurringCustomerValue)}
+                  </p>
+                </div>
+
+                <div className="space-y-2 p-4 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                  <Label className="text-sm text-muted-foreground">Tasa de Retención</Label>
+                  <p className="text-3xl font-bold text-amber-700 dark:text-amber-300">
+                    {customerSegmentation.retentionRate.toFixed(1)}%
+                  </p>
+                  <p className="text-xs text-muted-foreground">Clientes que vuelven a comprar</p>
+                  <div className="pt-2 border-t border-amber-200 dark:border-amber-800">
+                    <p className="text-xs text-muted-foreground mb-1">LTV Promedio</p>
+                    <p className="text-lg font-bold text-amber-700 dark:text-amber-300">
+                      {formatCurrency(customerSegmentation.averageLTV)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Comparación Visual */}
+              <div className="mt-6 pt-6 border-t">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-medium">Nuevos Clientes</Label>
+                      <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                        {formatCurrency(customerSegmentation.newCustomersRevenue)}
+                      </span>
+                    </div>
+                    <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-emerald-500 rounded-full transition-all"
+                        style={{
+                          width: `${customerSegmentation.newCustomersRevenue + customerSegmentation.recurringCustomersRevenue > 0
+                            ? (customerSegmentation.newCustomersRevenue / (customerSegmentation.newCustomersRevenue + customerSegmentation.recurringCustomersRevenue)) * 100
+                            : 0}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-medium">Clientes Recurrentes</Label>
+                      <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">
+                        {formatCurrency(customerSegmentation.recurringCustomersRevenue)}
+                      </span>
+                    </div>
+                    <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-purple-500 rounded-full transition-all"
+                        style={{
+                          width: `${customerSegmentation.newCustomersRevenue + customerSegmentation.recurringCustomersRevenue > 0
+                            ? (customerSegmentation.recurringCustomersRevenue / (customerSegmentation.newCustomersRevenue + customerSegmentation.recurringCustomersRevenue)) * 100
+                            : 0}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Orders Table */}
+        <Card>
+          <CardHeader className="pb-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <CardTitle className="text-base font-medium">Pedidos Recientes</CardTitle>
+              <div className="flex flex-wrap gap-2">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    placeholder="Buscar..."
+                    value={searchTermOnline}
+                    onChange={(e) => setSearchTermOnline(e.target.value)}
+                    className="w-64 pl-9"
+                  />
+                </div>
+                <Select value={statusFilterOnline} onValueChange={setStatusFilterOnline}>
+                  <SelectTrigger className="w-40">
+                    <Filter className="mr-2 h-4 w-4" />
+                    <SelectValue placeholder="Estado" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    <SelectItem value="paid">Pagados</SelectItem>
+                    <SelectItem value="pending">Pendientes</SelectItem>
+                    <SelectItem value="refunded">Reembolsados</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="outline"
+                  onClick={handleSync}
+                  disabled={syncing}
+                  size="sm"
+                >
+                  <RefreshCw className={`h-4 w-4 mr-2 ${syncing ? 'animate-spin' : ''}`} />
+                  {syncing ? 'Sincronizando...' : 'Sincronizar'}
+                </Button>
+                <Button variant="outline" size="icon">
+                  <Download className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Pedido</TableHead>
+                  <TableHead>Cliente</TableHead>
+                  <TableHead>Productos</TableHead>
+                  <TableHead>Total</TableHead>
+                  <TableHead>Pago</TableHead>
+                  <TableHead>Envío</TableHead>
+                  <TableHead>Fecha</TableHead>
+                  <TableHead className="text-right">Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredOrdersOnline.map((order) => (
+                  <TableRow key={order.id}>
+                    <TableCell className="font-medium">{order.order_number}</TableCell>
+                    <TableCell>
+                      <div>
+                        <p className="font-medium">{order.customer_name}</p>
+                        <p className="text-sm text-muted-foreground">{order.customer_email}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <p className="text-sm">
+                        {(order.line_items || []).slice(0, 2).map((item) => item.title).join(', ')}
+                        {(order.line_items || []).length > 2 && ` +${(order.line_items || []).length - 2} más`}
+                      </p>
+                    </TableCell>
+                    <TableCell className="font-semibold">
+                      {formatCurrency(order.total_price)}
+                    </TableCell>
+                    <TableCell>{getStatusBadge(order.financial_status)}</TableCell>
+                    <TableCell>{getFulfillmentBadge(order.fulfillment_status)}</TableCell>
+                    <TableCell>{formatDate(order.created_at, 'dd MMM yyyy')}</TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="sm">
+                        <ExternalLink className="mr-2 h-4 w-4" />
+                        Ver
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {!hasOrdersOnline && (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center text-sm text-muted-foreground">
+                      Sin pedidos online aún. Conecta Shopify para ver ventas reales.
                     </TableCell>
                   </TableRow>
                 )}

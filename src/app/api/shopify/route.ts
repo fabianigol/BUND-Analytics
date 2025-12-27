@@ -46,9 +46,13 @@ export async function GET(request: NextRequest) {
         return getAnalytics(supabase, searchParams)
       case 'analytics-funnel':
         return getAnalyticsFunnel(supabase, searchParams)
+      case 'online-time-analysis':
+        return getOnlineTimeAnalysis(supabase, searchParams)
+      case 'online-customer-segmentation':
+        return getOnlineCustomerSegmentation(supabase, searchParams)
       default:
         return NextResponse.json(
-          { error: 'Invalid type parameter. Use: orders, metrics, products, charts, customers, customer-metrics, locations, location-employees, analytics, analytics-funnel' },
+          { error: 'Invalid type parameter. Use: orders, metrics, products, charts, customers, customer-metrics, locations, location-employees, analytics, analytics-funnel, online-time-analysis, online-customer-segmentation' },
           { status: 400 }
         )
     }
@@ -70,6 +74,7 @@ async function getOrders(
   const endDate = searchParams.get('endDate')
   const status = searchParams.get('status') // all, paid, pending, refunded
   const search = searchParams.get('search')
+  const onlineOnly = searchParams.get('onlineOnly') === 'true'
 
   let query = supabase
     .from('shopify_orders')
@@ -100,10 +105,18 @@ async function getOrders(
   }
 
   const { data, error } = await query
-  const orders = data as Database['public']['Tables']['shopify_orders']['Row'][] | null
+  let orders = data as Database['public']['Tables']['shopify_orders']['Row'][] | null
 
   if (error) {
     throw error
+  }
+
+  // Filtrar pedidos online (sin tags) si onlineOnly es true
+  if (onlineOnly && orders) {
+    orders = orders.filter(order => {
+      const tags = (order as any).tags as string[] | null
+      return !tags || tags.length === 0
+    })
   }
 
   return NextResponse.json({
@@ -120,6 +133,7 @@ async function getMetrics(
   const days = parseInt(searchParams.get('days') || '30', 10)
   const startDate = searchParams.get('startDate')
   const endDate = searchParams.get('endDate')
+  const onlineOnly = searchParams.get('onlineOnly') === 'true'
 
   const today = new Date()
   const periodEnd = endDate ? parseISO(endDate) : today
@@ -131,10 +145,10 @@ async function getMetrics(
   const previousPeriodEnd = new Date(periodStart)
   previousPeriodEnd.setHours(23, 59, 59, 999)
 
-  // Obtener datos del período actual (incluyendo customer_email para relacionar con citas)
+  // Obtener datos del período actual (incluyendo customer_email y tags para filtrar)
   const { data: currentData, error: currentError } = await supabase
     .from('shopify_orders')
-    .select('total_price, financial_status, line_items, customer_email, created_at')
+    .select('total_price, financial_status, line_items, customer_email, created_at, tags')
     .gte('created_at', periodStart.toISOString())
     .lte('created_at', periodEnd.toISOString())
 
@@ -145,7 +159,7 @@ async function getMetrics(
   // Obtener datos del período anterior para comparación
   const { data: previousData, error: previousError } = await supabase
     .from('shopify_orders')
-    .select('total_price, financial_status, line_items, customer_email, created_at')
+    .select('total_price, financial_status, line_items, customer_email, created_at, tags')
     .gte('created_at', previousPeriodStart.toISOString())
     .lte('created_at', previousPeriodEnd.toISOString())
 
@@ -153,8 +167,20 @@ async function getMetrics(
     throw previousError
   }
 
-  const currentOrders = (currentData || []) as Database['public']['Tables']['shopify_orders']['Row'][]
-  const previousOrders = (previousData || []) as Database['public']['Tables']['shopify_orders']['Row'][]
+  let currentOrders = (currentData || []) as Database['public']['Tables']['shopify_orders']['Row'][]
+  let previousOrders = (previousData || []) as Database['public']['Tables']['shopify_orders']['Row'][]
+
+  // Filtrar pedidos online (sin tags) si onlineOnly es true
+  if (onlineOnly) {
+    currentOrders = currentOrders.filter(order => {
+      const tags = (order as any).tags as string[] | null
+      return !tags || tags.length === 0
+    })
+    previousOrders = previousOrders.filter(order => {
+      const tags = (order as any).tags as string[] | null
+      return !tags || tags.length === 0
+    })
+  }
 
   // Relacionar pedidos con citas de Acuity para determinar si vienen de medición o fitting
   // Estrategia optimizada: obtener todas las citas relevantes de una vez
@@ -249,13 +275,21 @@ async function getMetrics(
   // Obtener datos históricos (todo el tiempo)
   const { data: historicalData, error: historicalError } = await supabase
     .from('shopify_orders')
-    .select('total_price, financial_status, line_items, created_at')
+    .select('total_price, financial_status, line_items, created_at, tags')
 
   if (historicalError) {
     console.warn('Error fetching historical data:', historicalError)
   }
 
-  const historicalOrders = (historicalData || []) as Database['public']['Tables']['shopify_orders']['Row'][]
+  let historicalOrders = (historicalData || []) as Database['public']['Tables']['shopify_orders']['Row'][]
+  
+  // Filtrar pedidos online (sin tags) si onlineOnly es true
+  if (onlineOnly) {
+    historicalOrders = historicalOrders.filter(order => {
+      const tags = (order as any).tags as string[] | null
+      return !tags || tags.length === 0
+    })
+  }
   
   // Calcular métricas históricas
   const historicalRevenue = historicalOrders.reduce((sum, order) => sum + (Number(order.total_price) || 0), 0)
@@ -272,20 +306,38 @@ async function getMetrics(
   // Obtener gasto de Meta Ads para el período actual
   const { data: currentMetaData } = await supabase
     .from('meta_campaigns')
-    .select('spend')
+    .select('spend, campaign_name')
     .gte('date', format(periodStart, 'yyyy-MM-dd'))
     .lte('date', format(periodEnd, 'yyyy-MM-dd'))
 
-  const currentMetaSpend = (currentMetaData || []).reduce((sum, campaign: any) => sum + (Number(campaign.spend) || 0), 0)
+  // Si es onlineOnly, filtrar solo campañas con "ecom" en el nombre
+  let filteredCurrentMetaData = currentMetaData || []
+  if (onlineOnly) {
+    filteredCurrentMetaData = filteredCurrentMetaData.filter((campaign: any) => {
+      const campaignName = (campaign.campaign_name || '').toLowerCase()
+      return campaignName.includes('ecom')
+    })
+  }
+
+  const currentMetaSpend = filteredCurrentMetaData.reduce((sum, campaign: any) => sum + (Number(campaign.spend) || 0), 0)
 
   // Obtener gasto de Meta Ads para el período anterior
   const { data: previousMetaData } = await supabase
     .from('meta_campaigns')
-    .select('spend')
+    .select('spend, campaign_name')
     .gte('date', format(previousPeriodStart, 'yyyy-MM-dd'))
     .lte('date', format(previousPeriodEnd, 'yyyy-MM-dd'))
 
-  const previousMetaSpend = (previousMetaData || []).reduce((sum, campaign: any) => sum + (Number(campaign.spend) || 0), 0)
+  // Si es onlineOnly, filtrar solo campañas con "ecom" en el nombre
+  let filteredPreviousMetaData = previousMetaData || []
+  if (onlineOnly) {
+    filteredPreviousMetaData = filteredPreviousMetaData.filter((campaign: any) => {
+      const campaignName = (campaign.campaign_name || '').toLowerCase()
+      return campaignName.includes('ecom')
+    })
+  }
+
+  const previousMetaSpend = filteredPreviousMetaData.reduce((sum, campaign: any) => sum + (Number(campaign.spend) || 0), 0)
 
   // Calcular ROAS (Revenue / Ad Spend)
   const currentROAS = currentMetaSpend > 0 ? totalRevenue / currentMetaSpend : 0
@@ -395,10 +447,11 @@ async function getProducts(
   const startDate = searchParams.get('startDate')
   const endDate = searchParams.get('endDate')
   const filterType = searchParams.get('filterType') || 'monthly' // 'monthly' or 'total'
+  const onlineOnly = searchParams.get('onlineOnly') === 'true'
 
   let query = supabase
     .from('shopify_orders')
-    .select('line_items, created_at')
+    .select('line_items, created_at, tags')
     .order('created_at', { ascending: false })
 
   // Solo filtrar por fecha si es mensual, si es total no filtrar
@@ -418,10 +471,18 @@ async function getProducts(
   }
 
   const { data, error } = await query
-  const orders = data as Database['public']['Tables']['shopify_orders']['Row'][] | null
+  let orders = data as Database['public']['Tables']['shopify_orders']['Row'][] | null
 
   if (error) {
     throw error
+  }
+
+  // Filtrar pedidos online (sin tags) si onlineOnly es true
+  if (onlineOnly && orders) {
+    orders = orders.filter(order => {
+      const tags = (order as any).tags as string[] | null
+      return !tags || tags.length === 0
+    })
   }
 
   // Agrupar productos por product_id o title y calcular ingresos y ventas
@@ -468,6 +529,7 @@ async function getComplements(
   const startDate = searchParams.get('startDate')
   const endDate = searchParams.get('endDate')
   const filterType = searchParams.get('filterType') || 'total' // 'monthly' or 'total'
+  const onlineOnly = searchParams.get('onlineOnly') === 'true'
 
   // Lista de complementos según la imagen y los productos que aparecen en la tabla
   // Incluimos variantes y términos relacionados
@@ -481,7 +543,7 @@ async function getComplements(
 
   let query = supabase
     .from('shopify_orders')
-    .select('line_items, created_at')
+    .select('line_items, created_at, tags')
     .order('created_at', { ascending: false })
 
   // Si es mensual, usar el período del filtro de fechas
@@ -500,10 +562,18 @@ async function getComplements(
   }
 
   const { data, error } = await query
-  const orders = data as Database['public']['Tables']['shopify_orders']['Row'][] | null
+  let orders = data as Database['public']['Tables']['shopify_orders']['Row'][] | null
 
   if (error) {
     throw error
+  }
+
+  // Filtrar pedidos online (sin tags) si onlineOnly es true
+  if (onlineOnly && orders) {
+    orders = orders.filter(order => {
+      const tags = (order as any).tags as string[] | null
+      return !tags || tags.length === 0
+    })
   }
 
   // Agrupar complementos por título
@@ -583,6 +653,7 @@ async function getCharts(
   const days = parseInt(searchParams.get('days') || '30', 10)
   const startDate = searchParams.get('startDate')
   const endDate = searchParams.get('endDate')
+  const onlineOnly = searchParams.get('onlineOnly') === 'true'
 
   const today = new Date()
   const periodEnd = endDate ? parseISO(endDate) : today
@@ -593,7 +664,7 @@ async function getCharts(
   // Obtener todos los pedidos del período
   const { data, error } = await supabase
     .from('shopify_orders')
-    .select('total_price, created_at')
+    .select('total_price, created_at, tags')
     .gte('created_at', periodStart.toISOString())
     .lte('created_at', periodEnd.toISOString())
     .order('created_at', { ascending: true })
@@ -602,7 +673,15 @@ async function getCharts(
     throw error
   }
 
-  const orders = (data || []) as Database['public']['Tables']['shopify_orders']['Row'][]
+  let orders = (data || []) as Database['public']['Tables']['shopify_orders']['Row'][]
+
+  // Filtrar pedidos online (sin tags) si onlineOnly es true
+  if (onlineOnly) {
+    orders = orders.filter(order => {
+      const tags = (order as any).tags as string[] | null
+      return !tags || tags.length === 0
+    })
+  }
 
   // Agrupar por fecha
   const dailyRevenue = new Map<string, number>()
@@ -638,6 +717,7 @@ async function getMonthlyRevenue(
 ) {
   // Obtener últimos 12 meses
   const months = parseInt(searchParams.get('months') || '12', 10)
+  const onlineOnly = searchParams.get('onlineOnly') === 'true'
   const today = new Date()
   const startMonth = startOfMonth(subMonths(today, months - 1))
   startMonth.setHours(0, 0, 0, 0)
@@ -654,7 +734,7 @@ async function getMonthlyRevenue(
   // Obtener todos los pedidos del período
   const { data, error } = await supabase
     .from('shopify_orders')
-    .select('total_price, created_at')
+    .select('total_price, created_at, tags')
     .gte('created_at', startMonth.toISOString())
     .lte('created_at', endMonth.toISOString())
     .order('created_at', { ascending: true })
@@ -663,7 +743,15 @@ async function getMonthlyRevenue(
     throw error
   }
 
-  const orders = (data || []) as Database['public']['Tables']['shopify_orders']['Row'][]
+  let orders = (data || []) as Database['public']['Tables']['shopify_orders']['Row'][]
+
+  // Filtrar pedidos online (sin tags) si onlineOnly es true
+  if (onlineOnly) {
+    orders = orders.filter(order => {
+      const tags = (order as any).tags as string[] | null
+      return !tags || tags.length === 0
+    })
+  }
 
   // Agrupar por mes (YYYY-MM)
   const monthlyRevenue = new Map<string, number>()
@@ -1314,8 +1402,15 @@ async function getLocations(
   
   if (metaData) {
     (metaData as any[]).forEach((campaign: any) => {
+      const campaignName = (campaign.campaign_name || '').toUpperCase()
       const campaignLocation = extractLocationFromCampaignName(campaign.campaign_name || '')
-      if (campaignLocation) {
+      
+      // Si la campaña tiene "ecom" en el nombre, asignarla a "online"
+      if (campaignName.includes('ECOM')) {
+        const currentSpend = locationMetaSpendMap.get('online') || 0
+        locationMetaSpendMap.set('online', currentSpend + (Number(campaign.spend) || 0))
+      } else if (campaignLocation) {
+        // Si no es ecom, asignarla a su ubicación correspondiente
         const currentSpend = locationMetaSpendMap.get(campaignLocation) || 0
         locationMetaSpendMap.set(campaignLocation, currentSpend + (Number(campaign.spend) || 0))
       }
@@ -1337,11 +1432,15 @@ async function getLocations(
 
   orders.forEach(order => {
     const tags = (order as any).tags as string[] | null
-    const location = extractLocationFromTags(tags) || 'Sin ubicación'
+    const location = extractLocationFromTags(tags)
     
-    if (location === 'Sin ubicación') return // Ignorar pedidos sin ubicación
+    // Si no tiene tags o el array está vacío, es un pedido online
+    const isOnlineOrder = !tags || tags.length === 0
+    const finalLocation = isOnlineOrder ? 'online' : (location || 'Sin ubicación')
+    
+    if (finalLocation === 'Sin ubicación') return // Ignorar pedidos sin ubicación y sin tags
 
-    const existing = locationMap.get(location) || {
+    const existing = locationMap.get(finalLocation) || {
       revenue: 0,
       orders: 0,
       customers: new Map(),
@@ -1399,7 +1498,7 @@ async function getLocations(
     const monthlyKey = format(orderDate, 'yyyy-MM')
     existing.monthlyRevenue.set(monthlyKey, (existing.monthlyRevenue.get(monthlyKey) || 0) + orderRevenue)
 
-    locationMap.set(location, existing)
+    locationMap.set(finalLocation, existing)
   })
 
   // Convertir a array y calcular métricas
@@ -1443,7 +1542,7 @@ async function getLocations(
 
       // Calcular ROAS específico para esta ubicación
       const locationMetaSpend = locationMetaSpendMap.get(location) || 0
-      const locationROAS = locationMetaSpend > 0 ? data.revenue / locationMetaSpend : null
+      const locationROAS = locationMetaSpend > 0 ? data.revenue / locationMetaSpend : undefined
 
       return {
         location,
@@ -1706,5 +1805,220 @@ async function getAnalyticsFunnel(
       stages: [],
     },
     message: 'Funnel data requires Checkouts API access',
+  })
+}
+
+// ============================================
+// NEW ENDPOINTS: ONLINE ORDERS ANALYSIS
+// ============================================
+
+// Análisis de horarios y días de la semana para pedidos online
+async function getOnlineTimeAnalysis(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  searchParams: URLSearchParams
+) {
+  const startDate = searchParams.get('startDate')
+  const endDate = searchParams.get('endDate')
+
+  const periodStart = startDate ? parseISO(startDate) : subDays(new Date(), 30)
+  periodStart.setHours(0, 0, 0, 0)
+  const periodEnd = endDate ? parseISO(endDate) : new Date()
+  periodEnd.setHours(23, 59, 59, 999)
+
+  // Obtener pedidos del período
+  const { data, error } = await supabase
+    .from('shopify_orders')
+    .select('total_price, created_at, tags')
+    .gte('created_at', periodStart.toISOString())
+    .lte('created_at', periodEnd.toISOString())
+
+  if (error) {
+    throw error
+  }
+
+  let orders = (data || []) as Database['public']['Tables']['shopify_orders']['Row'][]
+
+  // Filtrar solo pedidos online (sin tags)
+  orders = orders.filter(order => {
+    const tags = (order as any).tags as string[] | null
+    return !tags || tags.length === 0
+  })
+
+  // Análisis por hora del día (0-23)
+  const hourlyData = new Map<number, { hour: number; revenue: number; orders: number }>()
+  for (let hour = 0; hour < 24; hour++) {
+    hourlyData.set(hour, { hour, revenue: 0, orders: 0 })
+  }
+
+  // Análisis por día de la semana (0=Domingo, 1=Lunes, ..., 6=Sábado)
+  const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+  const dailyData = new Map<number, { day: number; dayName: string; revenue: number; orders: number }>()
+  for (let day = 0; day < 7; day++) {
+    dailyData.set(day, { day, dayName: dayNames[day], revenue: 0, orders: 0 })
+  }
+
+  orders.forEach(order => {
+    const orderDate = parseISO(order.created_at)
+    const hour = orderDate.getHours()
+    const dayOfWeek = orderDate.getDay()
+    const revenue = Number(order.total_price) || 0
+
+    // Actualizar datos por hora
+    const hourly = hourlyData.get(hour)!
+    hourly.revenue += revenue
+    hourly.orders += 1
+
+    // Actualizar datos por día de la semana
+    const daily = dailyData.get(dayOfWeek)!
+    daily.revenue += revenue
+    daily.orders += 1
+  })
+
+  // Convertir a arrays y ordenar
+  const hourlyArray = Array.from(hourlyData.values())
+    .map(item => ({
+      hour: item.hour,
+      hourLabel: `${item.hour.toString().padStart(2, '0')}:00`,
+      revenue: Math.round(item.revenue * 100) / 100,
+      orders: item.orders,
+    }))
+    .sort((a, b) => a.hour - b.hour)
+
+  const dailyArray = Array.from(dailyData.values())
+    .map(item => ({
+      day: item.day,
+      dayName: item.dayName,
+      revenue: Math.round(item.revenue * 100) / 100,
+      orders: item.orders,
+    }))
+    .sort((a, b) => a.day - b.day)
+
+  return NextResponse.json({
+    success: true,
+    data: {
+      hourly: hourlyArray,
+      daily: dailyArray,
+    },
+  })
+}
+
+// Segmentación de clientes online
+async function getOnlineCustomerSegmentation(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  searchParams: URLSearchParams
+) {
+  const startDate = searchParams.get('startDate')
+  const endDate = searchParams.get('endDate')
+
+  const periodStart = startDate ? parseISO(startDate) : subDays(new Date(), 30)
+  periodStart.setHours(0, 0, 0, 0)
+  const periodEnd = endDate ? parseISO(endDate) : new Date()
+  periodEnd.setHours(23, 59, 59, 999)
+
+  // Obtener todos los pedidos (sin filtro de fecha para histórico completo)
+  const { data: allOrdersData, error } = await supabase
+    .from('shopify_orders')
+    .select('customer_email, total_price, created_at, tags')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    throw error
+  }
+
+  let allOrders = (allOrdersData || []) as Database['public']['Tables']['shopify_orders']['Row'][]
+
+  // Filtrar solo pedidos online (sin tags)
+  allOrders = allOrders.filter(order => {
+    const tags = (order as any).tags as string[] | null
+    return !tags || tags.length === 0
+  })
+
+  // Agrupar por email de cliente
+  const customerMap = new Map<string, {
+    email: string
+    totalSpent: number
+    orderCount: number
+    firstOrderDate: string
+    lastOrderDate: string
+    ordersInPeriod: number
+    revenueInPeriod: number
+  }>()
+
+  allOrders.forEach(order => {
+    const email = order.customer_email || 'unknown'
+    const existing = customerMap.get(email) || {
+      email,
+      totalSpent: 0,
+      orderCount: 0,
+      firstOrderDate: order.created_at,
+      lastOrderDate: order.created_at,
+      ordersInPeriod: 0,
+      revenueInPeriod: 0,
+    }
+
+    existing.totalSpent += Number(order.total_price) || 0
+    existing.orderCount += 1
+
+    const orderDate = parseISO(order.created_at)
+    if (orderDate < parseISO(existing.firstOrderDate)) {
+      existing.firstOrderDate = order.created_at
+    }
+    if (orderDate > parseISO(existing.lastOrderDate)) {
+      existing.lastOrderDate = order.created_at
+    }
+
+    // Verificar si el pedido está en el período
+    if (orderDate >= periodStart && orderDate <= periodEnd) {
+      existing.ordersInPeriod += 1
+      existing.revenueInPeriod += Number(order.total_price) || 0
+    }
+
+    customerMap.set(email, existing)
+  })
+
+  const customers = Array.from(customerMap.values())
+
+  // Clasificar clientes
+  const newCustomers = customers.filter(c => {
+    const firstOrderDate = parseISO(c.firstOrderDate)
+    return firstOrderDate >= periodStart && firstOrderDate <= periodEnd
+  })
+
+  const recurringCustomers = customers.filter(c => {
+    const firstOrderDate = parseISO(c.firstOrderDate)
+    return firstOrderDate < periodStart && c.ordersInPeriod > 0
+  })
+
+  const totalCustomers = customers.filter(c => c.ordersInPeriod > 0).length
+
+  // Calcular métricas
+  const newCustomersCount = newCustomers.length
+  const recurringCustomersCount = recurringCustomers.length
+  const retentionRate = totalCustomers > 0 ? (recurringCustomersCount / totalCustomers) * 100 : 0
+
+  const newCustomersRevenue = newCustomers.reduce((sum, c) => sum + c.revenueInPeriod, 0)
+  const recurringCustomersRevenue = recurringCustomers.reduce((sum, c) => sum + c.revenueInPeriod, 0)
+
+  const averageNewCustomerValue = newCustomersCount > 0 ? newCustomersRevenue / newCustomersCount : 0
+  const averageRecurringCustomerValue = recurringCustomersCount > 0 ? recurringCustomersRevenue / recurringCustomersCount : 0
+
+  // Calcular LTV promedio (basado en todos los pedidos históricos)
+  const averageLTV = customers.length > 0
+    ? customers.reduce((sum, c) => sum + c.totalSpent, 0) / customers.length
+    : 0
+
+  return NextResponse.json({
+    success: true,
+    data: {
+      totalCustomers,
+      newCustomers: newCustomersCount,
+      recurringCustomers: recurringCustomersCount,
+      retentionRate: Math.round(retentionRate * 100) / 100,
+      newCustomersRevenue: Math.round(newCustomersRevenue * 100) / 100,
+      recurringCustomersRevenue: Math.round(recurringCustomersRevenue * 100) / 100,
+      averageNewCustomerValue: Math.round(averageNewCustomerValue * 100) / 100,
+      averageRecurringCustomerValue: Math.round(averageRecurringCustomerValue * 100) / 100,
+      averageLTV: Math.round(averageLTV * 100) / 100,
+    },
   })
 }

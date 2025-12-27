@@ -6085,3 +6085,209 @@ ReferenceError: extractLocationFromCampaignName is not defined
 🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
 👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
  GET / 200 in 565ms (compile: 31ms, proxy.ts: 381ms, render: 153ms)
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 1715ms (compile: 1048ms, proxy.ts: 461ms, render: 206ms)
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 2.8s (compile: 1336ms, proxy.ts: 716ms, render: 726ms)
+🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ventas 200 in 1150ms (compile: 279ms, proxy.ts: 730ms, render: 140ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ ○ Compiling /api/shopify ...
+ GET /api/shopify?type=charts&startDate=2025-12-01&endDate=2025-12-27&days=26 200 in 9.7s (compile: 8.5s, proxy.ts: 472ms, render: 813ms)
+ GET /api/shopify?type=monthly-revenue&months=12 200 in 9.8s (compile: 8.4s, proxy.ts: 476ms, render: 825ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ventas 200 in 269ms (compile: 107ms, proxy.ts: 123ms, render: 38ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=products&limit=10&startDate=2025-12-01&endDate=2025-12-27&filterType=monthly 200 in 11.2s (compile: 8.5s, proxy.ts: 472ms, render: 2.3s)
+ GET /api/shopify?type=complements&limit=10&startDate=2025-12-01&endDate=2025-12-27&filterType=monthly 200 in 11.3s (compile: 8.4s, proxy.ts: 448ms, render: 2.4s)
+ GET /api/shopify?type=orders&limit=100&startDate=2025-12-01&endDate=2025-12-27 200 in 12.1s (compile: 8.5s, proxy.ts: 471ms, render: 3.1s)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ ○ Compiling /api/integrations/shopify ...
+ GET /api/integrations/shopify 200 in 4.0s (compile: 3.7s, proxy.ts: 128ms, render: 214ms)
+ GET /api/shopify?type=monthly-revenue&months=12 200 in 2.5s (compile: 1336ms, proxy.ts: 907ms, render: 255ms)
+ GET /api/shopify?type=charts&startDate=2025-12-01&endDate=2025-12-27&days=26 200 in 3.8s (compile: 3.4s, proxy.ts: 201ms, render: 262ms)
+ GET /api/shopify?type=metrics&startDate=2025-12-01&endDate=2025-12-27 200 in 13.9s (compile: 8.8s, proxy.ts: 161ms, render: 5.0s)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=complements&limit=10&startDate=2025-12-01&endDate=2025-12-27&filterType=monthly 200 in 1809ms (compile: 1046ms, proxy.ts: 285ms, render: 478ms)
+ GET /api/shopify?type=products&limit=10&startDate=2025-12-01&endDate=2025-12-27&filterType=monthly 200 in 2.7s (compile: 1338ms, proxy.ts: 904ms, render: 492ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/shopify 200 in 399ms (compile: 7ms, proxy.ts: 138ms, render: 254ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=customers&startDate=2025-12-01&endDate=2025-12-27&limit=50&offset=0 200 in 471ms (compile: 15ms, proxy.ts: 140ms, render: 316ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=orders&limit=100&startDate=2025-12-01&endDate=2025-12-27 200 in 553ms (compile: 12ms, proxy.ts: 143ms, render: 398ms)
+ GET /api/shopify?type=customers&limit=10&offset=0 200 in 309ms (compile: 9ms, proxy.ts: 92ms, render: 208ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=customer-metrics&startDate=2025-12-01&endDate=2025-12-27 200 in 583ms (compile: 6ms, proxy.ts: 136ms, render: 442ms)
+ GET /api/shopify?type=customers&startDate=2025-12-01&endDate=2025-12-27&limit=10&offset=0 200 in 345ms (compile: 22ms, proxy.ts: 100ms, render: 224ms)
+ GET /api/shopify?type=locations&startDate=2025-12-01&endDate=2025-12-27 200 in 601ms (compile: 7ms, proxy.ts: 82ms, render: 512ms)
+ GET /api/shopify?type=metrics&startDate=2025-12-01&endDate=2025-12-27 200 in 6.6s (compile: 15ms, proxy.ts: 98ms, render: 6.5s)
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 2.9s (compile: 659ms, proxy.ts: 2.0s, render: 215ms)
+🔍 Middleware Debug: {
+  url: '/api/dashboard/overview',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ ○ Compiling /api/dashboard/overview ...
+ GET /api/dashboard/overview 200 in 9.7s (compile: 7.7s, proxy.ts: 485ms, render: 1487ms)
+🔍 Middleware Debug: {
+  url: '/api/dashboard/overview',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/dashboard/overview 200 in 2.1s (compile: 13ms, proxy.ts: 157ms, render: 1931ms)
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 3.7s (compile: 1620ms, proxy.ts: 1532ms, render: 565ms)
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 1332ms (compile: 368ms, proxy.ts: 386ms, render: 578ms)
+🔍 Middleware Debug: {
+  url: '/api/dashboard/overview',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ ○ Compiling /api/dashboard/overview ...
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 231ms (compile: 45ms, proxy.ts: 148ms, render: 37ms)
+ GET /api/dashboard/overview 200 in 4.6s (compile: 3.6s, proxy.ts: 109ms, render: 831ms)
+🔍 Middleware Debug: {
+  url: '/api/dashboard/overview',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/dashboard/overview 200 in 791ms (compile: 2ms, proxy.ts: 72ms, render: 718ms)
+🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ventas 200 in 266ms (compile: 38ms, proxy.ts: 204ms, render: 24ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=charts&startDate=2025-12-01&endDate=2025-12-27&days=26 200 in 1786ms (compile: 1250ms, proxy.ts: 352ms, render: 184ms)
+ GET /api/shopify?type=monthly-revenue&months=12 200 in 1796ms (compile: 1243ms, proxy.ts: 359ms, render: 194ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=charts&startDate=2025-12-01&endDate=2025-12-27&days=26 200 in 376ms (compile: 3ms, proxy.ts: 129ms, render: 244ms)
+ GET /api/shopify?type=products&limit=10&startDate=2025-12-01&endDate=2025-12-27&filterType=monthly 200 in 2.2s (compile: 1244ms, proxy.ts: 358ms, render: 596ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=complements&limit=10&startDate=2025-12-01&endDate=2025-12-27&filterType=monthly 200 in 2.3s (compile: 1245ms, proxy.ts: 352ms, render: 654ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=orders&limit=100&startDate=2025-12-01&endDate=2025-12-27 200 in 2.4s (compile: 1243ms, proxy.ts: 359ms, render: 820ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=metrics&startDate=2025-12-01&endDate=2025-12-27 200 in 3.0s (compile: 1501ms, proxy.ts: 101ms, render: 1354ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/shopify 200 in 1291ms (compile: 989ms, proxy.ts: 140ms, render: 161ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/shopify?type=monthly-revenue&months=12 200 in 1025ms (compile: 549ms, proxy.ts: 195ms, render: 280ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=complements&limit=10&startDate=2025-12-01&endDate=2025-12-27&filterType=monthly 200 in 985ms (compile: 548ms, proxy.ts: 119ms, render: 317ms)
+ GET /api/shopify?type=products&limit=10&startDate=2025-12-01&endDate=2025-12-27&filterType=monthly 200 in 1103ms (compile: 549ms, proxy.ts: 163ms, render: 391ms)
+ GET /api/shopify?type=orders&limit=100&startDate=2025-12-01&endDate=2025-12-27 200 in 915ms (compile: 258ms, proxy.ts: 211ms, render: 447ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/integrations/shopify 200 in 320ms (compile: 4ms, proxy.ts: 120ms, render: 196ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=customers&startDate=2025-12-01&endDate=2025-12-27&limit=50&offset=0 200 in 514ms (compile: 10ms, proxy.ts: 96ms, render: 408ms)
+ GET /api/shopify?type=customers&startDate=2025-12-01&endDate=2025-12-27&limit=10&offset=0 200 in 546ms (compile: 1297µs, proxy.ts: 111ms, render: 434ms)
+ GET /api/shopify?type=customers&limit=10&offset=0 200 in 559ms (compile: 4ms, proxy.ts: 122ms, render: 432ms)
+ GET /api/shopify?type=customer-metrics&startDate=2025-12-01&endDate=2025-12-27 200 in 1263ms (compile: 7ms, proxy.ts: 105ms, render: 1150ms)
+ GET /api/shopify?type=locations&startDate=2025-12-01&endDate=2025-12-27 200 in 1737ms (compile: 3ms, proxy.ts: 86ms, render: 1648ms)
+ GET /api/shopify?type=metrics&startDate=2025-12-01&endDate=2025-12-27 200 in 2.2s (compile: 1936µs, proxy.ts: 79ms, render: 2.1s)
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 204ms (compile: 77ms, proxy.ts: 97ms, render: 30ms)
+🔍 Middleware Debug: {
+  url: '/api/dashboard/overview',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/dashboard/overview 200 in 850ms (compile: 11ms, proxy.ts: 86ms, render: 753ms)
+🔍 Middleware Debug: {
+  url: '/api/dashboard/overview',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/dashboard/overview 200 in 788ms (compile: 1795µs, proxy.ts: 79ms, render: 707ms)
