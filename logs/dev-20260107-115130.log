@@ -1,0 +1,371 @@
+▲ Next.js 16.1.1 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.166:3000
+- Environments: .env.local
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 1215ms
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (131kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ GET / 200 in 3.4s (compile: 2.7s, proxy.ts: 459ms, render: 220ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 194ms (compile: 37ms, proxy.ts: 138ms, render: 19ms)
+[Dashboard] Raw availability data: {
+  count: 14,
+  sample: [
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 3,
+      available: 12,
+      total: 15
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 1,
+      total: 2
+    },
+    {
+      store_name: 'The Bundclub Barcelona',
+      normalized: 'Barcelona',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 1
+    },
+    {
+      store_name: 'The Bundclub Zaragoza',
+      normalized: 'Zaragoza',
+      category: 'fitting',
+      booked: 0,
+      available: 4,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'medición',
+      booked: 1,
+      available: 29,
+      total: 30
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [
+    'Málaga',
+    'Sevilla',
+    'Barcelona',
+    'Zaragoza',
+    'Cdmx',
+    'Madrid',
+    'Murcia'
+  ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2026-01-07',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-22', 0 ]
+  ]
+}
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/dashboard 200 in 2.7s (compile: 1551ms, proxy.ts: 127ms, render: 1002ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 1232ms (compile: 1126ms, proxy.ts: 85ms, render: 21ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 110ms (compile: 1717µs, proxy.ts: 103ms, render: 5ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 509ms (compile: 244ms, proxy.ts: 86ms, render: 179ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Dashboard] Raw availability data: {
+  count: 14,
+  sample: [
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 3,
+      available: 12,
+      total: 15
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 1,
+      total: 2
+    },
+    {
+      store_name: 'The Bundclub Barcelona',
+      normalized: 'Barcelona',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 1
+    },
+    {
+      store_name: 'The Bundclub Zaragoza',
+      normalized: 'Zaragoza',
+      category: 'fitting',
+      booked: 0,
+      available: 4,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'medición',
+      booked: 1,
+      available: 29,
+      total: 30
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [
+    'Málaga',
+    'Sevilla',
+    'Barcelona',
+    'Zaragoza',
+    'Cdmx',
+    'Madrid',
+    'Murcia'
+  ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2026-01-07',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-22', 0 ]
+  ]
+}
+ GET /api/calendar/events?year=2026 200 in 289ms (compile: 1734µs, proxy.ts: 114ms, render: 173ms)
+ GET /api/dashboard 200 in 2.6s (compile: 790ms, proxy.ts: 102ms, render: 1757ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ POST /api/calendar/events 201 in 730ms (compile: 7ms, proxy.ts: 215ms, render: 508ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 444ms (compile: 4ms, proxy.ts: 92ms, render: 348ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 1645ms (compile: 1434ms, proxy.ts: 186ms, render: 25ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 192ms (compile: 29ms, proxy.ts: 150ms, render: 14ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 368ms (compile: 30ms, proxy.ts: 91ms, render: 246ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 258ms (compile: 3ms, proxy.ts: 78ms, render: 177ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ POST /api/calendar/events 201 in 380ms (compile: 6ms, proxy.ts: 183ms, render: 191ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 266ms (compile: 4ms, proxy.ts: 78ms, render: 184ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ POST /api/calendar/events 201 in 321ms (compile: 4ms, proxy.ts: 125ms, render: 192ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 295ms (compile: 4ms, proxy.ts: 92ms, render: 198ms)

@@ -35,6 +35,12 @@ const mainNavItems: NavItem[] = [
     sectionName: 'dashboard',
   },
   {
+    title: 'Calendario',
+    href: '/calendario',
+    emoji: '📅',
+    sectionName: 'calendario',
+  },
+  {
     title: 'Citas',
     href: '/citas',
     iconImage: '/Logo Acuity Scheduling.png',

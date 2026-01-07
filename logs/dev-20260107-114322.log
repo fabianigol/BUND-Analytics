@@ -1,0 +1,317 @@
+▲ Next.js 16.1.1 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.166:3000
+- Environments: .env.local
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 1135ms
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 2.8s (compile: 1957ms, proxy.ts: 277ms, render: 562ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 168ms (compile: 29ms, proxy.ts: 120ms, render: 20ms)
+[Dashboard] Raw availability data: {
+  count: 14,
+  sample: [
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 3,
+      available: 12,
+      total: 15
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 1,
+      total: 2
+    },
+    {
+      store_name: 'The Bundclub Barcelona',
+      normalized: 'Barcelona',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 1
+    },
+    {
+      store_name: 'The Bundclub Zaragoza',
+      normalized: 'Zaragoza',
+      category: 'fitting',
+      booked: 0,
+      available: 4,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'medición',
+      booked: 1,
+      available: 29,
+      total: 30
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [
+    'Málaga',
+    'Sevilla',
+    'Barcelona',
+    'Zaragoza',
+    'Cdmx',
+    'Madrid',
+    'Murcia'
+  ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2026-01-07',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-22', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 2.6s (compile: 1382ms, proxy.ts: 99ms, render: 1110ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Raw availability data: {
+  count: 14,
+  sample: [
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 3,
+      available: 12,
+      total: 15
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 1,
+      total: 2
+    },
+    {
+      store_name: 'The Bundclub Barcelona',
+      normalized: 'Barcelona',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 1
+    },
+    {
+      store_name: 'The Bundclub Zaragoza',
+      normalized: 'Zaragoza',
+      category: 'fitting',
+      booked: 0,
+      available: 4,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'medición',
+      booked: 1,
+      available: 29,
+      total: 30
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [
+    'Málaga',
+    'Sevilla',
+    'Barcelona',
+    'Zaragoza',
+    'Cdmx',
+    'Madrid',
+    'Murcia'
+  ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2026-01-07',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-22', 0 ]
+  ]
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/dashboard 200 in 1138ms (compile: 2ms, proxy.ts: 98ms, render: 1039ms)
+ GET /calendario 200 in 754ms (compile: 661ms, proxy.ts: 75ms, render: 17ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 528ms (compile: 257ms, proxy.ts: 79ms, render: 193ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 294ms (compile: 2ms, proxy.ts: 99ms, render: 193ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 264ms (compile: 97ms, proxy.ts: 146ms, render: 21ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 147ms (compile: 37ms, proxy.ts: 96ms, render: 14ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 119ms (compile: 27ms, proxy.ts: 79ms, render: 13ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 210ms (compile: 24ms, proxy.ts: 176ms, render: 11ms)

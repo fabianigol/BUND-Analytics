@@ -1,0 +1,544 @@
+▲ Next.js 16.1.1 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.166:3000
+- Environments: .env.local
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 1916ms
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (131kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+○ Compiling / ...
+ GET / 200 in 5.8s (compile: 5.1s, proxy.ts: 416ms, render: 214ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 188ms (compile: 34ms, proxy.ts: 135ms, render: 18ms)
+[Dashboard] Raw availability data: {
+  count: 14,
+  sample: [
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 3,
+      available: 12,
+      total: 15
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 1,
+      total: 2
+    },
+    {
+      store_name: 'The Bundclub Barcelona',
+      normalized: 'Barcelona',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 1
+    },
+    {
+      store_name: 'The Bundclub Zaragoza',
+      normalized: 'Zaragoza',
+      category: 'fitting',
+      booked: 0,
+      available: 4,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'medición',
+      booked: 1,
+      available: 29,
+      total: 30
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [
+    'Málaga',
+    'Sevilla',
+    'Barcelona',
+    'Zaragoza',
+    'Cdmx',
+    'Madrid',
+    'Murcia'
+  ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2026-01-07',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-22', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 2.9s (compile: 1436ms, proxy.ts: 313ms, render: 1138ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Raw availability data: {
+  count: 14,
+  sample: [
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 3,
+      available: 12,
+      total: 15
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 1,
+      total: 2
+    },
+    {
+      store_name: 'The Bundclub Barcelona',
+      normalized: 'Barcelona',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 1
+    },
+    {
+      store_name: 'The Bundclub Zaragoza',
+      normalized: 'Zaragoza',
+      category: 'fitting',
+      booked: 0,
+      available: 4,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'medición',
+      booked: 1,
+      available: 29,
+      total: 30
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [
+    'Málaga',
+    'Sevilla',
+    'Barcelona',
+    'Zaragoza',
+    'Cdmx',
+    'Madrid',
+    'Murcia'
+  ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2026-01-07',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-22', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 1314ms (compile: 6ms, proxy.ts: 100ms, render: 1208ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+⨯ ./src/components/calendar/CreateEventModal.tsx:16:1
+Module not found: Can't resolve '@/components/ui/textarea'
+  14 | import { Input } from '@/components/ui/input'
+  15 | import { Label } from '@/components/ui/label'
+> 16 | import { Textarea } from '@/components/ui/textarea'
+     | ^
+  17 | import {
+  18 |   Select,
+  19 |   SelectContent,
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./src/app/(dashboard)/calendario/page.tsx
+⨯ ./src/components/calendar/CreateEventModal.tsx:16:1
+Module not found: Can't resolve '@/components/ui/textarea'
+  14 | import { Input } from '@/components/ui/input'
+  15 | import { Label } from '@/components/ui/label'
+> 16 | import { Textarea } from '@/components/ui/textarea'
+     | ^
+  17 | import {
+  18 |   Select,
+  19 |   SelectContent,
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./src/app/(dashboard)/calendario/page.tsx
+⨯ ./src/components/calendar/CreateEventModal.tsx:16:1
+Module not found: Can't resolve '@/components/ui/textarea'
+  14 | import { Input } from '@/components/ui/input'
+  15 | import { Label } from '@/components/ui/label'
+> 16 | import { Textarea } from '@/components/ui/textarea'
+     | ^
+  17 | import {
+  18 |   Select,
+  19 |   SelectContent,
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./src/app/(dashboard)/calendario/page.tsx
+○ Compiling /_error ...
+ GET /calendario 500 in 3.2s (compile: 3.1s, proxy.ts: 113ms, render: 46ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 500 in 104ms (compile: 4ms, proxy.ts: 96ms, render: 4ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /calendario 500 in 107ms (compile: 10ms, proxy.ts: 94ms, render: 3ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 157ms (compile: 2ms, proxy.ts: 138ms, render: 17ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+Unexpected error: TypeError: Cannot read properties of undefined (reading 'getUser')
+    at GET (src/app/api/calendar/events/route.ts:14:70)
+  12 |     
+  13 |     // Verificar autenticación
+> 14 |     const { data: { user }, error: authError } = await supabase.auth.getUser()
+     |                                                                      ^
+  15 |     
+  16 |     if (authError || !user) {
+  17 |       return NextResponse.json(
+ GET /api/calendar/events?year=2026 500 in 555ms (compile: 404ms, proxy.ts: 86ms, render: 64ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+Unexpected error: TypeError: Cannot read properties of undefined (reading 'getUser')
+    at GET (src/app/api/calendar/events/route.ts:14:70)
+  12 |     
+  13 |     // Verificar autenticación
+> 14 |     const { data: { user }, error: authError } = await supabase.auth.getUser()
+     |                                                                      ^
+  15 |     
+  16 |     if (authError || !user) {
+  17 |       return NextResponse.json(
+ GET /api/calendar/events?year=2026 500 in 121ms (compile: 2ms, proxy.ts: 86ms, render: 32ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 186ms (compile: 30ms, proxy.ts: 139ms, render: 17ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 142ms (compile: 32ms, proxy.ts: 97ms, render: 13ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 111ms (compile: 1834µs, proxy.ts: 102ms, render: 7ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 146ms (compile: 3ms, proxy.ts: 135ms, render: 8ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 275ms (compile: 100ms, proxy.ts: 158ms, render: 17ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ POST /api/calendar/events 201 in 734ms (compile: 373ms, proxy.ts: 159ms, render: 203ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 348ms (compile: 5ms, proxy.ts: 88ms, render: 256ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 324ms (compile: 103ms, proxy.ts: 202ms, render: 20ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 181ms (compile: 46ms, proxy.ts: 121ms, render: 14ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 213ms (compile: 29ms, proxy.ts: 168ms, render: 16ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 173ms (compile: 27ms, proxy.ts: 128ms, render: 18ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 343ms (compile: 23ms, proxy.ts: 308ms, render: 12ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 236ms (compile: 29ms, proxy.ts: 195ms, render: 13ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 306ms (compile: 60ms, proxy.ts: 223ms, render: 22ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 200ms (compile: 48ms, proxy.ts: 129ms, render: 23ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 305ms (compile: 31ms, proxy.ts: 261ms, render: 13ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 156ms (compile: 25ms, proxy.ts: 119ms, render: 12ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 347ms (compile: 7ms, proxy.ts: 155ms, render: 185ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 1161ms (compile: 449ms, proxy.ts: 109ms, render: 603ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 307ms (compile: 1877µs, proxy.ts: 87ms, render: 218ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 170ms (compile: 46ms, proxy.ts: 106ms, render: 18ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 498ms (compile: 119ms, proxy.ts: 344ms, render: 36ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 133ms (compile: 37ms, proxy.ts: 82ms, render: 14ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 166ms (compile: 30ms, proxy.ts: 123ms, render: 13ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 180ms (compile: 33ms, proxy.ts: 126ms, render: 21ms)
+ GET /api/calendar/events?year=2026 200 in 1684ms (compile: 647ms, proxy.ts: 174ms, render: 864ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 105ms (compile: 1875µs, proxy.ts: 95ms, render: 8ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 130ms (compile: 36ms, proxy.ts: 81ms, render: 13ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 83ms (compile: 1593µs, proxy.ts: 74ms, render: 7ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 92ms (compile: 1957µs, proxy.ts: 82ms, render: 8ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 123ms (compile: 8ms, proxy.ts: 105ms, render: 10ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 83ms (compile: 1624µs, proxy.ts: 72ms, render: 9ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 181ms (compile: 27ms, proxy.ts: 143ms, render: 11ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 129ms (compile: 28ms, proxy.ts: 81ms, render: 21ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 164ms (compile: 29ms, proxy.ts: 119ms, render: 16ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 330ms (compile: 7ms, proxy.ts: 171ms, render: 152ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 433ms (compile: 30ms, proxy.ts: 99ms, render: 304ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 386ms (compile: 5ms, proxy.ts: 171ms, render: 210ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 187ms (compile: 7ms, proxy.ts: 135ms, render: 45ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 313ms (compile: 1611µs, proxy.ts: 89ms, render: 223ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 340ms (compile: 3ms, proxy.ts: 97ms, render: 240ms)
