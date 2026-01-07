@@ -106,6 +106,7 @@ const roleBadgeColors: Record<string, string> = {
 // Los IDs deben coincidir con sectionName en Sidebar.tsx
 const sidebarSections = [
   { id: 'dashboard', label: 'Dashboard', section: 'principal' },
+  { id: 'calendario', label: 'Calendario', section: 'principal' },
   { id: 'citas', label: 'Citas', section: 'principal' },
   { id: 'ventas', label: 'Ventas', section: 'principal' },
   { id: 'paid-media', label: 'Paid Media', section: 'principal' },
@@ -254,7 +255,7 @@ export default function UsuariosPage() {
     try {
       setIsCreatingUser(true)
 
-      // Limpiar y validar email
+      // Limpiar y validar
       const emailTrimmed = newUser.email?.trim() || ''
       const fullNameTrimmed = newUser.full_name?.trim() || ''
       const passwordTrimmed = newUser.password?.trim() || ''
@@ -277,134 +278,28 @@ export default function UsuariosPage() {
         return
       }
 
-      // Crear usuario en auth.users (usando admin API)
-      // Nota: Esto requiere service role key en el servidor
-      // Por ahora, crearemos el usuario directamente usando signUp
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: emailTrimmed.toLowerCase(),
-        password: passwordTrimmed,
-        options: {
-          data: {
-            full_name: fullNameTrimmed,
-          },
+      // Llamar al endpoint API que usa Admin API (no cierra sesión del admin)
+      const response = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      })
-
-      if (authError) {
-        let errorMessage = 'Error al crear usuario'
-        
-        if (authError.message.includes('already registered') || authError.message.includes('already exists')) {
-          errorMessage = 'Este email ya está registrado'
-        } else if (authError.message.includes('invalid format') || authError.message.includes('Unable to validate email')) {
-          errorMessage = 'El formato del email no es válido. Por favor verifica que sea correcto (ejemplo: usuario@dominio.com)'
-        } else if (authError.message.includes('Password')) {
-          errorMessage = `Error en la contraseña: ${authError.message}`
-        } else {
-          errorMessage = `Error al crear usuario: ${authError.message}`
-        }
-        
-        showMessage('error', errorMessage)
-        setIsCreatingUser(false)
-        return
-      }
-
-      if (!authData.user) {
-        showMessage('error', 'Error al crear el usuario')
-        return
-      }
-
-      const userId = authData.user.id
-
-      // Esperar un poco para que el trigger cree el perfil (si aún no existe)
-      await new Promise(resolve => setTimeout(resolve, 500))
-
-      // Usar upsert para crear o actualizar el perfil del usuario
-      const { error: profileError } = await (supabase as any)
-        .from('users')
-        .upsert({
-          id: userId,
+        body: JSON.stringify({
           email: emailTrimmed.toLowerCase(),
+          password: passwordTrimmed,
           full_name: fullNameTrimmed,
           department: newUser.department || null,
-        }, {
-          onConflict: 'id'
-        })
+          role: newUser.role,
+          sidebarPermissions: newUser.sidebarPermissions,
+        }),
+      })
 
-      // Verificar error de perfil - ignorar si es solo que no existe (el trigger lo crea)
-      if (profileError && profileError.code !== 'PGRST116') {
-        // Solo mostrar si hay un mensaje real
-        if (profileError.message?.trim()) {
-          console.error('Error updating profile:', profileError.message)
-          // No bloquear - el trigger puede haber creado el perfil
-        }
-      }
+      const data = await response.json()
 
-      // Obtener ID del rol
-      const { data: roleData, error: roleError } = await (supabase as any)
-        .from('roles')
-        .select('id, name')
-        .eq('name', newUser.role)
-        .single()
-
-      if (roleError) {
-        // Si el rol no existe, dar mensaje más específico
-        if (roleError.code === 'PGRST116') {
-          showMessage('error', `El rol "${newUser.role}" no existe en la base de datos. Por favor ejecuta la migración de roles primero.`)
-        } else {
-          console.error('Error fetching role:', roleError)
-          showMessage('error', `Error al obtener el rol: ${roleError.message || roleError.code || 'Error desconocido'}`)
-        }
+      if (!response.ok) {
+        showMessage('error', data.error || 'Error al crear usuario')
         setIsCreatingUser(false)
         return
-      }
-
-      if (!roleData) {
-        showMessage('error', `El rol "${newUser.role}" no se encontró en la base de datos`)
-        setIsCreatingUser(false)
-        return
-      }
-
-      // Eliminar rol anterior si existe y asignar nuevo rol
-      await (supabase as any).from('user_roles').delete().eq('user_id', userId)
-      
-      const { error: userRoleError } = await (supabase as any)
-        .from('user_roles')
-        .insert({
-          user_id: userId,
-          role_id: roleData.id,
-        })
-
-      if (userRoleError) {
-        // Solo mostrar si hay un mensaje real
-        if (userRoleError.message?.trim()) {
-          console.error('Error inserting user role:', userRoleError.message)
-          showMessage('error', `Error al asignar el rol: ${userRoleError.message}`)
-        } else if (userRoleError.code?.trim()) {
-          console.error('Error inserting user role:', userRoleError.code)
-          showMessage('error', `Error al asignar el rol: ${userRoleError.code}`)
-        } else {
-          showMessage('error', 'Error al asignar el rol. Verifica las políticas RLS.')
-        }
-        setIsCreatingUser(false)
-        return
-      }
-
-      // Si no es admin, asignar permisos de sidebar
-      if (newUser.role !== 'admin' && newUser.sidebarPermissions.length > 0) {
-        const permissionsToInsert = newUser.sidebarPermissions.map((section) => ({
-          user_id: userId,
-          section_name: section,
-        }))
-
-        const { error: permissionsError } = await (supabase as any)
-          .from('user_sidebar_permissions')
-          .insert(permissionsToInsert)
-
-        // Error de permisos no es crítico, solo loguear si hay mensaje
-        if (permissionsError && permissionsError.message?.trim()) {
-          console.error('Error creating permissions:', permissionsError.message)
-          // Continuar de todas formas
-        }
       }
 
       // Limpiar formulario
@@ -423,19 +318,8 @@ export default function UsuariosPage() {
 
       showMessage('success', 'Usuario creado exitosamente')
     } catch (error: any) {
-      // Solo mostrar error si tiene información útil
-      const hasValidError = error?.message?.trim() || 
-                           error?.code?.trim() ||
-                           error?.details?.trim()
-      
-      if (hasValidError) {
-        console.error('Error creating user:', error)
-        showMessage('error', error.message || error.code || 'Error al crear el usuario')
-      } else {
-        // Error vacío - puede que se haya creado correctamente, intentar recargar usuarios
-        await loadUsers()
-        showMessage('success', 'Usuario creado exitosamente')
-      }
+      console.error('Error creating user:', error)
+      showMessage('error', error.message || 'Error al crear el usuario')
     } finally {
       setIsCreatingUser(false)
     }
