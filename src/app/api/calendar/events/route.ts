@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validar capa válida
-    const validLayers = ['marketing', 'operations', 'pr', 'retail', 'product', 'personal', 'otros']
+    const validLayers = ['marketing', 'operations', 'pr', 'retail', 'product', 'personal', 'otros', 'tour']
     if (!validLayers.includes(layer)) {
       return NextResponse.json(
         { error: 'Capa inválida' },

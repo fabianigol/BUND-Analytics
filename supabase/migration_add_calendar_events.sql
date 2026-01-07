@@ -10,7 +10,8 @@ CREATE TYPE calendar_layer AS ENUM (
   'retail',
   'product',
   'personal',
-  'otros'
+  'otros',
+  'tour'
 );
 
 -- Create calendar_events table

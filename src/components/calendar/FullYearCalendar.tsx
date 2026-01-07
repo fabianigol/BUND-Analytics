@@ -27,6 +27,7 @@ export function FullYearCalendar({ onCreateEvent, onEditEvent, refreshTrigger }:
     'retail',
     'product',
     'otros',
+    'tour',
     'personal',
   ])
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)

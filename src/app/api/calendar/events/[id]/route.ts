@@ -62,7 +62,7 @@ export async function PUT(
 
     // Validar capa si se proporciona
     if (layer) {
-      const validLayers = ['marketing', 'operations', 'pr', 'retail', 'product', 'personal', 'otros']
+      const validLayers = ['marketing', 'operations', 'pr', 'retail', 'product', 'personal', 'otros', 'tour']
       if (!validLayers.includes(layer)) {
         return NextResponse.json(
           { error: 'Capa inválida' },

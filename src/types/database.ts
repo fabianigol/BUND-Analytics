@@ -772,7 +772,7 @@ export interface Database {
           description: string | null
           start_date: string
           end_date: string
-          layer: 'marketing' | 'operations' | 'pr' | 'retail' | 'product' | 'personal' | 'otros'
+          layer: 'marketing' | 'operations' | 'pr' | 'retail' | 'product' | 'personal' | 'otros' | 'tour'
           attachments: Json
           created_at: string
           updated_at: string
@@ -784,7 +784,7 @@ export interface Database {
           description?: string | null
           start_date: string
           end_date: string
-          layer: 'marketing' | 'operations' | 'pr' | 'retail' | 'product' | 'personal' | 'otros'
+          layer: 'marketing' | 'operations' | 'pr' | 'retail' | 'product' | 'personal' | 'otros' | 'tour'
           attachments?: Json
           created_at?: string
           updated_at?: string

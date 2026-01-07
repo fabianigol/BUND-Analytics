@@ -1,0 +1,3272 @@
+▲ Next.js 16.1.1 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.166:3000
+- Environments: .env.local
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 1180ms
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 3.1s (compile: 2.1s, proxy.ts: 683ms, render: 259ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 287ms (compile: 36ms, proxy.ts: 226ms, render: 24ms)
+[Dashboard] Raw availability data: {
+  count: 14,
+  sample: [
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 3,
+      available: 12,
+      total: 15
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 1,
+      total: 2
+    },
+    {
+      store_name: 'The Bundclub Barcelona',
+      normalized: 'Barcelona',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 1
+    },
+    {
+      store_name: 'The Bundclub Zaragoza',
+      normalized: 'Zaragoza',
+      category: 'fitting',
+      booked: 0,
+      available: 4,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'medición',
+      booked: 1,
+      available: 29,
+      total: 30
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [
+    'Málaga',
+    'Sevilla',
+    'Barcelona',
+    'Zaragoza',
+    'Cdmx',
+    'Madrid',
+    'Murcia'
+  ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2026-01-07',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-22', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 2.2s (compile: 938ms, proxy.ts: 106ms, render: 1162ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Raw availability data: {
+  count: 14,
+  sample: [
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 3,
+      available: 12,
+      total: 15
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 1,
+      total: 2
+    },
+    {
+      store_name: 'The Bundclub Barcelona',
+      normalized: 'Barcelona',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 1
+    },
+    {
+      store_name: 'The Bundclub Zaragoza',
+      normalized: 'Zaragoza',
+      category: 'fitting',
+      booked: 0,
+      available: 4,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'medición',
+      booked: 1,
+      available: 29,
+      total: 30
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [
+    'Málaga',
+    'Sevilla',
+    'Barcelona',
+    'Zaragoza',
+    'Cdmx',
+    'Madrid',
+    'Murcia'
+  ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2026-01-07',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-22', 0 ]
+  ]
+}
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/dashboard 200 in 978ms (compile: 6ms, proxy.ts: 119ms, render: 853ms)
+ GET /calendario 200 in 833ms (compile: 720ms, proxy.ts: 98ms, render: 15ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 551ms (compile: 268ms, proxy.ts: 106ms, render: 177ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 257ms (compile: 2ms, proxy.ts: 81ms, render: 173ms)
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 400ms (compile: 64ms, proxy.ts: 312ms, render: 24ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Raw availability data: {
+  count: 14,
+  sample: [
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 3,
+      available: 12,
+      total: 15
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 1,
+      total: 2
+    },
+    {
+      store_name: 'The Bundclub Barcelona',
+      normalized: 'Barcelona',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 1
+    },
+    {
+      store_name: 'The Bundclub Zaragoza',
+      normalized: 'Zaragoza',
+      category: 'fitting',
+      booked: 0,
+      available: 4,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'medición',
+      booked: 1,
+      available: 29,
+      total: 30
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [
+    'Málaga',
+    'Sevilla',
+    'Barcelona',
+    'Zaragoza',
+    'Cdmx',
+    'Madrid',
+    'Murcia'
+  ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2026-01-07',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-22', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 1169ms (compile: 17ms, proxy.ts: 115ms, render: 1037ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Raw availability data: {
+  count: 14,
+  sample: [
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 3,
+      available: 12,
+      total: 15
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 1,
+      total: 2
+    },
+    {
+      store_name: 'The Bundclub Barcelona',
+      normalized: 'Barcelona',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 1
+    },
+    {
+      store_name: 'The Bundclub Zaragoza',
+      normalized: 'Zaragoza',
+      category: 'fitting',
+      booked: 0,
+      available: 4,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'medición',
+      booked: 1,
+      available: 29,
+      total: 30
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [
+    'Málaga',
+    'Sevilla',
+    'Barcelona',
+    'Zaragoza',
+    'Cdmx',
+    'Madrid',
+    'Murcia'
+  ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2026-01-07',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-22', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 997ms (compile: 4ms, proxy.ts: 112ms, render: 881ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 172ms (compile: 26ms, proxy.ts: 128ms, render: 18ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 276ms (compile: 4ms, proxy.ts: 95ms, render: 177ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 236ms (compile: 4ms, proxy.ts: 82ms, render: 150ms)
+🔍 Middleware Debug: { url: '/citas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas 200 in 1020ms (compile: 865ms, proxy.ts: 140ms, render: 15ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:19:23.880Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:19:23.885Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:19:23.886Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:19:23.888Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:19:23.889Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:19:23.894Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Found 60 cancellations
+ GET /api/acuity/stats?type=cancellations 200 in 736ms (compile: 393ms, proxy.ts: 150ms, render: 193ms)
+ GET /api/acuity/stats?type=daily&year=2026&month=1 200 in 741ms (compile: 423ms, proxy.ts: 120ms, render: 198ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/acuity/stats?type=monthly&months=12 200 in 789ms (compile: 381ms, proxy.ts: 162ms, render: 246ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Found 389 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1607189809,
+  datetime: '2026-01-13T19:00:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Pablo Vallejo'
+}
+ GET /api/acuity/stats?type=upcoming&days=21 200 in 838ms (compile: 380ms, proxy.ts: 163ms, render: 294ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Stats Availability] Found 708 total employee availability records
+[Stats Availability] Found 688 valid employee availability records (with calendar_id)
+[Stats Availability] Found 78 calendars for mapping
+[Stats Availability] Calendar ID to Store map size: 27
+[Stats Availability] Calendar Name to Store map size: 27
+[Stats Availability] Records without calendar_id: 0
+[Stats Availability] Records with unknown store: 0
+[Stats Availability] Employee data map size: 23
+[Stats Availability] Added employee Josmar González to store The Bundclub Madrid (calendar_id=13199531)
+[Stats Availability] Added employee Pablo Vallejo to store The Bundclub Madrid (calendar_id=13199520)
+[Stats Availability] Added employee José Jiménez to store The Bundclub Madrid (calendar_id=13199513)
+[Stats Availability] Added employee Adrián Sánchez to store The Bundclub Madrid (calendar_id=13199571)
+[Stats Availability] Added employee Andrea Hernández to store The Bundclub Madrid (calendar_id=13199527)
+[Stats Availability] Added employee Andrea Quiñones to store The Bundclub Madrid (calendar_id=13199534)
+[Stats Availability] Added employee Jesús González Quirós to store The Bundclub Madrid (calendar_id=13199524)
+[Stats Availability] Added employee Pablo Oliva to store The Bundclub Sevilla (calendar_id=13199543)
+[Stats Availability] Added employee Alfonso López to store The Bundclub Sevilla (calendar_id=13199540)
+[Stats Availability] Added employee Francisco Gutiérrez to store The Bundclub Sevilla (calendar_id=13199542)
+[Stats Availability] Added employee Irene Rodríguez to store The Bundclub Sevilla (calendar_id=13199538)
+[Stats Availability] Added employee Pablo Cervantes to store The Bundclub Málaga (calendar_id=13199544)
+[Stats Availability] Added employee Adrián Lasarte to store The Bundclub Zaragoza (calendar_id=13199564)
+[Stats Availability] Added employee Ignacio Fernández de Cuevas to store The Bundclub Bilbao (calendar_id=13199561)
+[Stats Availability] Added employee Carlos Sánchez to store The Bundclub CDMX (Polanco) (calendar_id=13199567)
+[Stats Availability] Added employee Manuel Guadarrama to store The Bundclub CDMX (Polanco) (calendar_id=13199568)
+[Stats Availability] Added employee Curro Zayas to store The Bundclub Málaga (calendar_id=13199548)
+[Stats Availability] Added employee Rubén Blanco to store The Bundclub Málaga (calendar_id=13199546)
+[Stats Availability] Added employee Alberto Mesa to store The Bundclub Málaga (calendar_id=13199551)
+[Stats Availability] Added employee Ariadna Vega to store The Bundclub Barcelona (calendar_id=13199554)
+[Stats Availability] Added employee Joaquin Pombo to store The Bundclub Barcelona (calendar_id=13199553)
+[Stats Availability] Added employee Javier Peña to store The Bundclub Murcia (calendar_id=13199555)
+[Stats Availability] Added employee Pedro Aguilera  to store The Bundclub Valencia (calendar_id=13226214)
+[Stats Availability] Total employees added to stores: 23
+ GET /api/acuity/stats?type=availability&days=21 200 in 890ms (compile: 381ms, proxy.ts: 163ms, render: 346ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-31T23:00:00.000Z',
+  endDateStr: '2026-01-31T22:59:59.999Z',
+  futureEndDateStr: '2026-01-31T22:59:59.999Z',
+  startDateStrOnly: '2026-01-01',
+  endDateStrOnly: '2026-01-31',
+  futureEndDateStrOnly: '2026-01-31',
+  category: 'medición',
+  calendar: null,
+  todayISO: '2026-01-07T11:19:24.142Z',
+  todayStartISO: '2025-12-31T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-31T23:00:00.000Z',
+  endDateStr: '2026-01-31T22:59:59.999Z',
+  futureEndDateStr: '2026-01-31T22:59:59.999Z',
+  startDateStrOnly: '2026-01-01',
+  endDateStrOnly: '2026-01-31',
+  futureEndDateStrOnly: '2026-01-31',
+  category: 'fitting',
+  calendar: null,
+  todayISO: '2026-01-07T11:19:24.160Z',
+  todayStartISO: '2025-12-31T23:00:00.000Z'
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:19:24.229Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Found 93 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1608036343,
+  datetime: '2026-01-13T14:00:00+00:00',
+  status: 'scheduled',
+  category: 'fitting',
+  calendar: 'Jesús González Quirós'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2026-01-01&endDate=2026-01-31&category=fitting 200 in 257ms (compile: 5ms, proxy.ts: 84ms, render: 168ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Found 378 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1607189809,
+  datetime: '2026-01-13T19:00:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Pablo Vallejo'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2026-01-01&endDate=2026-01-31&category=medici%C3%B3n 200 in 281ms (compile: 3ms, proxy.ts: 80ms, render: 198ms)
+ GET /api/acuity/stats?type=occupation&days=21 200 in 1023ms (compile: 399ms, proxy.ts: 144ms, render: 480ms)
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:19:24.269Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:19:24.318Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:19:24.409Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-31T23:00:00.000Z',
+  endDateStr: '2026-01-31T22:59:59.999Z',
+  futureEndDateStr: '2026-01-31T22:59:59.999Z',
+  startDateStrOnly: '2026-01-01',
+  endDateStrOnly: '2026-01-31',
+  futureEndDateStrOnly: '2026-01-31',
+  category: 'fitting',
+  calendar: null,
+  todayISO: '2026-01-07T11:19:24.429Z',
+  todayStartISO: '2025-12-31T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:19:24.442Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=monthly&months=12 200 in 611ms (compile: 1299µs, proxy.ts: 95ms, render: 515ms)
+ GET /api/acuity/stats?type=daily&year=2026&month=1 200 in 678ms (compile: 1193µs, proxy.ts: 106ms, render: 571ms)
+[Acuity Stats] Found 60 cancellations
+ GET /api/acuity/stats?type=cancellations 200 in 731ms (compile: 7ms, proxy.ts: 99ms, render: 625ms)
+[Acuity Stats] Found 93 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1608036343,
+  datetime: '2026-01-13T14:00:00+00:00',
+  status: 'scheduled',
+  category: 'fitting',
+  calendar: 'Jesús González Quirós'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2026-01-01&endDate=2026-01-31&category=fitting 200 in 503ms (compile: 1192µs, proxy.ts: 78ms, render: 423ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Found 389 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1607189809,
+  datetime: '2026-01-13T19:00:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Pablo Vallejo'
+}
+ GET /api/acuity/stats?type=upcoming&days=21 200 in 560ms (compile: 4ms, proxy.ts: 79ms, render: 477ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Stats Availability] Found 708 total employee availability records
+[Stats Availability] Found 688 valid employee availability records (with calendar_id)
+[Stats Availability] Found 78 calendars for mapping
+[Stats Availability] Calendar ID to Store map size: 27
+[Stats Availability] Calendar Name to Store map size: 27
+[Stats Availability] Records without calendar_id: 0
+[Stats Availability] Records with unknown store: 0
+[Stats Availability] Employee data map size: 23
+[Stats Availability] Added employee Josmar González to store The Bundclub Madrid (calendar_id=13199531)
+[Stats Availability] Added employee Pablo Vallejo to store The Bundclub Madrid (calendar_id=13199520)
+[Stats Availability] Added employee José Jiménez to store The Bundclub Madrid (calendar_id=13199513)
+[Stats Availability] Added employee Adrián Sánchez to store The Bundclub Madrid (calendar_id=13199571)
+[Stats Availability] Added employee Andrea Hernández to store The Bundclub Madrid (calendar_id=13199527)
+[Stats Availability] Added employee Andrea Quiñones to store The Bundclub Madrid (calendar_id=13199534)
+[Stats Availability] Added employee Jesús González Quirós to store The Bundclub Madrid (calendar_id=13199524)
+[Stats Availability] Added employee Pablo Oliva to store The Bundclub Sevilla (calendar_id=13199543)
+[Stats Availability] Added employee Alfonso López to store The Bundclub Sevilla (calendar_id=13199540)
+[Stats Availability] Added employee Francisco Gutiérrez to store The Bundclub Sevilla (calendar_id=13199542)
+[Stats Availability] Added employee Irene Rodríguez to store The Bundclub Sevilla (calendar_id=13199538)
+[Stats Availability] Added employee Pablo Cervantes to store The Bundclub Málaga (calendar_id=13199544)
+[Stats Availability] Added employee Adrián Lasarte to store The Bundclub Zaragoza (calendar_id=13199564)
+[Stats Availability] Added employee Ignacio Fernández de Cuevas to store The Bundclub Bilbao (calendar_id=13199561)
+[Stats Availability] Added employee Carlos Sánchez to store The Bundclub CDMX (Polanco) (calendar_id=13199567)
+[Stats Availability] Added employee Manuel Guadarrama to store The Bundclub CDMX (Polanco) (calendar_id=13199568)
+[Stats Availability] Added employee Curro Zayas to store The Bundclub Málaga (calendar_id=13199548)
+[Stats Availability] Added employee Rubén Blanco to store The Bundclub Málaga (calendar_id=13199546)
+[Stats Availability] Added employee Alberto Mesa to store The Bundclub Málaga (calendar_id=13199551)
+[Stats Availability] Added employee Ariadna Vega to store The Bundclub Barcelona (calendar_id=13199554)
+[Stats Availability] Added employee Joaquin Pombo to store The Bundclub Barcelona (calendar_id=13199553)
+[Stats Availability] Added employee Javier Peña to store The Bundclub Murcia (calendar_id=13199555)
+[Stats Availability] Added employee Pedro Aguilera  to store The Bundclub Valencia (calendar_id=13226214)
+[Stats Availability] Total employees added to stores: 23
+ GET /api/acuity/stats?type=availability&days=21 200 in 598ms (compile: 1031µs, proxy.ts: 88ms, render: 509ms)
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-31T23:00:00.000Z',
+  endDateStr: '2026-01-31T22:59:59.999Z',
+  futureEndDateStr: '2026-01-31T22:59:59.999Z',
+  startDateStrOnly: '2026-01-01',
+  endDateStrOnly: '2026-01-31',
+  futureEndDateStrOnly: '2026-01-31',
+  category: 'medición',
+  calendar: null,
+  todayISO: '2026-01-07T11:19:24.931Z',
+  todayStartISO: '2025-12-31T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:19:24.948Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Found 378 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1607189809,
+  datetime: '2026-01-13T19:00:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Pablo Vallejo'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2026-01-01&endDate=2026-01-31&category=medici%C3%B3n 200 in 264ms (compile: 4ms, proxy.ts: 82ms, render: 178ms)
+ GET /api/acuity/stats?type=occupation&days=21 200 in 409ms (compile: 6ms, proxy.ts: 84ms, render: 319ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:20:35.750Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=daily&year=2025&month=12 200 in 691ms (compile: 5ms, proxy.ts: 179ms, render: 507ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:20:36.575Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=daily&year=2025&month=12 200 in 549ms (compile: 4ms, proxy.ts: 315ms, render: 230ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:20:43.421Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=daily&year=2026&month=1 200 in 620ms (compile: 3ms, proxy.ts: 184ms, render: 433ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:20:43.952Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=daily&year=2026&month=1 200 in 506ms (compile: 3ms, proxy.ts: 97ms, render: 406ms)
+🔍 Middleware Debug: {
+  url: '/citas/clubs/madrid',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /citas/clubs/madrid 200 in 1334ms (compile: 1115ms, proxy.ts: 201ms, render: 18ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 365,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2027-01-07T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2027-01-07',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:14.443Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:14.457Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 365,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2027-01-07T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2027-01-07',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:14.458Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:14.463Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:14.465Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 365,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2027-01-07T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2027-01-07',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:14.473Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=daily&year=2026&month=1 200 in 924ms (compile: 285ms, proxy.ts: 229ms, render: 410ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Found 60 cancellations
+ GET /api/acuity/stats?type=cancellations&startDate=2026-01-07 200 in 944ms (compile: 286ms, proxy.ts: 228ms, render: 430ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/appointments',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/acuity/stats?type=monthly&months=12 200 in 949ms (compile: 341ms, proxy.ts: 172ms, render: 436ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Found 389 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1607189809,
+  datetime: '2026-01-13T19:00:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Pablo Vallejo'
+}
+ GET /api/acuity/stats?type=upcoming&days=365&startDate=2026-01-07 200 in 1055ms (compile: 393ms, proxy.ts: 121ms, render: 541ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Stats Availability] Found 708 total employee availability records
+[Stats Availability] Found 688 valid employee availability records (with calendar_id)
+[Stats Availability] Found 78 calendars for mapping
+[Stats Availability] Calendar ID to Store map size: 27
+[Stats Availability] Calendar Name to Store map size: 27
+[Stats Availability] Records without calendar_id: 0
+[Stats Availability] Records with unknown store: 0
+[Stats Availability] Employee data map size: 23
+[Stats Availability] Added employee Josmar González to store The Bundclub Madrid (calendar_id=13199531)
+[Stats Availability] Added employee Pablo Vallejo to store The Bundclub Madrid (calendar_id=13199520)
+[Stats Availability] Added employee José Jiménez to store The Bundclub Madrid (calendar_id=13199513)
+[Stats Availability] Added employee Adrián Sánchez to store The Bundclub Madrid (calendar_id=13199571)
+[Stats Availability] Added employee Andrea Hernández to store The Bundclub Madrid (calendar_id=13199527)
+[Stats Availability] Added employee Andrea Quiñones to store The Bundclub Madrid (calendar_id=13199534)
+[Stats Availability] Added employee Jesús González Quirós to store The Bundclub Madrid (calendar_id=13199524)
+[Stats Availability] Added employee Pablo Oliva to store The Bundclub Sevilla (calendar_id=13199543)
+[Stats Availability] Added employee Alfonso López to store The Bundclub Sevilla (calendar_id=13199540)
+[Stats Availability] Added employee Francisco Gutiérrez to store The Bundclub Sevilla (calendar_id=13199542)
+[Stats Availability] Added employee Irene Rodríguez to store The Bundclub Sevilla (calendar_id=13199538)
+[Stats Availability] Added employee Pablo Cervantes to store The Bundclub Málaga (calendar_id=13199544)
+[Stats Availability] Added employee Adrián Lasarte to store The Bundclub Zaragoza (calendar_id=13199564)
+[Stats Availability] Added employee Ignacio Fernández de Cuevas to store The Bundclub Bilbao (calendar_id=13199561)
+[Stats Availability] Added employee Carlos Sánchez to store The Bundclub CDMX (Polanco) (calendar_id=13199567)
+[Stats Availability] Added employee Manuel Guadarrama to store The Bundclub CDMX (Polanco) (calendar_id=13199568)
+[Stats Availability] Added employee Curro Zayas to store The Bundclub Málaga (calendar_id=13199548)
+[Stats Availability] Added employee Rubén Blanco to store The Bundclub Málaga (calendar_id=13199546)
+[Stats Availability] Added employee Alberto Mesa to store The Bundclub Málaga (calendar_id=13199551)
+[Stats Availability] Added employee Ariadna Vega to store The Bundclub Barcelona (calendar_id=13199554)
+[Stats Availability] Added employee Joaquin Pombo to store The Bundclub Barcelona (calendar_id=13199553)
+[Stats Availability] Added employee Javier Peña to store The Bundclub Murcia (calendar_id=13199555)
+[Stats Availability] Added employee Pedro Aguilera  to store The Bundclub Valencia (calendar_id=13226214)
+[Stats Availability] Total employees added to stores: 23
+ GET /api/acuity/stats?type=availability&days=365&startDate=2026-01-07 200 in 1074ms (compile: 286ms, proxy.ts: 228ms, render: 560ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:14.953Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/acuity/stats?type=occupation&days=365&startDate=2026-01-07 200 in 1169ms (compile: 286ms, proxy.ts: 227ms, render: 655ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/acuity/stats?type=daily&year=2026&month=1 200 in 285ms (compile: 1347µs, proxy.ts: 84ms, render: 200ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:15.609Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:15.612Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 365,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2027-01-07T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2027-01-07',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:15.618Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 365,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2027-01-07T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2027-01-07',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:15.626Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 365,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2027-01-07T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2027-01-07',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:15.629Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=monthly&months=12 200 in 787ms (compile: 496ms, proxy.ts: 106ms, render: 185ms)
+[Acuity Stats] Found 60 cancellations
+ GET /api/acuity/stats?type=cancellations&startDate=2026-01-07 200 in 899ms (compile: 627ms, proxy.ts: 83ms, render: 189ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/appointments',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/appointments',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Appointments] Total appointments before filtering: 730
+[Acuity Appointments] Filtering by store: "The Bundclub Madrid" (normalized: "The Bundclub Madrid")
+[Acuity Appointments] Unique store names in data: [
+  'The Bundclub Madrid',
+  '- The Bundclub Madrid -',
+  'The Bundclub Sevilla',
+  'The Bundclub Madrid + Solo quiero informarme',
+  'The Bundclub Barcelona'
+]
+[Acuity Appointments] Filtered appointments: 730 -> 289
+ GET /api/acuity/appointments?store=The%20Bundclub%20Madrid&startDate=2026-01-01&endDate=2026-01-31 200 in 973ms (compile: 639ms, proxy.ts: 76ms, render: 258ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/appointments',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Found 389 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1607189809,
+  datetime: '2026-01-13T19:00:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Pablo Vallejo'
+}
+ GET /api/acuity/stats?type=upcoming&days=365&startDate=2026-01-07 200 in 930ms (compile: 491ms, proxy.ts: 94ms, render: 346ms)
+[Stats Availability] Found 708 total employee availability records
+[Stats Availability] Found 688 valid employee availability records (with calendar_id)
+[Stats Availability] Found 78 calendars for mapping
+[Stats Availability] Calendar ID to Store map size: 27
+[Stats Availability] Calendar Name to Store map size: 27
+[Stats Availability] Records without calendar_id: 0
+[Stats Availability] Records with unknown store: 0
+[Stats Availability] Employee data map size: 23
+[Stats Availability] Added employee Josmar González to store The Bundclub Madrid (calendar_id=13199531)
+[Stats Availability] Added employee Pablo Vallejo to store The Bundclub Madrid (calendar_id=13199520)
+[Stats Availability] Added employee José Jiménez to store The Bundclub Madrid (calendar_id=13199513)
+[Stats Availability] Added employee Adrián Sánchez to store The Bundclub Madrid (calendar_id=13199571)
+[Stats Availability] Added employee Andrea Hernández to store The Bundclub Madrid (calendar_id=13199527)
+[Stats Availability] Added employee Andrea Quiñones to store The Bundclub Madrid (calendar_id=13199534)
+[Stats Availability] Added employee Jesús González Quirós to store The Bundclub Madrid (calendar_id=13199524)
+[Stats Availability] Added employee Pablo Oliva to store The Bundclub Sevilla (calendar_id=13199543)
+[Stats Availability] Added employee Alfonso López to store The Bundclub Sevilla (calendar_id=13199540)
+[Stats Availability] Added employee Francisco Gutiérrez to store The Bundclub Sevilla (calendar_id=13199542)
+[Stats Availability] Added employee Irene Rodríguez to store The Bundclub Sevilla (calendar_id=13199538)
+[Stats Availability] Added employee Pablo Cervantes to store The Bundclub Málaga (calendar_id=13199544)
+[Stats Availability] Added employee Adrián Lasarte to store The Bundclub Zaragoza (calendar_id=13199564)
+[Stats Availability] Added employee Ignacio Fernández de Cuevas to store The Bundclub Bilbao (calendar_id=13199561)
+[Stats Availability] Added employee Carlos Sánchez to store The Bundclub CDMX (Polanco) (calendar_id=13199567)
+[Stats Availability] Added employee Manuel Guadarrama to store The Bundclub CDMX (Polanco) (calendar_id=13199568)
+[Stats Availability] Added employee Curro Zayas to store The Bundclub Málaga (calendar_id=13199548)
+[Stats Availability] Added employee Rubén Blanco to store The Bundclub Málaga (calendar_id=13199546)
+[Stats Availability] Added employee Alberto Mesa to store The Bundclub Málaga (calendar_id=13199551)
+[Stats Availability] Added employee Ariadna Vega to store The Bundclub Barcelona (calendar_id=13199554)
+[Stats Availability] Added employee Joaquin Pombo to store The Bundclub Barcelona (calendar_id=13199553)
+[Stats Availability] Added employee Javier Peña to store The Bundclub Murcia (calendar_id=13199555)
+[Stats Availability] Added employee Pedro Aguilera  to store The Bundclub Valencia (calendar_id=13226214)
+[Stats Availability] Total employees added to stores: 23
+ GET /api/acuity/stats?type=availability&days=365&startDate=2026-01-07 200 in 827ms (compile: 331ms, proxy.ts: 143ms, render: 352ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/appointments',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/appointments',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/acuity/stats?type=occupation&days=365&startDate=2026-01-07 200 in 816ms (compile: 331ms, proxy.ts: 116ms, render: 370ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Appointments] Total appointments before filtering: 257
+[Acuity Appointments] Filtering by store: "The Bundclub Madrid" (normalized: "The Bundclub Madrid")
+[Acuity Appointments] Unique store names in data: [
+  'The Bundclub Madrid',
+  '- The Bundclub Madrid -',
+  'The Bundclub Málaga',
+  'The Bundclub Barcelona',
+  'The Bundclub Sevilla + Añadir 2 personas más'
+]
+[Acuity Appointments] Filtered appointments: 257 -> 114
+ GET /api/acuity/appointments?store=The%20Bundclub%20Madrid&startDate=2025-12-01&endDate=2025-12-31 200 in 244ms (compile: 1334µs, proxy.ts: 79ms, render: 164ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/appointments',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Appointments] Total appointments before filtering: 345
+[Acuity Appointments] Filtering by store: "The Bundclub Madrid" (normalized: "The Bundclub Madrid")
+[Acuity Appointments] Unique store names in data: [
+  '- The Bundclub Madrid -',
+  'The Bundclub Madrid',
+  'The Bundclub CDMX (Polanco)',
+  'The Bundclub Málaga',
+  'The Bundclub Sevilla'
+]
+[Acuity Appointments] Filtered appointments: 345 -> 147
+ GET /api/acuity/appointments?store=The%20Bundclub%20Madrid&startDate=2025-01-07 200 in 264ms (compile: 1017µs, proxy.ts: 95ms, render: 167ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/appointments',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Appointments] Total appointments before filtering: 733
+[Acuity Appointments] Filtering by store: "The Bundclub Madrid" (normalized: "The Bundclub Madrid")
+[Acuity Appointments] Unique store names in data: [
+  'The Bundclub Madrid',
+  '- The Bundclub Madrid -',
+  'The Bundclub Sevilla',
+  'The Bundclub Madrid + Solo quiero informarme',
+  'The Bundclub Barcelona'
+]
+[Acuity Appointments] Filtered appointments: 733 -> 290
+ GET /api/acuity/appointments?store=The%20Bundclub%20Madrid&startDate=2026-02-01&endDate=2026-02-28 200 in 236ms (compile: 1855µs, proxy.ts: 73ms, render: 160ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/appointments',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Appointments] Total appointments before filtering: 734
+[Acuity Appointments] Filtering by store: "The Bundclub Madrid" (normalized: "The Bundclub Madrid")
+[Acuity Appointments] Unique store names in data: [
+  'The Bundclub Madrid',
+  '- The Bundclub Madrid -',
+  'The Bundclub Sevilla',
+  'The Bundclub Madrid + Solo quiero informarme',
+  'The Bundclub Barcelona'
+]
+[Acuity Appointments] Filtered appointments: 734 -> 290
+ GET /api/acuity/appointments?store=The%20Bundclub%20Madrid&startDate=2026-04-01&endDate=2026-04-30 200 in 233ms (compile: 2ms, proxy.ts: 80ms, render: 150ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/appointments',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Appointments] Total appointments before filtering: 730
+[Acuity Appointments] Filtering by store: "The Bundclub Madrid" (normalized: "The Bundclub Madrid")
+[Acuity Appointments] Unique store names in data: [
+  'The Bundclub Madrid',
+  '- The Bundclub Madrid -',
+  'The Bundclub Sevilla',
+  'The Bundclub Madrid + Solo quiero informarme',
+  'The Bundclub Barcelona'
+]
+[Acuity Appointments] Filtered appointments: 730 -> 289
+ GET /api/acuity/appointments?store=The%20Bundclub%20Madrid&startDate=2026-01-01&endDate=2026-01-31 200 in 247ms (compile: 3ms, proxy.ts: 89ms, render: 155ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/appointments',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Appointments] Total appointments before filtering: 257
+[Acuity Appointments] Filtering by store: "The Bundclub Madrid" (normalized: "The Bundclub Madrid")
+[Acuity Appointments] Unique store names in data: [
+  'The Bundclub Madrid',
+  '- The Bundclub Madrid -',
+  'The Bundclub Málaga',
+  'The Bundclub Barcelona',
+  'The Bundclub Sevilla + Añadir 2 personas más'
+]
+[Acuity Appointments] Filtered appointments: 257 -> 114
+ GET /api/acuity/appointments?store=The%20Bundclub%20Madrid&startDate=2025-12-01&endDate=2025-12-31 200 in 236ms (compile: 1072µs, proxy.ts: 72ms, render: 162ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Appointments] Total appointments before filtering: 345
+[Acuity Appointments] Filtering by store: "The Bundclub Madrid" (normalized: "The Bundclub Madrid")
+[Acuity Appointments] Unique store names in data: [
+  '- The Bundclub Madrid -',
+  'The Bundclub Madrid',
+  'The Bundclub CDMX (Polanco)',
+  'The Bundclub Málaga',
+  'The Bundclub Sevilla'
+]
+[Acuity Appointments] Filtered appointments: 345 -> 147
+ GET /api/acuity/appointments?store=The%20Bundclub%20Madrid&startDate=2025-01-07 200 in 251ms (compile: 1113µs, proxy.ts: 82ms, render: 167ms)
+[Acuity Appointments] Total appointments before filtering: 733
+[Acuity Appointments] Filtering by store: "The Bundclub Madrid" (normalized: "The Bundclub Madrid")
+[Acuity Appointments] Unique store names in data: [
+  'The Bundclub Madrid',
+  '- The Bundclub Madrid -',
+  'The Bundclub Sevilla',
+  'The Bundclub Madrid + Solo quiero informarme',
+  'The Bundclub Barcelona'
+]
+[Acuity Appointments] Filtered appointments: 733 -> 290
+ GET /api/acuity/appointments?store=The%20Bundclub%20Madrid&startDate=2026-02-01&endDate=2026-02-28 200 in 237ms (compile: 1063µs, proxy.ts: 74ms, render: 161ms)
+[Acuity Appointments] Total appointments before filtering: 734
+[Acuity Appointments] Filtering by store: "The Bundclub Madrid" (normalized: "The Bundclub Madrid")
+[Acuity Appointments] Unique store names in data: [
+  'The Bundclub Madrid',
+  '- The Bundclub Madrid -',
+  'The Bundclub Sevilla',
+  'The Bundclub Madrid + Solo quiero informarme',
+  'The Bundclub Barcelona'
+]
+[Acuity Appointments] Filtered appointments: 734 -> 290
+ GET /api/acuity/appointments?store=The%20Bundclub%20Madrid&startDate=2026-04-01&endDate=2026-04-30 200 in 269ms (compile: 2ms, proxy.ts: 83ms, render: 183ms)
+[Acuity Appointments] Total appointments before filtering: 730
+[Acuity Appointments] Filtering by store: "The Bundclub Madrid" (normalized: "The Bundclub Madrid")
+[Acuity Appointments] Unique store names in data: [
+  'The Bundclub Madrid',
+  '- The Bundclub Madrid -',
+  'The Bundclub Sevilla',
+  'The Bundclub Madrid + Solo quiero informarme',
+  'The Bundclub Barcelona'
+]
+[Acuity Appointments] Filtered appointments: 730 -> 289
+ GET /api/acuity/appointments?store=The%20Bundclub%20Madrid&startDate=2026-01-01&endDate=2026-01-31 200 in 280ms (compile: 1015µs, proxy.ts: 80ms, render: 199ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/appointments',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Appointments] Total appointments before filtering: 730
+[Acuity Appointments] Filtering by store: "The Bundclub Madrid" (normalized: "The Bundclub Madrid")
+[Acuity Appointments] Unique store names in data: [
+  'The Bundclub Madrid',
+  '- The Bundclub Madrid -',
+  'The Bundclub Sevilla',
+  'The Bundclub Madrid + Solo quiero informarme',
+  'The Bundclub Barcelona'
+]
+[Acuity Appointments] Filtered appointments: 730 -> 289
+ GET /api/acuity/appointments?store=The%20Bundclub%20Madrid&startDate=2026-01-01&endDate=2026-01-31 200 in 257ms (compile: 3ms, proxy.ts: 82ms, render: 172ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:56.460Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:56.472Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:56.477Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:56.481Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:56.485Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:56.486Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=daily&year=2026&month=1 200 in 395ms (compile: 7ms, proxy.ts: 170ms, render: 218ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/acuity/stats?type=monthly&months=12 200 in 470ms (compile: 6ms, proxy.ts: 171ms, render: 294ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Found 60 cancellations
+ GET /api/acuity/stats?type=cancellations 200 in 484ms (compile: 5ms, proxy.ts: 171ms, render: 308ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Found 389 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1607189809,
+  datetime: '2026-01-13T19:00:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Pablo Vallejo'
+}
+ GET /api/acuity/stats?type=upcoming&days=21 200 in 537ms (compile: 6ms, proxy.ts: 170ms, render: 360ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Stats Availability] Found 708 total employee availability records
+[Stats Availability] Found 688 valid employee availability records (with calendar_id)
+[Stats Availability] Found 78 calendars for mapping
+[Stats Availability] Calendar ID to Store map size: 27
+[Stats Availability] Calendar Name to Store map size: 27
+[Stats Availability] Records without calendar_id: 0
+[Stats Availability] Records with unknown store: 0
+[Stats Availability] Employee data map size: 23
+[Stats Availability] Added employee Josmar González to store The Bundclub Madrid (calendar_id=13199531)
+[Stats Availability] Added employee Pablo Vallejo to store The Bundclub Madrid (calendar_id=13199520)
+[Stats Availability] Added employee José Jiménez to store The Bundclub Madrid (calendar_id=13199513)
+[Stats Availability] Added employee Adrián Sánchez to store The Bundclub Madrid (calendar_id=13199571)
+[Stats Availability] Added employee Andrea Hernández to store The Bundclub Madrid (calendar_id=13199527)
+[Stats Availability] Added employee Andrea Quiñones to store The Bundclub Madrid (calendar_id=13199534)
+[Stats Availability] Added employee Jesús González Quirós to store The Bundclub Madrid (calendar_id=13199524)
+[Stats Availability] Added employee Pablo Oliva to store The Bundclub Sevilla (calendar_id=13199543)
+[Stats Availability] Added employee Alfonso López to store The Bundclub Sevilla (calendar_id=13199540)
+[Stats Availability] Added employee Francisco Gutiérrez to store The Bundclub Sevilla (calendar_id=13199542)
+[Stats Availability] Added employee Irene Rodríguez to store The Bundclub Sevilla (calendar_id=13199538)
+[Stats Availability] Added employee Pablo Cervantes to store The Bundclub Málaga (calendar_id=13199544)
+[Stats Availability] Added employee Adrián Lasarte to store The Bundclub Zaragoza (calendar_id=13199564)
+[Stats Availability] Added employee Ignacio Fernández de Cuevas to store The Bundclub Bilbao (calendar_id=13199561)
+[Stats Availability] Added employee Carlos Sánchez to store The Bundclub CDMX (Polanco) (calendar_id=13199567)
+[Stats Availability] Added employee Manuel Guadarrama to store The Bundclub CDMX (Polanco) (calendar_id=13199568)
+[Stats Availability] Added employee Curro Zayas to store The Bundclub Málaga (calendar_id=13199548)
+[Stats Availability] Added employee Rubén Blanco to store The Bundclub Málaga (calendar_id=13199546)
+[Stats Availability] Added employee Alberto Mesa to store The Bundclub Málaga (calendar_id=13199551)
+[Stats Availability] Added employee Ariadna Vega to store The Bundclub Barcelona (calendar_id=13199554)
+[Stats Availability] Added employee Joaquin Pombo to store The Bundclub Barcelona (calendar_id=13199553)
+[Stats Availability] Added employee Javier Peña to store The Bundclub Murcia (calendar_id=13199555)
+[Stats Availability] Added employee Pedro Aguilera  to store The Bundclub Valencia (calendar_id=13226214)
+[Stats Availability] Total employees added to stores: 23
+ GET /api/acuity/stats?type=availability&days=21 200 in 549ms (compile: 3ms, proxy.ts: 173ms, render: 372ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-31T23:00:00.000Z',
+  endDateStr: '2026-01-31T22:59:59.999Z',
+  futureEndDateStr: '2026-01-31T22:59:59.999Z',
+  startDateStrOnly: '2026-01-01',
+  endDateStrOnly: '2026-01-31',
+  futureEndDateStrOnly: '2026-01-31',
+  category: 'medición',
+  calendar: null,
+  todayISO: '2026-01-07T11:23:56.777Z',
+  todayStartISO: '2025-12-31T23:00:00.000Z'
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-31T23:00:00.000Z',
+  endDateStr: '2026-01-31T22:59:59.999Z',
+  futureEndDateStr: '2026-01-31T22:59:59.999Z',
+  startDateStrOnly: '2026-01-01',
+  endDateStrOnly: '2026-01-31',
+  futureEndDateStrOnly: '2026-01-31',
+  category: 'fitting',
+  calendar: null,
+  todayISO: '2026-01-07T11:23:56.848Z',
+  todayStartISO: '2025-12-31T23:00:00.000Z'
+}
+ GET /api/acuity/stats?type=occupation&days=21 200 in 663ms (compile: 3ms, proxy.ts: 156ms, render: 504ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Query params: {
+  type: 'daily',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:56.894Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'monthly',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:56.908Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Found 378 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1607189809,
+  datetime: '2026-01-13T19:00:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Pablo Vallejo'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2026-01-01&endDate=2026-01-31&category=medici%C3%B3n 200 in 290ms (compile: 3ms, proxy.ts: 81ms, render: 206ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+[Acuity Stats] Query params: {
+  type: 'cancellations',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:56.920Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Found 93 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1608036343,
+  datetime: '2026-01-13T14:00:00+00:00',
+  status: 'scheduled',
+  category: 'fitting',
+  calendar: 'Jesús González Quirós'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2026-01-01&endDate=2026-01-31&category=fitting 200 in 257ms (compile: 1726µs, proxy.ts: 81ms, render: 174ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/acuity/stats?type=daily&year=2026&month=1 200 in 277ms (compile: 1283µs, proxy.ts: 93ms, render: 183ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/acuity/stats?type=monthly&months=12 200 in 237ms (compile: 1374µs, proxy.ts: 76ms, render: 160ms)
+[Acuity Stats] Found 60 cancellations
+ GET /api/acuity/stats?type=cancellations 200 in 226ms (compile: 1427µs, proxy.ts: 75ms, render: 150ms)
+🔍 Middleware Debug: {
+  url: '/api/acuity/stats',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:57.033Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'availability',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:57.062Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Acuity Stats] Query params: {
+  type: 'occupation',
+  days: 21,
+  startDateStr: '2026-01-06T23:00:00.000Z',
+  endDateStr: '2026-01-28T22:59:59.999Z',
+  futureEndDateStr: '2027-01-07T22:59:59.999Z',
+  startDateStrOnly: '2026-01-07',
+  endDateStrOnly: '2026-01-28',
+  futureEndDateStrOnly: '2027-01-07',
+  category: null,
+  calendar: null,
+  todayISO: '2026-01-07T11:23:57.123Z',
+  todayStartISO: '2026-01-06T23:00:00.000Z'
+}
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-31T23:00:00.000Z',
+  endDateStr: '2026-01-31T22:59:59.999Z',
+  futureEndDateStr: '2026-01-31T22:59:59.999Z',
+  startDateStrOnly: '2026-01-01',
+  endDateStrOnly: '2026-01-31',
+  futureEndDateStrOnly: '2026-01-31',
+  category: 'fitting',
+  calendar: null,
+  todayISO: '2026-01-07T11:23:57.143Z',
+  todayStartISO: '2025-12-31T23:00:00.000Z'
+}
+[Acuity Stats] Found 389 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1607189809,
+  datetime: '2026-01-13T19:00:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Pablo Vallejo'
+}
+ GET /api/acuity/stats?type=upcoming&days=21 200 in 280ms (compile: 1287µs, proxy.ts: 75ms, render: 204ms)
+[Acuity Stats] Query params: {
+  type: 'upcoming',
+  days: 21,
+  startDateStr: '2025-12-31T23:00:00.000Z',
+  endDateStr: '2026-01-31T22:59:59.999Z',
+  futureEndDateStr: '2026-01-31T22:59:59.999Z',
+  startDateStrOnly: '2026-01-01',
+  endDateStrOnly: '2026-01-31',
+  futureEndDateStrOnly: '2026-01-31',
+  category: 'medición',
+  calendar: null,
+  todayISO: '2026-01-07T11:23:57.178Z',
+  todayStartISO: '2025-12-31T23:00:00.000Z'
+}
+[Stats Availability] Found 708 total employee availability records
+[Stats Availability] Found 688 valid employee availability records (with calendar_id)
+[Stats Availability] Found 78 calendars for mapping
+[Stats Availability] Calendar ID to Store map size: 27
+[Stats Availability] Calendar Name to Store map size: 27
+[Stats Availability] Records without calendar_id: 0
+[Stats Availability] Records with unknown store: 0
+[Stats Availability] Employee data map size: 23
+[Stats Availability] Added employee Josmar González to store The Bundclub Madrid (calendar_id=13199531)
+[Stats Availability] Added employee Pablo Vallejo to store The Bundclub Madrid (calendar_id=13199520)
+[Stats Availability] Added employee José Jiménez to store The Bundclub Madrid (calendar_id=13199513)
+[Stats Availability] Added employee Adrián Sánchez to store The Bundclub Madrid (calendar_id=13199571)
+[Stats Availability] Added employee Andrea Hernández to store The Bundclub Madrid (calendar_id=13199527)
+[Stats Availability] Added employee Andrea Quiñones to store The Bundclub Madrid (calendar_id=13199534)
+[Stats Availability] Added employee Jesús González Quirós to store The Bundclub Madrid (calendar_id=13199524)
+[Stats Availability] Added employee Pablo Oliva to store The Bundclub Sevilla (calendar_id=13199543)
+[Stats Availability] Added employee Alfonso López to store The Bundclub Sevilla (calendar_id=13199540)
+[Stats Availability] Added employee Francisco Gutiérrez to store The Bundclub Sevilla (calendar_id=13199542)
+[Stats Availability] Added employee Irene Rodríguez to store The Bundclub Sevilla (calendar_id=13199538)
+[Stats Availability] Added employee Pablo Cervantes to store The Bundclub Málaga (calendar_id=13199544)
+[Stats Availability] Added employee Adrián Lasarte to store The Bundclub Zaragoza (calendar_id=13199564)
+[Stats Availability] Added employee Ignacio Fernández de Cuevas to store The Bundclub Bilbao (calendar_id=13199561)
+[Stats Availability] Added employee Carlos Sánchez to store The Bundclub CDMX (Polanco) (calendar_id=13199567)
+[Stats Availability] Added employee Manuel Guadarrama to store The Bundclub CDMX (Polanco) (calendar_id=13199568)
+[Stats Availability] Added employee Curro Zayas to store The Bundclub Málaga (calendar_id=13199548)
+[Stats Availability] Added employee Rubén Blanco to store The Bundclub Málaga (calendar_id=13199546)
+[Stats Availability] Added employee Alberto Mesa to store The Bundclub Málaga (calendar_id=13199551)
+[Stats Availability] Added employee Ariadna Vega to store The Bundclub Barcelona (calendar_id=13199554)
+[Stats Availability] Added employee Joaquin Pombo to store The Bundclub Barcelona (calendar_id=13199553)
+[Stats Availability] Added employee Javier Peña to store The Bundclub Murcia (calendar_id=13199555)
+[Stats Availability] Added employee Pedro Aguilera  to store The Bundclub Valencia (calendar_id=13226214)
+[Stats Availability] Total employees added to stores: 23
+ GET /api/acuity/stats?type=availability&days=21 200 in 326ms (compile: 1394µs, proxy.ts: 74ms, render: 251ms)
+[Acuity Stats] Found 93 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1608036343,
+  datetime: '2026-01-13T14:00:00+00:00',
+  status: 'scheduled',
+  category: 'fitting',
+  calendar: 'Jesús González Quirós'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2026-01-01&endDate=2026-01-31&category=fitting 200 in 255ms (compile: 5ms, proxy.ts: 73ms, render: 177ms)
+[Acuity Stats] Found 378 upcoming appointments
+[Acuity Stats] Sample appointment: {
+  id: 1607189809,
+  datetime: '2026-01-13T19:00:00+00:00',
+  status: 'scheduled',
+  category: 'medición',
+  calendar: 'Pablo Vallejo'
+}
+ GET /api/acuity/stats?type=upcoming&startDate=2026-01-01&endDate=2026-01-31&category=medici%C3%B3n 200 in 349ms (compile: 1337µs, proxy.ts: 113ms, render: 234ms)
+ GET /api/acuity/stats?type=occupation&days=21 200 in 416ms (compile: 2ms, proxy.ts: 86ms, render: 328ms)
+🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ventas 200 in 1681ms (compile: 1516ms, proxy.ts: 145ms, render: 20ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-07&days=6 200 in 2.5s (compile: 1805ms, proxy.ts: 460ms, render: 199ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-07&filterType=monthly 200 in 2.5s (compile: 1802ms, proxy.ts: 461ms, render: 257ms)
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-07&filterType=monthly 200 in 2.5s (compile: 1800ms, proxy.ts: 464ms, render: 262ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-07 200 in 2.5s (compile: 1806ms, proxy.ts: 459ms, render: 273ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=monthly-revenue&months=12 200 in 2.6s (compile: 1805ms, proxy.ts: 459ms, render: 292ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-07&filterType=monthly&onlineOnly=true 200 in 295ms (compile: 1817µs, proxy.ts: 85ms, render: 209ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-07&days=6&onlineOnly=true 200 in 313ms (compile: 1143µs, proxy.ts: 79ms, render: 233ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-07&onlineOnly=true 200 in 341ms (compile: 2ms, proxy.ts: 86ms, render: 253ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=monthly-revenue&months=12&onlineOnly=true 200 in 555ms (compile: 1682µs, proxy.ts: 119ms, render: 434ms)
+ GET /api/shopify?type=online-customer-segmentation&startDate=2026-01-01&endDate=2026-01-07 200 in 261ms (compile: 1861µs, proxy.ts: 75ms, render: 184ms)
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-07&filterType=monthly&onlineOnly=true 200 in 304ms (compile: 1927µs, proxy.ts: 81ms, render: 221ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/shopify 200 in 921ms (compile: 659ms, proxy.ts: 92ms, render: 170ms)
+ GET /api/shopify?type=online-time-analysis&startDate=2026-01-01&endDate=2026-01-07 200 in 670ms (compile: 399ms, proxy.ts: 98ms, render: 174ms)
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-07&days=6 200 in 701ms (compile: 351ms, proxy.ts: 140ms, render: 210ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-07&filterType=monthly 200 in 750ms (compile: 395ms, proxy.ts: 94ms, render: 260ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-07&onlineOnly=true 200 in 1422ms (compile: 1931µs, proxy.ts: 88ms, render: 1332ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-07 200 in 3.9s (compile: 1798ms, proxy.ts: 467ms, render: 1646ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-07 200 in 316ms (compile: 2ms, proxy.ts: 147ms, render: 168ms)
+ GET /api/shopify?type=monthly-revenue&months=12 200 in 291ms (compile: 1585µs, proxy.ts: 102ms, render: 187ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-07&days=6&onlineOnly=true 200 in 245ms (compile: 5ms, proxy.ts: 80ms, render: 160ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-07&filterType=monthly 200 in 372ms (compile: 1674µs, proxy.ts: 168ms, render: 202ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-07&onlineOnly=true 200 in 272ms (compile: 1458µs, proxy.ts: 79ms, render: 191ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-07&filterType=monthly&onlineOnly=true 200 in 354ms (compile: 2ms, proxy.ts: 81ms, render: 271ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=monthly-revenue&months=12&onlineOnly=true 200 in 260ms (compile: 1489µs, proxy.ts: 93ms, render: 165ms)
+ GET /api/shopify?type=online-customer-segmentation&startDate=2026-01-01&endDate=2026-01-07 200 in 251ms (compile: 1346µs, proxy.ts: 91ms, render: 159ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/integrations/shopify 200 in 235ms (compile: 1020µs, proxy.ts: 79ms, render: 155ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=online-time-analysis&startDate=2026-01-01&endDate=2026-01-07 200 in 229ms (compile: 1051µs, proxy.ts: 72ms, render: 156ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-07&filterType=monthly&onlineOnly=true 200 in 348ms (compile: 2ms, proxy.ts: 88ms, render: 258ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=customer-metrics&startDate=2026-01-01&endDate=2026-01-07 200 in 393ms (compile: 1454µs, proxy.ts: 86ms, render: 306ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=customers&startDate=2026-01-01&endDate=2026-01-07&limit=10&offset=0 200 in 281ms (compile: 3ms, proxy.ts: 90ms, render: 188ms)
+ GET /api/shopify?type=customers&limit=10&offset=0 200 in 264ms (compile: 2ms, proxy.ts: 74ms, render: 187ms)
+ GET /api/shopify?type=customers&startDate=2026-01-01&endDate=2026-01-07&limit=50&offset=0 200 in 290ms (compile: 5ms, proxy.ts: 83ms, render: 201ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=locations&startDate=2026-01-01&endDate=2026-01-07 200 in 444ms (compile: 3ms, proxy.ts: 80ms, render: 361ms)
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-07&onlineOnly=true 200 in 1099ms (compile: 3ms, proxy.ts: 102ms, render: 994ms)
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-07 200 in 1207ms (compile: 1703µs, proxy.ts: 81ms, render: 1124ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=monthly-revenue&months=12 200 in 340ms (compile: 15ms, proxy.ts: 115ms, render: 210ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=charts&startDate=2025-12-01&endDate=2025-12-31&days=30 200 in 557ms (compile: 17ms, proxy.ts: 113ms, render: 427ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=products&limit=10&startDate=2025-12-01&endDate=2025-12-31&filterType=monthly 200 in 585ms (compile: 14ms, proxy.ts: 127ms, render: 444ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=complements&limit=10&startDate=2025-12-01&endDate=2025-12-31&filterType=monthly 200 in 609ms (compile: 8ms, proxy.ts: 122ms, render: 479ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=orders&limit=100&startDate=2025-12-01&endDate=2025-12-31 200 in 698ms (compile: 11ms, proxy.ts: 118ms, render: 569ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=charts&startDate=2025-12-01&endDate=2025-12-31&days=30&onlineOnly=true 200 in 244ms (compile: 2ms, proxy.ts: 87ms, render: 155ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=orders&limit=100&startDate=2025-12-01&endDate=2025-12-31&onlineOnly=true 200 in 358ms (compile: 1371µs, proxy.ts: 82ms, render: 274ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=monthly-revenue&months=12&onlineOnly=true 200 in 240ms (compile: 1617µs, proxy.ts: 74ms, render: 165ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=products&limit=10&startDate=2025-12-01&endDate=2025-12-31&filterType=monthly&onlineOnly=true 200 in 510ms (compile: 1605µs, proxy.ts: 113ms, render: 395ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=online-time-analysis&startDate=2025-12-01&endDate=2025-12-31 200 in 276ms (compile: 3ms, proxy.ts: 114ms, render: 160ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=online-customer-segmentation&startDate=2025-12-01&endDate=2025-12-31 200 in 266ms (compile: 2ms, proxy.ts: 88ms, render: 175ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=metrics&startDate=2025-12-01&endDate=2025-12-31 200 in 1245ms (compile: 15ms, proxy.ts: 126ms, render: 1105ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=complements&limit=10&startDate=2025-12-01&endDate=2025-12-31&filterType=monthly&onlineOnly=true 200 in 551ms (compile: 1415µs, proxy.ts: 100ms, render: 450ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=customers&startDate=2025-12-01&endDate=2025-12-31&limit=50&offset=0 200 in 369ms (compile: 3ms, proxy.ts: 84ms, render: 283ms)
+ GET /api/shopify?type=customers&startDate=2025-12-01&endDate=2025-12-31&limit=10&offset=0 200 in 264ms (compile: 1555µs, proxy.ts: 77ms, render: 186ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=metrics&startDate=2025-12-01&endDate=2025-12-31&onlineOnly=true 200 in 1154ms (compile: 5ms, proxy.ts: 113ms, render: 1036ms)
+ GET /api/shopify?type=customers&limit=10&offset=0 200 in 325ms (compile: 4ms, proxy.ts: 84ms, render: 238ms)
+ GET /api/shopify?type=customer-metrics&startDate=2025-12-01&endDate=2025-12-31 200 in 415ms (compile: 4ms, proxy.ts: 84ms, render: 327ms)
+ GET /api/shopify?type=locations&startDate=2025-12-01&endDate=2025-12-31 200 in 648ms (compile: 3ms, proxy.ts: 83ms, render: 562ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=monthly-revenue&months=12 200 in 547ms (compile: 7ms, proxy.ts: 253ms, render: 287ms)
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-07&days=6 200 in 554ms (compile: 3ms, proxy.ts: 276ms, render: 274ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-07&filterType=monthly 200 in 607ms (compile: 3ms, proxy.ts: 277ms, render: 327ms)
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-07 200 in 609ms (compile: 6ms, proxy.ts: 254ms, render: 349ms)
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-07&filterType=monthly 200 in 614ms (compile: 15ms, proxy.ts: 245ms, render: 354ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=monthly-revenue&months=12&onlineOnly=true 200 in 260ms (compile: 1749µs, proxy.ts: 84ms, render: 174ms)
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-07&days=6&onlineOnly=true 200 in 264ms (compile: 1811µs, proxy.ts: 99ms, render: 163ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-07&filterType=monthly&onlineOnly=true 200 in 290ms (compile: 3ms, proxy.ts: 83ms, render: 204ms)
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-07&onlineOnly=true 200 in 359ms (compile: 3ms, proxy.ts: 106ms, render: 251ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=online-time-analysis&startDate=2026-01-01&endDate=2026-01-07 200 in 239ms (compile: 5ms, proxy.ts: 81ms, render: 154ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=online-customer-segmentation&startDate=2026-01-01&endDate=2026-01-07 200 in 310ms (compile: 11ms, proxy.ts: 101ms, render: 198ms)
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-07&filterType=monthly&onlineOnly=true 200 in 354ms (compile: 1372µs, proxy.ts: 105ms, render: 248ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=customers&startDate=2026-01-01&endDate=2026-01-07&limit=50&offset=0 200 in 327ms (compile: 10ms, proxy.ts: 86ms, render: 231ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-07 200 in 1940ms (compile: 2ms, proxy.ts: 278ms, render: 1659ms)
+ GET /api/shopify?type=customers&limit=10&offset=0 200 in 736ms (compile: 1444µs, proxy.ts: 83ms, render: 652ms)
+ GET /api/shopify?type=customers&startDate=2026-01-01&endDate=2026-01-07&limit=10&offset=0 200 in 762ms (compile: 1968µs, proxy.ts: 90ms, render: 670ms)
+ GET /api/shopify?type=customer-metrics&startDate=2026-01-01&endDate=2026-01-07 200 in 879ms (compile: 7ms, proxy.ts: 87ms, render: 785ms)
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-07&onlineOnly=true 200 in 1458ms (compile: 2ms, proxy.ts: 109ms, render: 1347ms)
+ GET /api/shopify?type=locations&startDate=2026-01-01&endDate=2026-01-07 200 in 834ms (compile: 1875µs, proxy.ts: 75ms, render: 757ms)
+🔍 Middleware Debug: { url: '/ads', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ads 200 in 1922ms (compile: 1752ms, proxy.ts: 147ms, render: 23ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/meta 200 in 695ms (compile: 401ms, proxy.ts: 95ms, render: 199ms)
+ GET /api/integrations/meta 200 in 713ms (compile: 371ms, proxy.ts: 125ms, render: 218ms)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 682ms (compile: 533ms, proxy.ts: 131ms, render: 17ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/meta?t=1767785384631&_=0.2856967321233844 200 in 379ms (compile: 23ms, proxy.ts: 96ms, render: 259ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/analytics?t=1767785384631&_=0.3040447842751969 200 in 1089ms (compile: 799ms, proxy.ts: 138ms, render: 152ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/integrations/acuity?t=1767785384632&_=0.5400063635787127 200 in 707ms (compile: 215ms, proxy.ts: 334ms, render: 158ms)
+ GET /api/integrations/shopify?t=1767785384631&_=0.014418827887332397 200 in 1096ms (compile: 777ms, proxy.ts: 160ms, render: 159ms)
+ GET /api/integrations/meta?t=1767785384632&_=0.28952120376796986 200 in 1100ms (compile: 773ms, proxy.ts: 164ms, render: 163ms)
+ GET /api/integrations/acuity?t=1767785384631&_=0.6698286158778897 200 in 1105ms (compile: 793ms, proxy.ts: 144ms, render: 168ms)
+ GET /api/integrations/analytics?t=1767785384632&_=0.4520589383700634 200 in 1106ms (compile: 745ms, proxy.ts: 192ms, render: 169ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/shopify?t=1767785384632&_=0.6840984032725669 200 in 260ms (compile: 865µs, proxy.ts: 117ms, render: 142ms)
+🔍 Middleware Debug: { url: '/analytics', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /analytics 200 in 2.3s (compile: 2.0s, proxy.ts: 199ms, render: 20ms)
+🔍 Middleware Debug: { url: '/api/analytics', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Final device data: [
+  { name: 'mobile', value: 603008, color: '#10b981' },
+  { name: 'desktop', value: 333296, color: '#3b82f6' },
+  { name: 'tablet', value: 11232, color: '#8b5cf6' },
+  { name: 'smart tv', value: 16, color: '#8b5cf6' }
+]
+[Analytics API] Final geographic data: [
+  { country: 'Spain', sessions: 613376, users: 473616 },
+  { country: 'China', sessions: 206528, users: 206048 },
+  { country: 'Mexico', sessions: 50512, users: 46768 },
+  { country: 'United States', sessions: 27120, users: 26496 },
+  { country: 'Singapore', sessions: 18592, users: 18576 },
+  { country: 'Brazil', sessions: 4080, users: 4080 },
+  { country: 'France', sessions: 3904, users: 3152 },
+  { country: 'Italy', sessions: 3584, users: 3040 },
+  { country: 'United Kingdom', sessions: 3328, users: 2608 },
+  { country: 'Germany', sessions: 2960, users: 2640 },
+  { country: 'Netherlands', sessions: 2640, users: 2448 },
+  { country: 'Argentina', sessions: 2304, users: 2224 },
+  { country: 'Vietnam', sessions: 2288, users: 2272 },
+  { country: 'India', sessions: 1792, users: 1744 },
+  { country: 'Ireland', sessions: 1744, users: 1680 },
+  { country: 'Indonesia', sessions: 1616, users: 1584 },
+  { country: 'Iraq', sessions: 1584, users: 1584 },
+  { country: 'Colombia', sessions: 1568, users: 1520 },
+  { country: 'Portugal', sessions: 1552, users: 1376 },
+  { country: 'Japan', sessions: 1488, users: 1456 }
+]
+[Analytics API] Final city data: [
+  {
+    city: 'Lanzhou',
+    country: 'China',
+    sessions: 198480,
+    users: 197104
+  },
+  { city: 'Madrid', country: 'Spain', sessions: 156112, users: 131904 },
+  {
+    city: '(not set)',
+    country: 'Spain',
+    sessions: 90928,
+    users: 71568
+  },
+  { city: 'Seville', country: 'Spain', sessions: 50896, users: 40896 },
+  { city: 'Valencia', country: 'Spain', sessions: 50816, users: 39840 },
+  {
+    city: 'Barcelona',
+    country: 'Spain',
+    sessions: 49584,
+    users: 39344
+  },
+  {
+    city: 'Mexico City',
+    country: 'Mexico',
+    sessions: 37872,
+    users: 36576
+  },
+  { city: 'Zaragoza', country: 'Spain', sessions: 21696, users: 19264 },
+  { city: 'Malaga', country: 'Spain', sessions: 20880, users: 17264 },
+  {
+    city: 'Singapore',
+    country: 'Singapore',
+    sessions: 17968,
+    users: 17952
+  },
+  { city: 'Bilbao', country: 'Spain', sessions: 13568, users: 12272 },
+  {
+    city: 'Mairena del Aljarafe',
+    country: 'Spain',
+    sessions: 8928,
+    users: 3536
+  },
+  { city: 'Murcia', country: 'Spain', sessions: 7936, users: 6352 },
+  {
+    city: 'Ashburn',
+    country: 'United States',
+    sessions: 7024,
+    users: 7008
+  },
+  { city: '(not set)', country: 'China', sessions: 6832, users: 6800 },
+  { city: 'Alicante', country: 'Spain', sessions: 5616, users: 5200 },
+  {
+    city: 'Las Palmas de Gran Canaria',
+    country: 'Spain',
+    sessions: 4912,
+    users: 4400
+  },
+  { city: 'Granada', country: 'Spain', sessions: 3760, users: 3152 },
+  { city: 'Palma', country: 'Spain', sessions: 3488, users: 3216 },
+  {
+    city: 'Jerez de la Frontera',
+    country: 'Spain',
+    sessions: 3184,
+    users: 2784
+  }
+]
+[Analytics API] Final hourly data: [
+  { hour: 0, sessions: 37328, users: 36576 },
+  { hour: 1, sessions: 23232, users: 22928 },
+  { hour: 2, sessions: 17120, users: 17040 },
+  { hour: 3, sessions: 13504, users: 13408 },
+  { hour: 4, sessions: 14080, users: 14000 },
+  { hour: 5, sessions: 16304, users: 16224 },
+  { hour: 6, sessions: 17904, users: 17792 },
+  { hour: 7, sessions: 25392, users: 25072 },
+  { hour: 8, sessions: 35536, users: 34768 },
+  { hour: 9, sessions: 44096, users: 42864 },
+  { hour: 10, sessions: 75344, users: 71232 },
+  { hour: 11, sessions: 66704, users: 63088 },
+  { hour: 12, sessions: 62608, users: 57696 },
+  { hour: 13, sessions: 48000, users: 44064 },
+  { hour: 14, sessions: 42192, users: 40016 },
+  { hour: 15, sessions: 48272, users: 46464 },
+  { hour: 16, sessions: 49040, users: 46768 },
+  { hour: 17, sessions: 48912, users: 45296 },
+  { hour: 18, sessions: 48768, users: 45376 },
+  { hour: 19, sessions: 48176, users: 46144 },
+  { hour: 20, sessions: 48512, users: 46000 },
+  { hour: 21, sessions: 48176, users: 45936 },
+  { hour: 22, sessions: 52720, users: 51696 },
+  { hour: 23, sessions: 47504, users: 46000 }
+]
+ GET /api/analytics?startDate=2025-12-11&endDate=2026-01-07 200 in 729ms (compile: 427ms, proxy.ts: 77ms, render: 226ms)
+🔍 Middleware Debug: { url: '/api/analytics', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Processing device data: [
+  { device: 'mobile', sessions: 37688 },
+  { device: 'desktop', sessions: 20831 },
+  { device: 'tablet', sessions: 702 },
+  { device: 'smart tv', sessions: 1 }
+]
+[Analytics API] Final device data: [
+  { name: 'mobile', value: 603008, color: '#10b981' },
+  { name: 'desktop', value: 333296, color: '#3b82f6' },
+  { name: 'tablet', value: 11232, color: '#8b5cf6' },
+  { name: 'smart tv', value: 16, color: '#8b5cf6' }
+]
+[Analytics API] Final geographic data: [
+  { country: 'Spain', sessions: 613376, users: 473616 },
+  { country: 'China', sessions: 206528, users: 206048 },
+  { country: 'Mexico', sessions: 50512, users: 46768 },
+  { country: 'United States', sessions: 27120, users: 26496 },
+  { country: 'Singapore', sessions: 18592, users: 18576 },
+  { country: 'Brazil', sessions: 4080, users: 4080 },
+  { country: 'France', sessions: 3904, users: 3152 },
+  { country: 'Italy', sessions: 3584, users: 3040 },
+  { country: 'United Kingdom', sessions: 3328, users: 2608 },
+  { country: 'Germany', sessions: 2960, users: 2640 },
+  { country: 'Netherlands', sessions: 2640, users: 2448 },
+  { country: 'Argentina', sessions: 2304, users: 2224 },
+  { country: 'Vietnam', sessions: 2288, users: 2272 },
+  { country: 'India', sessions: 1792, users: 1744 },
+  { country: 'Ireland', sessions: 1744, users: 1680 },
+  { country: 'Indonesia', sessions: 1616, users: 1584 },
+  { country: 'Iraq', sessions: 1584, users: 1584 },
+  { country: 'Colombia', sessions: 1568, users: 1520 },
+  { country: 'Portugal', sessions: 1552, users: 1376 },
+  { country: 'Japan', sessions: 1488, users: 1456 }
+]
+[Analytics API] Final city data: [
+  {
+    city: 'Lanzhou',
+    country: 'China',
+    sessions: 198480,
+    users: 197104
+  },
+  { city: 'Madrid', country: 'Spain', sessions: 156112, users: 131904 },
+  {
+    city: '(not set)',
+    country: 'Spain',
+    sessions: 90928,
+    users: 71568
+  },
+  { city: 'Seville', country: 'Spain', sessions: 50896, users: 40896 },
+  { city: 'Valencia', country: 'Spain', sessions: 50816, users: 39840 },
+  {
+    city: 'Barcelona',
+    country: 'Spain',
+    sessions: 49584,
+    users: 39344
+  },
+  {
+    city: 'Mexico City',
+    country: 'Mexico',
+    sessions: 37872,
+    users: 36576
+  },
+  { city: 'Zaragoza', country: 'Spain', sessions: 21696, users: 19264 },
+  { city: 'Malaga', country: 'Spain', sessions: 20880, users: 17264 },
+  {
+    city: 'Singapore',
+    country: 'Singapore',
+    sessions: 17968,
+    users: 17952
+  },
+  { city: 'Bilbao', country: 'Spain', sessions: 13568, users: 12272 },
+  {
+    city: 'Mairena del Aljarafe',
+    country: 'Spain',
+    sessions: 8928,
+    users: 3536
+  },
+  { city: 'Murcia', country: 'Spain', sessions: 7936, users: 6352 },
+  {
+    city: 'Ashburn',
+    country: 'United States',
+    sessions: 7024,
+    users: 7008
+  },
+  { city: '(not set)', country: 'China', sessions: 6832, users: 6800 },
+  { city: 'Alicante', country: 'Spain', sessions: 5616, users: 5200 },
+  {
+    city: 'Las Palmas de Gran Canaria',
+    country: 'Spain',
+    sessions: 4912,
+    users: 4400
+  },
+  { city: 'Granada', country: 'Spain', sessions: 3760, users: 3152 },
+  { city: 'Palma', country: 'Spain', sessions: 3488, users: 3216 },
+  {
+    city: 'Jerez de la Frontera',
+    country: 'Spain',
+    sessions: 3184,
+    users: 2784
+  }
+]
+[Analytics API] Final hourly data: [
+  { hour: 0, sessions: 37328, users: 36576 },
+  { hour: 1, sessions: 23232, users: 22928 },
+  { hour: 2, sessions: 17120, users: 17040 },
+  { hour: 3, sessions: 13504, users: 13408 },
+  { hour: 4, sessions: 14080, users: 14000 },
+  { hour: 5, sessions: 16304, users: 16224 },
+  { hour: 6, sessions: 17904, users: 17792 },
+  { hour: 7, sessions: 25392, users: 25072 },
+  { hour: 8, sessions: 35536, users: 34768 },
+  { hour: 9, sessions: 44096, users: 42864 },
+  { hour: 10, sessions: 75344, users: 71232 },
+  { hour: 11, sessions: 66704, users: 63088 },
+  { hour: 12, sessions: 62608, users: 57696 },
+  { hour: 13, sessions: 48000, users: 44064 },
+  { hour: 14, sessions: 42192, users: 40016 },
+  { hour: 15, sessions: 48272, users: 46464 },
+  { hour: 16, sessions: 49040, users: 46768 },
+  { hour: 17, sessions: 48912, users: 45296 },
+  { hour: 18, sessions: 48768, users: 45376 },
+  { hour: 19, sessions: 48176, users: 46144 },
+  { hour: 20, sessions: 48512, users: 46000 },
+  { hour: 21, sessions: 48176, users: 45936 },
+  { hour: 22, sessions: 52720, users: 51696 },
+  { hour: 23, sessions: 47504, users: 46000 }
+]
+ GET /api/analytics?startDate=2025-12-11&endDate=2026-01-07 200 in 263ms (compile: 2ms, proxy.ts: 85ms, render: 176ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 862ms (compile: 686ms, proxy.ts: 160ms, render: 15ms)
+🔍 Middleware Debug: { url: '/recursos', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /recursos 200 in 639ms (compile: 473ms, proxy.ts: 151ms, render: 15ms)
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 470ms (compile: 361ms, proxy.ts: 99ms, render: 9ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Raw availability data: {
+  count: 14,
+  sample: [
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 3,
+      available: 12,
+      total: 15
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 1,
+      total: 2
+    },
+    {
+      store_name: 'The Bundclub Barcelona',
+      normalized: 'Barcelona',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 1
+    },
+    {
+      store_name: 'The Bundclub Zaragoza',
+      normalized: 'Zaragoza',
+      category: 'fitting',
+      booked: 0,
+      available: 4,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'medición',
+      booked: 1,
+      available: 29,
+      total: 30
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [
+    'Málaga',
+    'Sevilla',
+    'Barcelona',
+    'Zaragoza',
+    'Cdmx',
+    'Madrid',
+    'Murcia'
+  ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2026-01-07',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-22', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 1605ms (compile: 729ms, proxy.ts: 99ms, render: 778ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Raw availability data: {
+  count: 14,
+  sample: [
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 3,
+      available: 12,
+      total: 15
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      available: 1,
+      total: 2
+    },
+    {
+      store_name: 'The Bundclub Barcelona',
+      normalized: 'Barcelona',
+      category: 'fitting',
+      booked: 3,
+      available: 0,
+      total: 1
+    },
+    {
+      store_name: 'The Bundclub Zaragoza',
+      normalized: 'Zaragoza',
+      category: 'fitting',
+      booked: 0,
+      available: 4,
+      total: 4
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'medición',
+      booked: 1,
+      available: 29,
+      total: 30
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  storesInMap: [
+    'Málaga',
+    'Sevilla',
+    'Barcelona',
+    'Zaragoza',
+    'Cdmx',
+    'Madrid',
+    'Murcia'
+  ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2026-01-07',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-23', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-16', 0 ],
+    [ '2025-12-26', 0 ],
+    [ '2025-12-22', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 895ms (compile: 4ms, proxy.ts: 84ms, render: 807ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 1875ms (compile: 1358ms, proxy.ts: 498ms, render: 19ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 916ms (compile: 433ms, proxy.ts: 100ms, render: 383ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 567ms (compile: 1273µs, proxy.ts: 105ms, render: 460ms)
+🔍 Middleware Debug: { url: '/ads', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ads 200 in 776ms (compile: 526ms, proxy.ts: 236ms, render: 14ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/meta 200 in 850ms (compile: 358ms, proxy.ts: 139ms, render: 353ms)
+ GET /api/integrations/meta 200 in 856ms (compile: 382ms, proxy.ts: 115ms, render: 360ms)
+🔍 Middleware Debug: { url: '/usuarios', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /usuarios 200 in 223ms (compile: 50ms, proxy.ts: 156ms, render: 16ms)
+🔍 Middleware Debug: { url: '/reportes', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /reportes 200 in 1930ms (compile: 1705ms, proxy.ts: 206ms, render: 19ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 356ms (compile: 34ms, proxy.ts: 300ms, render: 23ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 1781ms (compile: 1295ms, proxy.ts: 118ms, render: 368ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 291ms (compile: 1509µs, proxy.ts: 102ms, render: 188ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 318ms (compile: 109ms, proxy.ts: 190ms, render: 19ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 176ms (compile: 41ms, proxy.ts: 115ms, render: 19ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 118ms (compile: 23ms, proxy.ts: 82ms, render: 12ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 124ms (compile: 27ms, proxy.ts: 87ms, render: 10ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 118ms (compile: 23ms, proxy.ts: 81ms, render: 14ms)
+🔍 Middleware Debug: {
+  url: '/api/calendar/events',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/calendar/events?year=2026 200 in 1858ms (compile: 1450ms, proxy.ts: 199ms, render: 208ms)
+ GET /calendario 200 in 199ms (compile: 38ms, proxy.ts: 133ms, render: 28ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 175ms (compile: 38ms, proxy.ts: 122ms, render: 16ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 88ms (compile: 1508µs, proxy.ts: 78ms, render: 9ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 110ms (compile: 26ms, proxy.ts: 71ms, render: 14ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 94ms (compile: 1745µs, proxy.ts: 84ms, render: 8ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 351ms (compile: 12ms, proxy.ts: 325ms, render: 13ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 89ms (compile: 1457µs, proxy.ts: 78ms, render: 10ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 169ms (compile: 30ms, proxy.ts: 111ms, render: 27ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 95ms (compile: 1620µs, proxy.ts: 83ms, render: 10ms)
+🔍 Middleware Debug: { url: '/calendario', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /calendario 200 in 162ms (compile: 26ms, proxy.ts: 124ms, render: 12ms)

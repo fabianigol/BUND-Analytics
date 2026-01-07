@@ -13,7 +13,7 @@ import {
 } from 'date-fns'
 import { es } from 'date-fns/locale'
 
-export type CalendarLayer = 'marketing' | 'operations' | 'pr' | 'retail' | 'product' | 'personal' | 'otros'
+export type CalendarLayer = 'marketing' | 'operations' | 'pr' | 'retail' | 'product' | 'personal' | 'otros' | 'tour'
 
 export interface CalendarEvent {
   id: string
@@ -37,6 +37,7 @@ export const LAYER_COLORS: Record<CalendarLayer, string> = {
   product: '#EAB308',       // Amarillo
   personal: '#6B7280',      // Gris
   otros: '#EC4899',         // Rosa
+  tour: '#06B6D4',          // Cyan
 }
 
 // Nombres legibles para cada capa
@@ -48,6 +49,7 @@ export const LAYER_NAMES: Record<CalendarLayer, string> = {
   product: 'Producto',
   personal: 'Personal',
   otros: 'Otros',
+  tour: 'Tour',
 }
 
 /**
@@ -75,17 +77,17 @@ export function getMonthDays(year: number, month: number): Date[] {
 
 /**
  * Genera el grid completo de un mes incluyendo días de padding
- * para que el calendario siempre comience en domingo
+ * para que el calendario siempre comience en lunes
  */
 export function getMonthGrid(year: number, month: number): Date[] {
   const firstDay = startOfMonth(new Date(year, month))
   const lastDay = endOfMonth(new Date(year, month))
   
-  // Obtener el inicio de la semana (domingo) para el primer día del mes
-  const startDate = startOfWeek(firstDay, { weekStartsOn: 0 })
+  // Obtener el inicio de la semana (lunes) para el primer día del mes
+  const startDate = startOfWeek(firstDay, { weekStartsOn: 1 })
   
-  // Obtener el final de la semana (sábado) para el último día del mes
-  const endDate = endOfWeek(lastDay, { weekStartsOn: 0 })
+  // Obtener el final de la semana (domingo) para el último día del mes
+  const endDate = endOfWeek(lastDay, { weekStartsOn: 1 })
   
   return eachDayOfInterval({ start: startDate, end: endDate })
 }
@@ -168,9 +170,10 @@ export function getMonthName(month: number): string {
 
 /**
  * Obtiene los nombres de los días de la semana (abreviados)
+ * Comienza en lunes
  */
 export function getWeekdayNames(): string[] {
-  return ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
+  return ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
 }
 
 /**
@@ -249,7 +252,7 @@ export function stringToDate(dateString: string): Date {
  * Obtiene todas las capas disponibles
  */
 export function getAllLayers(): CalendarLayer[] {
-  return ['marketing', 'operations', 'pr', 'retail', 'product', 'otros', 'personal']
+  return ['marketing', 'operations', 'pr', 'retail', 'product', 'otros', 'tour', 'personal']
 }
 
 /**
