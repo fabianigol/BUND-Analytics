@@ -9,6 +9,7 @@ import { BarChart, LineChart } from '@/components/dashboard/Charts'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Calendar,
   TrendingUp,
@@ -25,6 +26,7 @@ import { formatNumber } from '@/lib/utils/format'
 import { slugToStoreName, getClubImagePath } from '@/lib/utils/storeHelpers'
 import { normalizeStoreName } from '@/lib/integrations/acuity'
 import { ClubHero } from '@/components/clubs/ClubHero'
+import Link from 'next/link'
 
 interface AppointmentStats {
   upcoming: {
@@ -102,7 +104,7 @@ export default function ClubDetailPage() {
   const [dailyStats, setDailyStats] = useState<Partial<AppointmentStats['daily']>>({})
   const [selectedMonth, setSelectedMonth] = useState({ year: new Date().getFullYear(), month: new Date().getMonth() + 1 })
   const [appointments, setAppointments] = useState<Array<{ datetime: string; appointment_type_name: string; appointment_category: string }>>([])
-  const [monthlyCancellations, setMonthlyCancellations] = useState<Map<string, number>>(new Map())
+  const [monthlyCancellations, setMonthlyCancellations] = useState<Map<string, { medición: number; fitting: number; total: number; canceladas: number }>>(new Map())
   
   // Procesar datos para gráficas de horas y días
   const getHourlyData = () => {
@@ -349,49 +351,71 @@ export default function ClubDetailPage() {
   useEffect(() => {
     const fetchDailyStats = async () => {
       try {
-        // Filtrar por tienda en el frontend ya que el endpoint no lo soporta directamente
-        const response = await fetch(
-          `/api/acuity/stats?type=daily&year=${selectedMonth.year}&month=${selectedMonth.month}`
+        // Obtener citas directamente filtradas por tienda para este mes
+        const monthStart = new Date(selectedMonth.year, selectedMonth.month - 1, 1)
+        const monthEnd = new Date(selectedMonth.year, selectedMonth.month, 0, 23, 59, 59, 999)
+        const startStr = format(monthStart, 'yyyy-MM-dd')
+        const endStr = format(monthEnd, 'yyyy-MM-dd')
+
+        const appointmentsRes = await fetch(
+          `/api/acuity/appointments?store=${encodeURIComponent(storeName)}&startDate=${startStr}&endDate=${endStr}`
         )
-        if (response.ok) {
-          const data = await response.json()
-          if (data.type === 'daily') {
-            // Obtener canceladas filtradas por tienda
-            const monthStart = new Date(selectedMonth.year, selectedMonth.month - 1, 1)
-            const monthEnd = new Date(selectedMonth.year, selectedMonth.month, 0, 23, 59, 59, 999)
-            const startStr = format(monthStart, 'yyyy-MM-dd')
-            const endStr = format(monthEnd, 'yyyy-MM-dd')
-
-            try {
-              const appointmentsRes = await fetch(
-                `/api/acuity/appointments?store=${encodeURIComponent(storeName)}&startDate=${startStr}&endDate=${endStr}`
-              )
-              if (appointmentsRes.ok) {
-                const appointmentsData = await appointmentsRes.json()
-                // Agrupar canceladas por día
-                const canceledByDay = new Map<number, number>()
-                appointmentsData.appointments?.forEach((apt: any) => {
-                  if (apt.status === 'canceled' && normalizeStoreName(apt.appointment_type_name || '') === normalizedStoreName) {
-                    const date = new Date(apt.datetime)
-                    const day = date.getDate()
-                    canceledByDay.set(day, (canceledByDay.get(day) || 0) + 1)
-                  }
-                })
-
-                // Agregar canceladas a los datos diarios
-                if (data.byDay) {
-                  data.byDay = data.byDay.map((day: any) => ({
-                    ...day,
-                    'Canceladas': canceledByDay.get(parseInt(day.name)) || 0,
-                  }))
-                }
-              }
-            } catch (error) {
-              console.error('Error fetching cancellations for daily stats:', error)
-            }
-
-            setDailyStats(data)
+        
+        if (appointmentsRes.ok) {
+          const appointmentsData = await appointmentsRes.json()
+          
+          // Agrupar citas por día
+          const dayData = new Map<number, { medición: number; fitting: number; total: number; canceladas: number }>()
+          
+          // Inicializar todos los días del mes
+          const daysInMonth = new Date(selectedMonth.year, selectedMonth.month, 0).getDate()
+          for (let day = 1; day <= daysInMonth; day++) {
+            dayData.set(day, { medición: 0, fitting: 0, total: 0, canceladas: 0 })
           }
+          
+          // Procesar citas
+          appointmentsData.appointments?.forEach((apt: any) => {
+            if (normalizeStoreName(apt.appointment_type_name || '') === normalizedStoreName) {
+              const date = new Date(apt.datetime)
+              const day = date.getDate()
+              const data = dayData.get(day)
+              
+              if (data) {
+                if (apt.status === 'canceled') {
+                  data.canceladas++
+                } else {
+                  const category = apt.appointment_category?.toLowerCase() || ''
+                  if (category === 'medición') {
+                    data.medición++
+                    data.total++
+                  } else if (category === 'fitting') {
+                    data.fitting++
+                    data.total++
+                  }
+                }
+                dayData.set(day, data)
+              }
+            }
+          })
+          
+          // Convertir a formato de gráfica
+          const byDay = Array.from({ length: daysInMonth }, (_, i) => {
+            const day = i + 1
+            const data = dayData.get(day) || { medición: 0, fitting: 0, total: 0, canceladas: 0 }
+            return {
+              name: String(day),
+              'Medición': data.medición,
+              'Fitting': data.fitting,
+              'Total': data.total,
+              'Canceladas': data.canceladas,
+            }
+          })
+          
+          setDailyStats({
+            year: selectedMonth.year,
+            month: selectedMonth.month,
+            byDay,
+          })
         }
       } catch (error) {
         console.error('Error fetching daily stats:', error)
@@ -402,15 +426,14 @@ export default function ClubDetailPage() {
   }, [selectedMonth, storeName, normalizedStoreName])
 
   // Preparar datos mensuales filtrados por tienda
-  // Necesitamos obtener canceladas por mes también
+  // Necesitamos obtener todas las citas y agruparlas por mes
   useEffect(() => {
-    // Obtener canceladas por mes para cada mes en los datos mensuales
-    const fetchMonthlyCancellations = async () => {
+    const fetchMonthlyData = async () => {
       if (!stats.monthly?.byMonth || stats.monthly.byMonth.length === 0) return
 
-      const cancellationsMap = new Map<string, number>()
+      const monthlyMap = new Map<string, { medición: number; fitting: number; total: number; canceladas: number }>()
       
-      // Obtener canceladas para cada mes
+      // Obtener datos para cada mes
       const promises = stats.monthly.byMonth.map(async (month) => {
         const monthStart = new Date(month.year, month.month - 1, 1)
         const monthEnd = new Date(month.year, month.month, 0, 23, 59, 59, 999)
@@ -424,39 +447,54 @@ export default function ClubDetailPage() {
           )
           if (response.ok) {
             const data = await response.json()
-            const canceledCount = (data.appointments || []).filter((apt: any) => 
-              apt.status === 'canceled' && normalizeStoreName(apt.appointment_type_name || '') === normalizedStoreName
-            ).length
-            cancellationsMap.set(monthKey, canceledCount)
+            let medición = 0
+            let fitting = 0
+            let total = 0
+            let canceladas = 0
+            
+            data.appointments?.forEach((apt: any) => {
+              if (normalizeStoreName(apt.appointment_type_name || '') === normalizedStoreName) {
+                if (apt.status === 'canceled') {
+                  canceladas++
+                } else {
+                  const category = apt.appointment_category?.toLowerCase() || ''
+                  if (category === 'medición') {
+                    medición++
+                    total++
+                  } else if (category === 'fitting') {
+                    fitting++
+                    total++
+                  }
+                }
+              }
+            })
+            
+            monthlyMap.set(monthKey, { medición, fitting, total, canceladas })
           }
         } catch (error) {
-          console.error(`Error fetching cancellations for ${monthKey}:`, error)
+          console.error(`Error fetching data for ${monthKey}:`, error)
         }
       })
 
       await Promise.all(promises)
-      setMonthlyCancellations(cancellationsMap)
+      setMonthlyCancellations(monthlyMap)
     }
 
-    fetchMonthlyCancellations()
+    fetchMonthlyData()
   }, [stats.monthly, storeName, normalizedStoreName])
 
   const monthlyData = stats.monthly?.byMonth
-    .filter(month => {
-      // Por ahora, mostrar todos los meses (la API no filtra por tienda en monthly)
-      // En el futuro podríamos filtrar si la API lo soporta
-      return true
-    })
     .map(month => {
       const monthKey = `${month.year}-${String(month.month).padStart(2, '0')}`
+      const data = monthlyCancellations.get(monthKey) || { medición: 0, fitting: 0, total: 0, canceladas: 0 }
       return {
         name: monthKey,
         year: month.year,
         month: month.month,
-        'Medición': month.medición,
-        'Fitting': month.fitting,
-        Total: month.total,
-        'Canceladas': monthlyCancellations.get(monthKey) || 0,
+        'Medición': data.medición,
+        'Fitting': data.fitting,
+        Total: data.total,
+        'Canceladas': data.canceladas,
       }
     }) || []
 
@@ -514,8 +552,26 @@ export default function ClubDetailPage() {
       <Header title={storeName} subtitle="Detalles del club" />
 
       <div className="flex-1 space-y-6 p-6">
-        {/* Imagen Hero */}
-        <ClubHero storeName={storeName} slug={storeSlug} />
+        {/* Pestañas de navegación */}
+        <Tabs value="club-detail" className="w-full">
+          <TabsList>
+            <TabsTrigger value="general" onClick={() => router.push('/citas')}>
+              General
+            </TabsTrigger>
+            <TabsTrigger value="clubs" onClick={() => router.push('/citas')}>
+              Clubs
+            </TabsTrigger>
+            <TabsTrigger value="comparativas" onClick={() => router.push('/citas')}>
+              Comparativas
+            </TabsTrigger>
+            <TabsTrigger value="club-detail">
+              Detalle Club
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="club-detail" className="space-y-6 mt-6">
+            {/* Imagen Hero */}
+            <ClubHero storeName={storeName} slug={storeSlug} />
 
         {/* KPIs Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -832,6 +888,8 @@ export default function ClubDetailPage() {
             </CardContent>
           </Card>
         )}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   )

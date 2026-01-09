@@ -994,7 +994,9 @@ export default function CitasPage() {
             {/* Lista de clubs */}
             <Card>
               <CardHeader>
-                <CardTitle>Clubs</CardTitle>
+                <CardTitle>
+                  Clubs <span className="italic text-muted-foreground">(Próximos 21 días)</span>
+                </CardTitle>
                 <CardDescription>Selecciona un club para ver sus estadísticas detalladas</CardDescription>
               </CardHeader>
               <CardContent>
@@ -1086,6 +1088,9 @@ export default function CitasPage() {
                                   <div className="text-3xl font-bold text-blue-900 dark:text-blue-100">
                                     {formatNumber(store.total)}
                                   </div>
+                                  <div className="mt-2 text-xs italic text-blue-700/80 dark:text-blue-300/80">
+                                    Medición: {formatNumber(store.medición)} • Fitting: {formatNumber(store.fitting)}
+                                  </div>
                                 </div>
                                 <div className={`relative p-4 rounded-xl border ${
                                   occupationPercentage >= 90
@@ -1128,6 +1133,17 @@ export default function CitasPage() {
                                       : 'text-green-900 dark:text-green-100'
                                   }`}>
                                     {occupationPercentage}%
+                                  </div>
+                                  <div className={`mt-2 text-xs italic ${
+                                    occupationPercentage >= 90
+                                      ? 'text-red-700/80 dark:text-red-300/80'
+                                      : occupationPercentage >= 70
+                                      ? 'text-orange-700/80 dark:text-orange-300/80'
+                                      : occupationPercentage >= 50
+                                      ? 'text-yellow-700/80 dark:text-yellow-300/80'
+                                      : 'text-green-700/80 dark:text-green-300/80'
+                                  }`}>
+                                    Medición: {storeOccupation?.medición.percentage || 0}% • Fitting: {storeOccupation?.fitting.percentage || 0}%
                                   </div>
                                 </div>
                               </div>
