@@ -18,29 +18,46 @@ export async function GET(request: NextRequest) {
 
     const searchParams = request.nextUrl.searchParams
     const store = searchParams.get('store')
-    const startDate = searchParams.get('startDate') || format(new Date(), 'yyyy-MM-dd')
+    const startDate = searchParams.get('startDate')
     const endDate = searchParams.get('endDate')
 
-    // Incluir citas históricas también (1 año hacia atrás desde startDate si no se especifica)
-    const todayStart = parseISO(startDate)
+    // Si se proporcionan ambas fechas, usarlas exactamente como están (para comparativas)
+    // Si no, incluir rango amplio (1 año hacia atrás y 1 año hacia adelante)
     let startDateStr: string
-    if (startDate) {
-      const pastDate = new Date(todayStart)
-      pastDate.setFullYear(pastDate.getFullYear() - 1) // 1 año hacia atrás
-      startDateStr = pastDate.toISOString()
-    } else {
-      const pastDate = new Date()
-      pastDate.setFullYear(pastDate.getFullYear() - 1)
-      startDateStr = pastDate.toISOString()
-    }
-    
     let endDateStr: string
-    if (endDate) {
+    
+    if (startDate && endDate) {
+      // Modo exacto: usar las fechas proporcionadas sin modificar
+      startDateStr = parseISO(startDate).toISOString()
       endDateStr = parseISO(endDate).toISOString()
     } else {
-      const futureDate = new Date(todayStart)
-      futureDate.setFullYear(futureDate.getFullYear() + 1)
-      endDateStr = futureDate.toISOString()
+      // Modo amplio: rango de 1 año atrás a 1 año adelante
+      const todayStart = startDate ? parseISO(startDate) : new Date()
+      
+      if (startDate && !endDate) {
+        // Solo startDate: desde 1 año atrás hasta 1 año adelante
+        const pastDate = new Date(todayStart)
+        pastDate.setFullYear(pastDate.getFullYear() - 1)
+        startDateStr = pastDate.toISOString()
+        
+        const futureDate = new Date(todayStart)
+        futureDate.setFullYear(futureDate.getFullYear() + 1)
+        endDateStr = futureDate.toISOString()
+      } else if (!startDate && endDate) {
+        // Solo endDate: desde 1 año atrás del endDate hasta endDate
+        const endParsed = parseISO(endDate)
+        const pastDate = new Date(endParsed)
+        pastDate.setFullYear(pastDate.getFullYear() - 1)
+        startDateStr = pastDate.toISOString()
+        endDateStr = endParsed.toISOString()
+      } else {
+        // Sin fechas: últimos 12 meses
+        const now = new Date()
+        const pastDate = new Date(now)
+        pastDate.setFullYear(pastDate.getFullYear() - 1)
+        startDateStr = pastDate.toISOString()
+        endDateStr = now.toISOString()
+      }
     }
 
     let query = supabase
@@ -48,7 +65,6 @@ export async function GET(request: NextRequest) {
       .select('datetime, appointment_type_name, appointment_category, status')
       .gte('datetime', startDateStr)
       .lte('datetime', endDateStr)
-      .neq('status', 'canceled')
 
     const { data: appointments, error } = await query
 

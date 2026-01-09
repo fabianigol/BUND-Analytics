@@ -27,6 +27,7 @@ import { formatNumber, formatCompactNumber } from '@/lib/utils/format'
 import Link from 'next/link'
 import { storeNameToSlug } from '@/lib/utils/storeHelpers'
 import Image from 'next/image'
+import { HistoricalComparativesSection } from './comparativas/HistoricalComparativesSection'
 
 type CategoryFilter = 'all' | 'medición' | 'fitting'
 
@@ -1179,18 +1180,8 @@ export default function CitasPage() {
           </TabsContent>
 
           <TabsContent value="comparativas" className="space-y-6 mt-6">
-            {/* Vista comparativa - placeholder */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Comparativas</CardTitle>
-                <CardDescription>Comparación entre clubs y periodos</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12 text-muted-foreground">
-                  Vista comparativa en desarrollo...
-                </div>
-              </CardContent>
-            </Card>
+            {/* Sub-tabs de Comparativas Históricas */}
+            <HistoricalComparativesSection />
           </TabsContent>
         </Tabs>
       </div>

@@ -1,0 +1,16 @@
+⚠ Port 3000 is in use by process 35791, using available port 3002 instead.
+Unhandled Rejection: NodeError [SystemError]: A system error occurred: uv_interface_addresses returned Unknown system error 1 (Unknown system error 1)
+    at Object.networkInterfaces (node:os:277:16)
+    at getNetworkHosts (/Users/juanfabianidelaiglesia/Downloads/2º BUSINESS/BUND-Analytics/node_modules/next/dist/lib/get-network-host.js:18:36)
+    at getNetworkHost (/Users/juanfabianidelaiglesia/Downloads/2º BUSINESS/BUND-Analytics/node_modules/next/dist/lib/get-network-host.js:40:19)
+    at Server.<anonymous> (/Users/juanfabianidelaiglesia/Downloads/2º BUSINESS/BUND-Analytics/node_modules/next/dist/server/lib/start-server.js:290:84) {
+  code: 'ERR_SYSTEM_ERROR',
+  info: {
+    errno: 1,
+    code: 'Unknown system error 1',
+    message: 'Unknown system error 1',
+    syscall: 'uv_interface_addresses'
+  },
+  errno: [Getter/Setter: 1],
+  syscall: [Getter/Setter: 'uv_interface_addresses']
+}
