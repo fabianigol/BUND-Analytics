@@ -2,15 +2,16 @@
 
 import { Progress } from '@/components/ui/progress'
 import { WeeklyProgress } from '@/types'
-import { formatNumber } from '@/lib/utils/format'
+import { formatNumber, formatCurrencyByCountry } from '@/lib/utils/format'
 
 interface WeekProgressBarProps {
   week: WeeklyProgress
   color: string
   isOnline?: boolean
+  country?: 'ES' | 'MX'
 }
 
-export function WeekProgressBar({ week, color, isOnline = false }: WeekProgressBarProps) {
+export function WeekProgressBar({ week, color, isOnline = false, country = 'ES' }: WeekProgressBarProps) {
   // Determinar color de citas/pedidos según si está por encima o debajo del objetivo
   const appointmentsColor = week.currentAppointments >= week.targetAppointments 
     ? 'text-green-600' 
@@ -25,7 +26,7 @@ export function WeekProgressBar({ week, color, isOnline = false }: WeekProgressB
       <div className="flex items-center justify-between text-xs">
         <span className="font-medium">{week.weekLabel}</span>
         <div className="flex gap-3 text-muted-foreground">
-          <span>€{formatNumber(week.currentRevenue)}</span>
+          <span>{formatCurrencyByCountry(week.currentRevenue, country).replace(/\.\d{2}$/, '')}</span>
           <span>|</span>
           {isOnline ? (
             <span>

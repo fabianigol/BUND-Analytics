@@ -4,6 +4,7 @@ import { Database } from '@/types/database';
 import { LocationTargetProgress, WeeklyProgress } from '@/types';
 import { getWeeksOfMonth } from '@/lib/utils/date';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
+import { MXN_TO_EUR_RATE } from '@/lib/utils/format';
 
 type SalesTargetRow = Database['public']['Tables']['sales_targets']['Row'];
 type ShopifyOrderRow = Database['public']['Tables']['shopify_orders']['Row'];
@@ -15,7 +16,7 @@ type AcuityAppointmentRow = Database['public']['Tables']['acuity_appointments'][
 function extractLocationFromTags(tags: string[] | null | undefined): string | null {
   if (!tags || tags.length === 0) return null;
   
-  const knownLocations = ['Madrid', 'Sevilla', 'Málaga', 'Malaga', 'Barcelona', 'Bilbao', 'Valencia', 'Murcia', 'Zaragoza', 'México', 'Mexico', 'online'];
+  const knownLocations = ['Madrid', 'Sevilla', 'Málaga', 'Malaga', 'Barcelona', 'Bilbao', 'Valencia', 'Murcia', 'Zaragoza', 'México', 'Mexico', 'CDMX', 'Polanco', 'online'];
   
   for (const tag of tags) {
     const tagLower = tag.toLowerCase().trim();
@@ -23,12 +24,20 @@ function extractLocationFromTags(tags: string[] | null | undefined): string | nu
     // Buscar formato "Tienda: X"
     if (tagLower.startsWith('tienda:')) {
       const location = tag.substring(7).trim();
+      // Si el tag de tienda es CDMX o Polanco, mapear a México
+      if (location.toLowerCase() === 'cdmx' || location.toLowerCase() === 'polanco') {
+        return 'México';
+      }
       return location || null;
     }
     
     // Buscar ubicación conocida directamente
     for (const location of knownLocations) {
       if (tagLower === location.toLowerCase() || tagLower.includes(location.toLowerCase())) {
+        // Si encontramos CDMX o Polanco, devolver México
+        if (location === 'CDMX' || location === 'Polanco') {
+          return 'México';
+        }
         return location;
       }
     }
@@ -64,8 +73,13 @@ function mapCalendarToLocation(appointmentTypeName: string): string | null {
     'valencia': 'Valencia',
     'murcia': 'Murcia',
     'zaragoza': 'Zaragoza',
+    // México: incluir todas las variantes posibles
     'méxico': 'México',
     'mexico': 'México',
+    'cdmx': 'México',
+    'polanco': 'México',
+    'ciudad de méxico': 'México',
+    'ciudad de mexico': 'México',
   };
   
   for (const [key, location] of Object.entries(locationMap)) {
@@ -137,7 +151,7 @@ export async function GET(request: NextRequest) {
     
     console.log(`[Sales Targets Progress] Rango de fechas: ${startDateStr} - ${endDateStr}`);
     
-    // 3. Obtener pedidos del mes
+    // 3. Obtener pedidos del mes (de TODOS los países para vista combinada)
     const { data: orders, error: ordersError } = await supabase
       .from('shopify_orders')
       .select('*')
@@ -173,17 +187,29 @@ export async function GET(request: NextRequest) {
     
     for (const target of targets as SalesTargetRow[]) {
       const location = target.location;
+      const targetCountry = (target as any).country || 'ES'; // País del objetivo
       
-      // Filtrar pedidos de esta ubicación
+      // Filtrar pedidos de esta ubicación Y país
       const locationOrders: ShopifyOrderRow[] = (orders || []).filter(order => {
         const orderTags = (order as any).tags || [];
+        const orderCountry = (order as any).country || 'ES';
+        
+        // Primero verificar que el pedido sea del mismo país que el objetivo
+        if (orderCountry !== targetCountry) {
+          return false;
+        }
+        
+        // Para México: TODOS los pedidos de MX (independientemente de tags)
+        if (location === 'México' || location === 'Mexico') {
+          return orderCountry === 'MX';
+        }
         
         // Para "online": pedidos SIN tags (o array vacío)
         if (location === 'online') {
           return !orderTags || orderTags.length === 0;
         }
         
-        // Para tiendas físicas: pedidos CON el tag correspondiente
+        // Para tiendas físicas de España: pedidos CON el tag correspondiente
         const orderLocation = extractLocationFromTags(orderTags);
         return orderLocation === location;
       }) as ShopifyOrderRow[];
@@ -193,13 +219,17 @@ export async function GET(request: NextRequest) {
       const currentOrders = locationOrders.length;
       const currentAov = currentOrders > 0 ? currentRevenue / currentOrders : 0;
       
-      // Filtrar citas de esta ubicación (solo para tiendas físicas)
+      // Filtrar citas de esta ubicación (solo para tiendas físicas y México)
       let currentAppointments = 0;
       let locationAppointments: AcuityAppointmentRow[] = [];
       
       if (location !== 'online') {
         locationAppointments = (appointments || []).filter((apt: AcuityAppointmentRow) => {
           const aptLocation = mapCalendarToLocation(apt.appointment_type_name || '');
+          // Para México, aceptar tanto "México" como "Mexico"
+          if (location === 'México' || location === 'Mexico') {
+            return aptLocation === 'México' || aptLocation === 'Mexico';
+          }
           return aptLocation === location;
         }) as AcuityAppointmentRow[];
         currentAppointments = locationAppointments.length;
@@ -264,10 +294,15 @@ export async function GET(request: NextRequest) {
       const dailyRevenue: Array<{ date: string; value: number }> = [];
       const monthlyRevenue: Array<{ date: string; value: number }> = [];
       
+      // Para México, convertir facturación actual a EUR para ordenamiento y totales
+      const isMexico = location === 'México' || location === 'Mexico';
+      const currentRevenueInEUR = isMexico ? currentRevenue * MXN_TO_EUR_RATE : currentRevenue;
+      
       progressData.push({
         location,
         targetRevenue,
         currentRevenue,
+        currentRevenueInEUR, // Para ordenar y calcular totales correctamente
         progressPercentage,
         targetAov,
         currentAov,
@@ -281,6 +316,9 @@ export async function GET(request: NextRequest) {
         dailyRevenue,
       });
     }
+    
+    // Ordenar por facturación actual en EUR (descendente)
+    progressData.sort((a, b) => (b.currentRevenueInEUR || b.currentRevenue) - (a.currentRevenueInEUR || a.currentRevenue));
     
     console.log(`[Sales Targets Progress] Calculado progreso para ${progressData.length} ubicaciones`);
     

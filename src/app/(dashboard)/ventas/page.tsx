@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState, useEffect, useCallback } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { Header } from '@/components/dashboard/Header'
 import { MetricCard } from '@/components/dashboard/MetricCard'
 import { QuickStatCard } from '@/components/dashboard/QuickStatCard'
@@ -40,7 +41,7 @@ import {
   AlertCircle,
   Target,
 } from 'lucide-react'
-import { formatCurrency, formatNumber, formatDate } from '@/lib/utils/format'
+import { formatCurrency, formatCurrencyByCountry, formatNumber, formatDate, convertMXNtoEUR } from '@/lib/utils/format'
 import { ShopifyOrder, ShopifyCustomer, ShopifyCustomerMetrics, ShopifyLocationMetrics } from '@/types'
 import { format, subDays, startOfMonth, endOfMonth, subMonths, parseISO } from 'date-fns'
 import { Label } from '@/components/ui/label'
@@ -79,6 +80,24 @@ interface Metrics {
 type DateFilterType = 'today' | 'last7' | 'last30' | 'last90' | 'thisMonth' | 'lastMonth' | 'custom'
 
 export default function VentasPage() {
+  // Obtener país de la URL (ES por defecto)
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const country = (searchParams.get('country') || 'ES').toUpperCase() as 'ES' | 'MX'
+  
+  // Redirect a ES si no hay parámetro country
+  useEffect(() => {
+    if (!searchParams.get('country')) {
+      router.replace('/ventas?country=ES')
+    }
+  }, [searchParams, router])
+  
+  // Helper para agregar parámetro country a las URLs de API
+  const addCountryParam = (url: string) => {
+    const separator = url.includes('?') ? '&' : '?'
+    return `${url}${separator}country=${country}`
+  }
+  
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [orders, setOrders] = useState<ShopifyOrder[]>([])
@@ -281,7 +300,8 @@ export default function VentasPage() {
         ? `&startDate=${dateRangePedidos.start}&endDate=${dateRangePedidos.end}`
         : ''
 
-      const locationsRes = await fetch(`/api/shopify?type=locations${dateParams}`)
+      // Para ubicaciones, obtener datos de AMBOS países (no filtrar por country)
+      const locationsRes = await fetch(`/api/shopify?type=locations${dateParams}&country=ALL`)
 
       if (locationsRes.ok) {
         const locationsData = await locationsRes.json()
@@ -298,7 +318,7 @@ export default function VentasPage() {
 
   const checkConnection = async () => {
     try {
-      const response = await fetch('/api/integrations/shopify')
+      const response = await fetch(addCountryParam('/api/integrations/shopify'))
       if (response.ok) {
         const data = await response.json()
         setIsConnected(data.connected || false)
@@ -331,12 +351,12 @@ export default function VentasPage() {
       const complementsFilter = complementsFilterType === 'monthly' ? dateParams : ''
       
       const [metricsRes, ordersRes, productsRes, chartsRes, monthlyRes, complementsRes] = await Promise.all([
-        fetch(`/api/shopify?type=metrics${dateParams}`),
-        fetch(`/api/shopify?type=orders&limit=100${dateParams}`),
-        fetch(`/api/shopify?type=products&limit=10${productsFilter}&filterType=${productsFilterType}`),
-        fetch(`/api/shopify?type=charts${dateParams}&days=${days}`),
-        fetch(`/api/shopify?type=monthly-revenue&months=12`),
-        fetch(`/api/shopify?type=complements&limit=10${complementsFilter}&filterType=${complementsFilterType}`),
+        fetch(addCountryParam(`/api/shopify?type=metrics${dateParams}`)),
+        fetch(addCountryParam(`/api/shopify?type=orders&limit=100${dateParams}`)),
+        fetch(addCountryParam(`/api/shopify?type=products&limit=10${productsFilter}&filterType=${productsFilterType}`)),
+        fetch(addCountryParam(`/api/shopify?type=charts${dateParams}&days=${days}`)),
+        fetch(addCountryParam(`/api/shopify?type=monthly-revenue&months=12`)),
+        fetch(addCountryParam(`/api/shopify?type=complements&limit=10${complementsFilter}&filterType=${complementsFilterType}`)),
       ])
 
       if (!metricsRes.ok || !ordersRes.ok || !productsRes.ok || !chartsRes.ok) {
@@ -403,14 +423,14 @@ export default function VentasPage() {
       const onlineParam = '&onlineOnly=true'
       
       const [metricsRes, ordersRes, productsRes, chartsRes, monthlyRes, complementsRes, timeAnalysisRes, segmentationRes] = await Promise.all([
-        fetch(`/api/shopify?type=metrics${dateParams}${onlineParam}`),
-        fetch(`/api/shopify?type=orders&limit=100${dateParams}${onlineParam}`),
-        fetch(`/api/shopify?type=products&limit=10${productsFilter}&filterType=${productsFilterType}${onlineParam}`),
-        fetch(`/api/shopify?type=charts${dateParams}&days=${days}${onlineParam}`),
-        fetch(`/api/shopify?type=monthly-revenue&months=12${onlineParam}`),
-        fetch(`/api/shopify?type=complements&limit=10${complementsFilter}&filterType=${complementsFilterType}${onlineParam}`),
-        fetch(`/api/shopify?type=online-time-analysis${dateParams}`),
-        fetch(`/api/shopify?type=online-customer-segmentation${dateParams}`),
+        fetch(addCountryParam(`/api/shopify?type=metrics${dateParams}${onlineParam}`)),
+        fetch(addCountryParam(`/api/shopify?type=orders&limit=100${dateParams}${onlineParam}`)),
+        fetch(addCountryParam(`/api/shopify?type=products&limit=10${productsFilter}&filterType=${productsFilterType}${onlineParam}`)),
+        fetch(addCountryParam(`/api/shopify?type=charts${dateParams}&days=${days}${onlineParam}`)),
+        fetch(addCountryParam(`/api/shopify?type=monthly-revenue&months=12${onlineParam}`)),
+        fetch(addCountryParam(`/api/shopify?type=complements&limit=10${complementsFilter}&filterType=${complementsFilterType}${onlineParam}`)),
+        fetch(addCountryParam(`/api/shopify?type=online-time-analysis${dateParams}`)),
+        fetch(addCountryParam(`/api/shopify?type=online-customer-segmentation${dateParams}`)),
       ])
 
       if (!metricsRes.ok || !ordersRes.ok || !productsRes.ok || !chartsRes.ok) {
@@ -476,10 +496,10 @@ export default function VentasPage() {
 
       // Cargar clientes paginados, métricas, top 10 del mes e histórico
       const [customersRes, metricsRes, top10MonthRes, top10HistoricalRes] = await Promise.all([
-        fetch(`/api/shopify?type=customers${dateParams}${emailParam}&limit=${limit}&offset=${offset}`),
-        fetch(`/api/shopify?type=customer-metrics${dateParams}`),
-        fetch(`/api/shopify?type=customers${dateParams}&limit=10&offset=0&periodBasedLTV=true`), // Top 10 del período - CON LTV del período
-        fetch(`/api/shopify?type=customers&limit=10&offset=0`), // Top 10 histórico (sin filtro de fechas)
+        fetch(addCountryParam(`/api/shopify?type=customers${dateParams}${emailParam}&limit=${limit}&offset=${offset}`)),
+        fetch(addCountryParam(`/api/shopify?type=customer-metrics${dateParams}`)),
+        fetch(addCountryParam(`/api/shopify?type=customers${dateParams}&limit=10&offset=0&periodBasedLTV=true`)), // Top 10 del período - CON LTV del período
+        fetch(addCountryParam(`/api/shopify?type=customers&limit=10&offset=0`)), // Top 10 histórico (sin filtro de fechas)
       ])
 
       if (!customersRes.ok || !metricsRes.ok) {
@@ -555,7 +575,7 @@ export default function VentasPage() {
       setSyncing(true)
       setError(null)
 
-      const response = await fetch('/api/sync/shopify', {
+      const response = await fetch(addCountryParam('/api/sync/shopify'), {
         method: 'POST',
       })
 
@@ -712,12 +732,15 @@ export default function VentasPage() {
     }
   }
 
+  // Obtener nombre del país para mostrar en el header
+  const countryName = country === 'MX' ? 'México' : 'España'
+  
   if (loading) {
     return (
       <div className="flex flex-col">
         <Header
-          title="Ventas"
-          subtitle="Análisis de ventas e ingresos de Shopify"
+          title={`Ventas - ${countryName}`}
+          subtitle={`Análisis de ventas e ingresos de Shopify ${countryName}`}
         />
         <div className="flex-1 flex items-center justify-center p-6">
           <div className="text-center">
@@ -733,8 +756,8 @@ export default function VentasPage() {
     return (
       <div className="flex flex-col">
         <Header
-          title="Ventas"
-          subtitle="Análisis de ventas e ingresos de Shopify"
+          title={`Ventas - ${countryName}`}
+          subtitle={`Análisis de ventas e ingresos de Shopify ${countryName}`}
         />
         <div className="flex-1 flex items-center justify-center p-6">
           <Card className="max-w-md">
@@ -761,8 +784,8 @@ export default function VentasPage() {
   return (
     <div className="flex flex-col">
       <Header
-        title="Ventas"
-        subtitle="Análisis de ventas e ingresos de Shopify"
+        title={`Ventas - ${countryName}`}
+        subtitle={`Análisis de ventas e ingresos de Shopify ${countryName}`}
       />
 
       <div className="flex-1 space-y-6 p-6">
@@ -912,14 +935,15 @@ export default function VentasPage() {
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
               <QuickStatCard
                 title="Ingresos brutos totales"
-                value={metrics?.totalRevenue ? formatCurrency(metrics.totalRevenue) : '—'}
+                value={metrics?.totalRevenue ? formatCurrencyByCountry(metrics.totalRevenue, country) : '—'}
                 emoji="💰"
                 emojiBgColor="bg-emerald-100"
                 previousPeriodValue={metrics?.previousRevenue || null}
                 previousPeriodChange={metrics?.revenueChange}
                 historicalValue={metrics?.historicalRevenue || null}
                 historicalChange={metrics?.revenueChangeHistorical}
-                formatValue={(v) => formatCurrency(v)}
+                formatValue={(v) => formatCurrencyByCountry(v, country)}
+                conversionToEur={country === 'MX' && metrics?.totalRevenue ? convertMXNtoEUR(metrics.totalRevenue) : undefined}
               />
               <QuickStatCard
                 title="Total Pedidos"
@@ -934,14 +958,15 @@ export default function VentasPage() {
               />
               <QuickStatCard
                 title="Valor Medio Pedido"
-                value={metrics?.averageOrderValue ? formatCurrency(metrics.averageOrderValue) : '—'}
+                value={metrics?.averageOrderValue ? formatCurrencyByCountry(metrics.averageOrderValue, country) : '—'}
                 emoji="📊"
                 emojiBgColor="bg-purple-100"
                 previousPeriodValue={metrics?.previousAOV || null}
                 previousPeriodChange={metrics?.aovChange}
                 historicalValue={metrics?.historicalAOV || null}
                 historicalChange={metrics?.aovChangeHistorical}
-                formatValue={(v) => formatCurrency(v)}
+                formatValue={(v) => formatCurrencyByCountry(v, country)}
+                conversionToEur={country === 'MX' && metrics?.averageOrderValue ? convertMXNtoEUR(metrics.averageOrderValue) : undefined}
               />
               <QuickStatCard
                 title="ROAS"
@@ -964,7 +989,7 @@ export default function VentasPage() {
               title={`Ingresos Diarios - ${periodLabelPedidos}`}
               data={salesChartData.map(d => ({ date: d.date, value: d.value }))}
               height={280}
-              formatValue={(v) => formatCurrency(v)}
+              formatValue={(v) => formatCurrencyByCountry(v, country)}
               color="#10b981"
               gradientColor="#059669"
             />
@@ -988,7 +1013,7 @@ export default function VentasPage() {
                   title=""
                   data={monthlyRevenueData.map(d => ({ name: d.date, value: d.value }))}
                   height={280}
-                  formatValue={(v) => formatCurrency(v)}
+                  formatValue={(v) => formatCurrencyByCountry(v, country)}
                   color="#10b981"
                   horizontal={false}
                   xAxisKey="name"
@@ -1034,7 +1059,7 @@ export default function VentasPage() {
                   data={topProductsChart}
                   horizontal
                   height={280}
-                  formatValue={(v) => formatCurrency(v)}
+                  formatValue={(v) => formatCurrencyByCountry(v, country)}
                   color="#10b981"
                 />
               ) : (
@@ -1079,7 +1104,7 @@ export default function VentasPage() {
                   }))}
                   horizontal
                   height={280}
-                  formatValue={(v) => formatCurrency(v)}
+                  formatValue={(v) => formatCurrencyByCountry(v, country)}
                   color="#10b981"
                 />
               ) : (
@@ -1164,7 +1189,7 @@ export default function VentasPage() {
                       </p>
                     </TableCell>
                     <TableCell className="font-semibold">
-                      {formatCurrency(order.total_price)}
+                      {formatCurrencyByCountry(order.total_price, country)}
                     </TableCell>
                     <TableCell>{getStatusBadge(order.financial_status)}</TableCell>
                     <TableCell>{getFulfillmentBadge(order.fulfillment_status)}</TableCell>
@@ -1307,7 +1332,7 @@ export default function VentasPage() {
                 previousPeriodChange={metricsOnline?.revenueChange}
                 historicalValue={metricsOnline?.historicalRevenue || null}
                 historicalChange={metricsOnline?.revenueChangeHistorical}
-                formatValue={(v) => formatCurrency(v)}
+                formatValue={(v) => formatCurrencyByCountry(v, country)}
               />
               <QuickStatCard
                 title="Total Pedidos"
@@ -1322,14 +1347,14 @@ export default function VentasPage() {
               />
               <QuickStatCard
                 title="Valor Medio Pedido"
-                value={metricsOnline?.averageOrderValue ? formatCurrency(metricsOnline.averageOrderValue) : '—'}
+                value={metricsOnline?.averageOrderValue ? formatCurrencyByCountry(metricsOnline.averageOrderValue, country) : '—'}
                 emoji="📊"
                 emojiBgColor="bg-purple-100"
                 previousPeriodValue={metricsOnline?.previousAOV || null}
                 previousPeriodChange={metricsOnline?.aovChange}
                 historicalValue={metricsOnline?.historicalAOV || null}
                 historicalChange={metricsOnline?.aovChangeHistorical}
-                formatValue={(v) => formatCurrency(v)}
+                formatValue={(v) => formatCurrencyByCountry(v, country)}
               />
               <QuickStatCard
                 title="ROAS"
@@ -1352,7 +1377,7 @@ export default function VentasPage() {
               title={`Ingresos Diarios - ${periodLabelOnline}`}
               data={salesChartDataOnline.map(d => ({ date: d.date, value: d.value }))}
               height={280}
-              formatValue={(v) => formatCurrency(v)}
+              formatValue={(v) => formatCurrencyByCountry(v, country)}
               color="#10b981"
               gradientColor="#059669"
             />
@@ -1376,7 +1401,7 @@ export default function VentasPage() {
                   title=""
                   data={monthlyRevenueDataOnline.map(d => ({ name: d.date, value: d.value }))}
                   height={280}
-                  formatValue={(v) => formatCurrency(v)}
+                  formatValue={(v) => formatCurrencyByCountry(v, country)}
                   color="#10b981"
                   horizontal={false}
                   xAxisKey="name"
@@ -1422,7 +1447,7 @@ export default function VentasPage() {
                   data={topProductsChartOnline}
                   horizontal
                   height={280}
-                  formatValue={(v) => formatCurrency(v)}
+                  formatValue={(v) => formatCurrencyByCountry(v, country)}
                   color="#10b981"
                 />
               ) : (
@@ -1467,7 +1492,7 @@ export default function VentasPage() {
                   }))}
                   horizontal
                   height={280}
-                  formatValue={(v) => formatCurrency(v)}
+                  formatValue={(v) => formatCurrencyByCountry(v, country)}
                   color="#10b981"
                 />
               ) : (
@@ -1596,11 +1621,11 @@ export default function VentasPage() {
                 <div className="grid gap-4 md:grid-cols-2 pt-4 border-t">
                   <div className="space-y-1">
                     <Label className="text-sm text-muted-foreground">Valor promedio del pedido actualizado (sin IVA)</Label>
-                    <p className="text-lg font-semibold">{formatCurrency(calculatorResults.aovWithoutTax)}</p>
+                    <p className="text-lg font-semibold">{formatCurrencyByCountry(calculatorResults.aovWithoutTax, country)}</p>
                   </div>
                   <div className="space-y-1">
                     <Label className="text-sm text-muted-foreground">IVA + aranceles a pagar</Label>
-                    <p className="text-lg font-semibold">{formatCurrency(calculatorResults.taxAmount)}</p>
+                    <p className="text-lg font-semibold">{formatCurrencyByCountry(calculatorResults.taxAmount, country)}</p>
                   </div>
                 </div>
               </div>
@@ -1616,7 +1641,7 @@ export default function VentasPage() {
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <div className="space-y-1 p-3 bg-white/50 dark:bg-gray-900/50 rounded-lg">
                   <Label className="text-xs text-muted-foreground">Costos totales de producto, fulfillment e impuestos</Label>
-                  <p className="text-xl font-bold">{formatCurrency(calculatorResults.totalCosts)}</p>
+                  <p className="text-xl font-bold">{formatCurrencyByCountry(calculatorResults.totalCosts, country)}</p>
                 </div>
                 <div className="space-y-1 p-3 bg-white/50 dark:bg-gray-900/50 rounded-lg">
                   <Label className="text-xs text-muted-foreground">Porcentaje de costo</Label>
@@ -1643,7 +1668,7 @@ export default function VentasPage() {
                   </div>
                   <div className="space-y-1 p-3 bg-amber-100/50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
                     <Label className="text-xs text-muted-foreground">CAC máximo</Label>
-                    <p className="text-2xl font-bold text-amber-700 dark:text-amber-300">{formatCurrency(calculatorResults.maxCAC)}</p>
+                    <p className="text-2xl font-bold text-amber-700 dark:text-amber-300">{formatCurrencyByCountry(calculatorResults.maxCAC, country)}</p>
                     <p className="text-xs text-muted-foreground">Costo máximo de adquisición de cliente</p>
                   </div>
                   <div className="space-y-1 p-3 bg-blue-100/50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
@@ -1677,7 +1702,7 @@ export default function VentasPage() {
                       value: item.revenue,
                     }))}
                     height={300}
-                    formatValue={(v) => formatCurrency(v)}
+                    formatValue={(v) => formatCurrencyByCountry(v, country)}
                     color="#6366f1"
                     horizontal={false}
                     xAxisKey="name"
@@ -1705,7 +1730,7 @@ export default function VentasPage() {
                       value: item.revenue,
                     }))}
                     height={300}
-                    formatValue={(v) => formatCurrency(v)}
+                    formatValue={(v) => formatCurrencyByCountry(v, country)}
                     color="#8b5cf6"
                     horizontal={false}
                     xAxisKey="name"
@@ -1750,7 +1775,7 @@ export default function VentasPage() {
                       : '0% del total'}
                   </p>
                   <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
-                    {formatCurrency(customerSegmentation.newCustomersRevenue)} en ingresos
+                    {formatCurrencyByCountry(customerSegmentation.newCustomersRevenue, country)} en ingresos
                   </p>
                   <p className="text-xs text-muted-foreground">
                     AOV: {formatCurrency(customerSegmentation.averageNewCustomerValue)}
@@ -1768,7 +1793,7 @@ export default function VentasPage() {
                       : '0% del total'}
                   </p>
                   <p className="text-sm font-semibold text-purple-600 dark:text-purple-400">
-                    {formatCurrency(customerSegmentation.recurringCustomersRevenue)} en ingresos
+                    {formatCurrencyByCountry(customerSegmentation.recurringCustomersRevenue, country)} en ingresos
                   </p>
                   <p className="text-xs text-muted-foreground">
                     AOV: {formatCurrency(customerSegmentation.averageRecurringCustomerValue)}
@@ -1784,7 +1809,7 @@ export default function VentasPage() {
                   <div className="pt-2 border-t border-amber-200 dark:border-amber-800">
                     <p className="text-xs text-muted-foreground mb-1">LTV Promedio</p>
                     <p className="text-lg font-bold text-amber-700 dark:text-amber-300">
-                      {formatCurrency(customerSegmentation.averageLTV)}
+                      {formatCurrencyByCountry(customerSegmentation.averageLTV, country)}
                     </p>
                   </div>
                 </div>
@@ -1797,7 +1822,7 @@ export default function VentasPage() {
                     <div className="flex items-center justify-between">
                       <Label className="text-sm font-medium">Nuevos Clientes</Label>
                       <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
-                        {formatCurrency(customerSegmentation.newCustomersRevenue)}
+                        {formatCurrencyByCountry(customerSegmentation.newCustomersRevenue, country)}
                       </span>
                     </div>
                     <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -1815,7 +1840,7 @@ export default function VentasPage() {
                     <div className="flex items-center justify-between">
                       <Label className="text-sm font-medium">Clientes Recurrentes</Label>
                       <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">
-                        {formatCurrency(customerSegmentation.recurringCustomersRevenue)}
+                        {formatCurrencyByCountry(customerSegmentation.recurringCustomersRevenue, country)}
                       </span>
                     </div>
                     <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -1908,7 +1933,7 @@ export default function VentasPage() {
                       </p>
                     </TableCell>
                     <TableCell className="font-semibold">
-                      {formatCurrency(order.total_price)}
+                      {formatCurrencyByCountry(order.total_price, country)}
                     </TableCell>
                     <TableCell>{getStatusBadge(order.financial_status)}</TableCell>
                     <TableCell>{getFulfillmentBadge(order.fulfillment_status)}</TableCell>
@@ -2102,7 +2127,7 @@ export default function VentasPage() {
                       previousPeriodChange={customerMetrics.averageCustomerValueChange}
                       historicalValue={null}
                       historicalChange={undefined}
-                      formatValue={(v) => formatCurrency(v)}
+                      formatValue={(v) => formatCurrencyByCountry(v, country)}
                     />
                   </div>
                 )}
@@ -2171,7 +2196,7 @@ export default function VentasPage() {
                                   )}
                                 </TableCell>
                                 <TableCell className="text-right">
-                                  <span className="font-semibold">{formatCurrency(customer.totalSpent)}</span>
+                                  <span className="font-semibold">{formatCurrencyByCountry(customer.totalSpent, country)}</span>
                                 </TableCell>
                               </TableRow>
                             )
@@ -2250,7 +2275,7 @@ export default function VentasPage() {
                                   )}
                                 </TableCell>
                                 <TableCell className="text-right">
-                                  <span className="font-semibold">{formatCurrency(customer.totalSpent)}</span>
+                                  <span className="font-semibold">{formatCurrencyByCountry(customer.totalSpent, country)}</span>
                                 </TableCell>
                               </TableRow>
                             )

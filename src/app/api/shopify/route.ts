@@ -4,6 +4,7 @@ import { Database } from '@/types/database'
 import { subDays, format, parseISO, differenceInDays, startOfMonth, endOfMonth, subMonths } from 'date-fns'
 import { ShopifyCustomer, ShopifyCustomerMetrics, ShopifyLocationMetrics, ShopifyEmployeeMetrics } from '@/types'
 import { normalizeStoreName } from '@/lib/integrations/acuity'
+import { MXN_TO_EUR_RATE } from '@/lib/utils/format'
 
 export async function GET(request: NextRequest) {
   try {
@@ -75,10 +76,12 @@ async function getOrders(
   const status = searchParams.get('status') // all, paid, pending, refunded
   const search = searchParams.get('search')
   const onlineOnly = searchParams.get('onlineOnly') === 'true'
+  const country = (searchParams.get('country') || 'ES').toUpperCase()
 
   let query = supabase
     .from('shopify_orders')
     .select('*')
+    .eq('country', country) // Filtrar por país
     .order('created_at', { ascending: false })
 
   if (startDate) {
@@ -134,6 +137,7 @@ async function getMetrics(
   const startDate = searchParams.get('startDate')
   const endDate = searchParams.get('endDate')
   const onlineOnly = searchParams.get('onlineOnly') === 'true'
+  const country = (searchParams.get('country') || 'ES').toUpperCase()
 
   const today = new Date()
   const periodEnd = endDate ? parseISO(endDate) : today
@@ -149,6 +153,7 @@ async function getMetrics(
   const { data: currentData, error: currentError } = await supabase
     .from('shopify_orders')
     .select('total_price, financial_status, line_items, customer_email, created_at, tags')
+    .eq('country', country) // Filtrar por país
     .gte('created_at', periodStart.toISOString())
     .lte('created_at', periodEnd.toISOString())
 
@@ -160,6 +165,7 @@ async function getMetrics(
   const { data: previousData, error: previousError } = await supabase
     .from('shopify_orders')
     .select('total_price, financial_status, line_items, customer_email, created_at, tags')
+    .eq('country', country) // Filtrar por país
     .gte('created_at', previousPeriodStart.toISOString())
     .lte('created_at', previousPeriodEnd.toISOString())
 
@@ -307,6 +313,7 @@ async function getMetrics(
   const { data: currentMetaData } = await supabase
     .from('meta_campaigns')
     .select('spend, campaign_name')
+    .eq('country', country) // Filtrar por país
     .gte('date', format(periodStart, 'yyyy-MM-dd'))
     .lte('date', format(periodEnd, 'yyyy-MM-dd'))
 
@@ -325,6 +332,7 @@ async function getMetrics(
   const { data: previousMetaData } = await supabase
     .from('meta_campaigns')
     .select('spend, campaign_name')
+    .eq('country', country) // Filtrar por país
     .gte('date', format(previousPeriodStart, 'yyyy-MM-dd'))
     .lte('date', format(previousPeriodEnd, 'yyyy-MM-dd'))
 
@@ -448,10 +456,12 @@ async function getProducts(
   const endDate = searchParams.get('endDate')
   const filterType = searchParams.get('filterType') || 'monthly' // 'monthly' or 'total'
   const onlineOnly = searchParams.get('onlineOnly') === 'true'
+  const country = (searchParams.get('country') || 'ES').toUpperCase()
 
   let query = supabase
     .from('shopify_orders')
     .select('line_items, created_at, tags')
+    .eq('country', country) // Filtrar por país
     .order('created_at', { ascending: false })
 
   // Solo filtrar por fecha si es mensual, si es total no filtrar
@@ -530,6 +540,7 @@ async function getComplements(
   const endDate = searchParams.get('endDate')
   const filterType = searchParams.get('filterType') || 'total' // 'monthly' or 'total'
   const onlineOnly = searchParams.get('onlineOnly') === 'true'
+  const country = (searchParams.get('country') || 'ES').toUpperCase()
 
   // Lista de complementos según la imagen y los productos que aparecen en la tabla
   // Incluimos variantes y términos relacionados
@@ -654,6 +665,7 @@ async function getCharts(
   const startDate = searchParams.get('startDate')
   const endDate = searchParams.get('endDate')
   const onlineOnly = searchParams.get('onlineOnly') === 'true'
+  const country = (searchParams.get('country') || 'ES').toUpperCase()
 
   const today = new Date()
   const periodEnd = endDate ? parseISO(endDate) : today
@@ -665,6 +677,7 @@ async function getCharts(
   const { data, error } = await supabase
     .from('shopify_orders')
     .select('total_price, created_at, tags')
+    .eq('country', country) // Filtrar por país
     .gte('created_at', periodStart.toISOString())
     .lte('created_at', periodEnd.toISOString())
     .order('created_at', { ascending: true })
@@ -718,6 +731,7 @@ async function getMonthlyRevenue(
   // Obtener últimos 12 meses
   const months = parseInt(searchParams.get('months') || '12', 10)
   const onlineOnly = searchParams.get('onlineOnly') === 'true'
+  const country = (searchParams.get('country') || 'ES').toUpperCase()
   const today = new Date()
   const startMonth = startOfMonth(subMonths(today, months - 1))
   startMonth.setHours(0, 0, 0, 0)
@@ -735,6 +749,7 @@ async function getMonthlyRevenue(
   const { data, error } = await supabase
     .from('shopify_orders')
     .select('total_price, created_at, tags')
+    .eq('country', country) // Filtrar por país
     .gte('created_at', startMonth.toISOString())
     .lte('created_at', endMonth.toISOString())
     .order('created_at', { ascending: true })
@@ -801,11 +816,13 @@ async function getCustomers(
   const limit = parseInt(searchParams.get('limit') || '50', 10)
   const offset = parseInt(searchParams.get('offset') || '0', 10)
   const periodBasedLTV = searchParams.get('periodBasedLTV') === 'true' // Nuevo parámetro
+  const country = (searchParams.get('country') || 'ES').toUpperCase()
 
   // Obtener pedidos
   let query = supabase
     .from('shopify_orders')
     .select('customer_email, customer_name, total_price, created_at, tags')
+    .eq('country', country) // Filtrar por país
     .order('created_at', { ascending: false })
 
   // Si periodBasedLTV=true y hay fechas, filtrar pedidos por período
@@ -944,6 +961,7 @@ async function getCustomerMetrics(
 ) {
   const startDate = searchParams.get('startDate')
   const endDate = searchParams.get('endDate')
+  const country = (searchParams.get('country') || 'ES').toUpperCase()
 
   const today = new Date()
   const periodEnd = endDate ? parseISO(endDate) : today
@@ -962,6 +980,7 @@ async function getCustomerMetrics(
   const { data: currentOrdersData, error: currentError } = await supabase
     .from('shopify_orders')
     .select('customer_email, total_price, created_at')
+    .eq('country', country) // Filtrar por país
     .gte('created_at', periodStart.toISOString())
     .lte('created_at', periodEnd.toISOString())
 
@@ -973,6 +992,7 @@ async function getCustomerMetrics(
   const { data: previousOrdersData, error: previousError } = await supabase
     .from('shopify_orders')
     .select('customer_email, total_price, created_at')
+    .eq('country', country) // Filtrar por país
     .gte('created_at', previousPeriodStart.toISOString())
     .lte('created_at', previousPeriodEnd.toISOString())
 
@@ -1116,8 +1136,11 @@ async function getCustomerMetrics(
 function extractLocationFromTags(tags: string[] | null | undefined): string | null {
   if (!tags || tags.length === 0) return null
 
-  // Ubicaciones conocidas
-  const knownLocations = ['Madrid', 'Sevilla', 'Málaga', 'Malaga', 'Barcelona', 'Bilbao', 'Valencia', 'Murcia', 'Zaragoza', 'México', 'Mexico']
+  // Ubicaciones conocidas (incluyendo variantes de México)
+  const knownLocations = [
+    'Madrid', 'Sevilla', 'Málaga', 'Malaga', 'Barcelona', 'Bilbao', 
+    'Valencia', 'Murcia', 'Zaragoza', 'México', 'Mexico', 'CDMX', 'Polanco'
+  ]
 
   // Buscar en los tags
   for (const tag of tags) {
@@ -1126,12 +1149,21 @@ function extractLocationFromTags(tags: string[] | null | undefined): string | nu
     // Buscar formato "Tienda: X"
     if (tagLower.startsWith('tienda:')) {
       const location = tag.substring(7).trim()
+      const locationLower = location.toLowerCase()
+      // Si es CDMX o Polanco, mapear a México
+      if (locationLower === 'cdmx' || locationLower === 'polanco') {
+        return 'México'
+      }
       return location || null
     }
 
     // Buscar ubicación conocida directamente
     for (const location of knownLocations) {
       if (tagLower === location.toLowerCase() || tagLower.includes(location.toLowerCase())) {
+        // Si encontramos CDMX o Polanco, devolver México
+        if (location === 'CDMX' || location === 'Polanco') {
+          return 'México'
+        }
         return location
       }
     }
@@ -1354,6 +1386,8 @@ async function getLocations(
 ) {
   const startDate = searchParams.get('startDate')
   const endDate = searchParams.get('endDate')
+  const country = (searchParams.get('country') || 'ES').toUpperCase()
+  const fetchAllCountries = country === 'ALL' // Si es ALL, obtener de ambos países
 
   const periodStart = startDate ? parseISO(startDate) : subDays(new Date(), 30)
   periodStart.setHours(0, 0, 0, 0)
@@ -1391,10 +1425,15 @@ async function getLocations(
   // Obtener pedidos del período
   let query = supabase
     .from('shopify_orders')
-    .select('tags, total_price, created_at, customer_email, customer_name, line_items')
+    .select('tags, total_price, created_at, customer_email, customer_name, line_items, country')
     .gte('created_at', periodStart.toISOString())
     .lte('created_at', periodEnd.toISOString())
     .order('created_at', { ascending: false })
+  
+  // Solo filtrar por país si no es ALL
+  if (!fetchAllCountries) {
+    query = query.eq('country', country)
+  }
 
   const { data, error } = await query
   if (error) {
@@ -1404,11 +1443,18 @@ async function getLocations(
   const orders = (data || []) as Array<Database['public']['Tables']['shopify_orders']['Row']>
 
   // Obtener campañas de Meta Ads del período
-  const { data: metaData } = await supabase
+  let metaQuery = supabase
     .from('meta_campaigns')
     .select('campaign_name, spend')
     .gte('date', format(periodStart, 'yyyy-MM-dd'))
     .lte('date', format(periodEnd, 'yyyy-MM-dd'))
+  
+  // Solo filtrar por país si no es ALL
+  if (!fetchAllCountries) {
+    metaQuery = metaQuery.eq('country', country)
+  }
+  
+  const { data: metaData } = await metaQuery
 
   // Agrupar gasto de Meta Ads por ubicación basándome en el nombre de la campaña
   const locationMetaSpendMap = new Map<string, number>()
@@ -1445,13 +1491,23 @@ async function getLocations(
 
   orders.forEach(order => {
     const tags = (order as any).tags as string[] | null
+    const orderCountry = (order as any).country as string
     const location = extractLocationFromTags(tags)
     
-    // Si no tiene tags o el array está vacío, es un pedido online
-    const isOnlineOrder = !tags || tags.length === 0
-    const finalLocation = isOnlineOrder ? 'online' : (location || 'Sin ubicación')
+    let finalLocation: string
     
-    if (finalLocation === 'Sin ubicación') return // Ignorar pedidos sin ubicación y sin tags
+    // Si el pedido es de México, siempre va a la tarjeta "México"
+    if (orderCountry === 'MX') {
+      finalLocation = 'México'
+    } else {
+      // Si es de España:
+      // - Si tiene tags y ubicación, usar la ubicación extraída
+      // - Si no tiene tags, es "online"
+      const isOnlineOrder = !tags || tags.length === 0
+      finalLocation = isOnlineOrder ? 'online' : (location || 'Sin ubicación')
+      
+      if (finalLocation === 'Sin ubicación') return // Ignorar pedidos sin ubicación y sin tags
+    }
 
     const existing = locationMap.get(finalLocation) || {
       revenue: 0,
@@ -1514,7 +1570,7 @@ async function getLocations(
     locationMap.set(finalLocation, existing)
   })
 
-  // Convertir a array y calcular métricas
+  // Convertir a array y calcular métricas (usando la tasa centralizada de format.ts)
   const locations: ShopifyLocationMetrics[] = Array.from(locationMap.entries())
     .map(([location, data]) => {
       // Top 3 clientes
@@ -1557,11 +1613,22 @@ async function getLocations(
       const locationMetaSpend = locationMetaSpendMap.get(location) || 0
       const locationROAS = locationMetaSpend > 0 ? data.revenue / locationMetaSpend : undefined
 
+      // Para México, calcular conversión a EUR
+      const isMexico = location === 'México'
+      const revenueInEUR = isMexico 
+        ? Math.round(data.revenue * MXN_TO_EUR_RATE * 100) / 100 
+        : data.revenue
+      const aovInEUR = isMexico && data.orders > 0
+        ? Math.round((data.revenue / data.orders) * MXN_TO_EUR_RATE * 100) / 100
+        : (data.orders > 0 ? Math.round((data.revenue / data.orders) * 100) / 100 : 0)
+
       return {
         location,
         revenue: Math.round(data.revenue * 100) / 100,
+        revenueInEUR, // Para ordenar correctamente
         orders: data.orders,
         averageOrderValue: data.orders > 0 ? Math.round((data.revenue / data.orders) * 100) / 100 : 0,
+        averageOrderValueInEUR: aovInEUR, // Para tooltip
         percentageOfTotal: totalRevenue > 0 ? Math.round((data.revenue / totalRevenue) * 100 * 100) / 100 : 0,
         roas: locationROAS ? Math.round(locationROAS * 100) / 100 : undefined, // ROAS específico por tienda
         topCustomers,
@@ -1570,7 +1637,7 @@ async function getLocations(
         monthlyRevenue,
       }
     })
-    .sort((a, b) => b.revenue - a.revenue)
+    .sort((a, b) => b.revenueInEUR - a.revenueInEUR) // Ordenar por revenue en EUR
 
   return NextResponse.json({
     success: true,
@@ -1832,6 +1899,7 @@ async function getOnlineTimeAnalysis(
 ) {
   const startDate = searchParams.get('startDate')
   const endDate = searchParams.get('endDate')
+  const country = (searchParams.get('country') || 'ES').toUpperCase()
 
   const periodStart = startDate ? parseISO(startDate) : subDays(new Date(), 30)
   periodStart.setHours(0, 0, 0, 0)
@@ -1842,6 +1910,7 @@ async function getOnlineTimeAnalysis(
   const { data, error } = await supabase
     .from('shopify_orders')
     .select('total_price, created_at, tags')
+    .eq('country', country) // Filtrar por país
     .gte('created_at', periodStart.toISOString())
     .lte('created_at', periodEnd.toISOString())
 
@@ -1922,6 +1991,7 @@ async function getOnlineCustomerSegmentation(
 ) {
   const startDate = searchParams.get('startDate')
   const endDate = searchParams.get('endDate')
+  const country = (searchParams.get('country') || 'ES').toUpperCase()
 
   const periodStart = startDate ? parseISO(startDate) : subDays(new Date(), 30)
   periodStart.setHours(0, 0, 0, 0)
@@ -1932,6 +2002,7 @@ async function getOnlineCustomerSegmentation(
   const { data: allOrdersData, error } = await supabase
     .from('shopify_orders')
     .select('customer_email, total_price, created_at, tags')
+    .eq('country', country) // Filtrar por país
     .order('created_at', { ascending: false })
 
   if (error) {

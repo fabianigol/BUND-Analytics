@@ -4,6 +4,7 @@ import { Database } from '@/types/database';
 import { YearlyTargetTrend, StoreYearlyTrend, MonthlyTargetData } from '@/types';
 import { getMonthLabel } from '@/lib/utils/date';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
+import { MXN_TO_EUR_RATE } from '@/lib/utils/format';
 
 type SalesTargetRow = Database['public']['Tables']['sales_targets']['Row'];
 type ShopifyOrderRow = Database['public']['Tables']['shopify_orders']['Row'];
@@ -14,18 +15,27 @@ type ShopifyOrderRow = Database['public']['Tables']['shopify_orders']['Row'];
 function extractLocationFromTags(tags: string[] | null | undefined): string | null {
   if (!tags || tags.length === 0) return null;
   
-  const knownLocations = ['Madrid', 'Sevilla', 'Málaga', 'Malaga', 'Barcelona', 'Bilbao', 'Valencia', 'Murcia', 'Zaragoza', 'México', 'Mexico', 'online'];
+  const knownLocations = ['Madrid', 'Sevilla', 'Málaga', 'Malaga', 'Barcelona', 'Bilbao', 'Valencia', 'Murcia', 'Zaragoza', 'México', 'Mexico', 'CDMX', 'Polanco', 'online'];
   
   for (const tag of tags) {
     const tagLower = tag.toLowerCase().trim();
     
     if (tagLower.startsWith('tienda:')) {
       const location = tag.substring(7).trim();
+      const locationLower = location.toLowerCase();
+      // Si es CDMX o Polanco, mapear a México
+      if (locationLower === 'cdmx' || locationLower === 'polanco') {
+        return 'México';
+      }
       return location || null;
     }
     
     for (const location of knownLocations) {
       if (tagLower === location.toLowerCase() || tagLower.includes(location.toLowerCase())) {
+        // Si encontramos CDMX o Polanco, devolver México
+        if (location === 'CDMX' || location === 'Polanco') {
+          return 'México';
+        }
         return location;
       }
     }
@@ -131,7 +141,18 @@ export async function GET(request: NextRequest) {
       const orders: ShopifyOrderRow[] = (monthOrders || []) as ShopifyOrderRow[];
       
       // Calcular facturación total del mes (suma de todos los pedidos)
-      const totalCurrentRevenueMonth = orders.reduce((sum, order) => sum + (order.total_price || 0), 0);
+      // IMPORTANTE: Convertir México a EUR para el cálculo total
+      const totalCurrentRevenueMonth = orders.reduce((sum, order) => {
+        const orderCountry = (order as any).country || 'ES';
+        const orderRevenue = order.total_price || 0;
+        
+        // Si es de México, convertir a EUR antes de sumar
+        if (orderCountry === 'MX') {
+          return sum + (orderRevenue * MXN_TO_EUR_RATE);
+        }
+        
+        return sum + orderRevenue;
+      }, 0);
       
       // Calcular % consecución del mes
       const achievementPercentage = totalTargetRevenueMonth > 0 
@@ -155,17 +176,29 @@ export async function GET(request: NextRequest) {
       for (const location of uniqueLocations) {
         const storeTarget = monthTargets.find(t => t.location === location);
         const targetRevenue = storeTarget ? storeTarget.target_revenue : 0;
+        const targetCountry = (storeTarget as any)?.country || 'ES';
         
         // Filtrar pedidos de esta ubicación
         const storeOrders = orders.filter(order => {
           const orderTags = (order as any).tags || [];
+          const orderCountry = (order as any).country || 'ES';
+          
+          // Verificar que sea del mismo país
+          if (orderCountry !== targetCountry) {
+            return false;
+          }
+          
+          // Para México: TODOS los pedidos de MX
+          if (location === 'México' || location === 'Mexico') {
+            return orderCountry === 'MX';
+          }
           
           // Para "online": pedidos SIN tags (o array vacío)
           if (location === 'online') {
             return !orderTags || orderTags.length === 0;
           }
           
-          // Para tiendas físicas: pedidos CON el tag correspondiente
+          // Para tiendas físicas de España: pedidos CON el tag correspondiente
           const orderLocation = extractLocationFromTags(orderTags);
           return orderLocation === location;
         });

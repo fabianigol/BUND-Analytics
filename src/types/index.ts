@@ -40,6 +40,7 @@ export interface ShopifyOrder {
   customer_email: string;
   customer_name: string;
   line_items: ShopifyLineItem[];
+  country: string;
   created_at: string;
   processed_at: string;
   tags?: string[];
@@ -103,8 +104,10 @@ export interface ShopifyCustomerMetrics {
 export interface ShopifyLocationMetrics {
   location: string;
   revenue: number;
+  revenueInEUR?: number; // Para ordenar correctamente (México en EUR)
   orders: number;
   averageOrderValue: number;
+  averageOrderValueInEUR?: number; // Para tooltip (México en EUR)
   percentageOfTotal: number;
   roas?: number; // ROAS para esta ubicación
   topCustomers?: Array<{
@@ -417,6 +420,7 @@ export interface SalesTarget {
   targetRevenue: number;
   targetAov: number;
   conversionRate: number;
+  country: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -425,20 +429,21 @@ export interface LocationTargetProgress {
   location: string;
   targetRevenue: number;
   currentRevenue: number;
+  currentRevenueInEUR?: number; // Para México: facturación en EUR (para ordenar y totales)
   progressPercentage: number;
   targetAov: number;
   currentAov: number;
   conversionRate: number;
-  
+
   // Cálculos de citas
   targetOrders: number; // targetRevenue / targetAov
   currentOrders: number;
   targetAppointments: number; // targetOrders / (conversionRate / 100)
   currentAppointments: number; // Del mes actual (solo medición)
-  
+
   // Desglose semanal
   weeklyBreakdown: WeeklyProgress[];
-  
+
   // Datos mensuales
   monthlyRevenue: Array<{ date: string; value: number }>;
   dailyRevenue: Array<{ date: string; value: number }>;
@@ -487,4 +492,3 @@ export interface StoreYearlyTrend {
   year: number;
   monthlyData: MonthlyTargetData[]; // Datos mes a mes de esta tienda
 }
-

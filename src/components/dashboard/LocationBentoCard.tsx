@@ -1,18 +1,20 @@
 'use client'
 
 import { Card, CardContent } from '@/components/ui/card'
-import { formatCurrency, formatNumber } from '@/lib/utils/format'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { formatCurrency, formatCurrencyByCountry, formatNumber } from '@/lib/utils/format'
 import { ShopifyLocationMetrics } from '@/types'
 import {
   Area,
   AreaChart as RechartsAreaChart,
   CartesianGrid,
   ResponsiveContainer,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   XAxis,
   YAxis,
 } from 'recharts'
 import { cn } from '@/lib/utils'
+import { Info } from 'lucide-react'
 
 interface LocationBentoCardProps {
   location: ShopifyLocationMetrics
@@ -20,6 +22,13 @@ interface LocationBentoCardProps {
 }
 
 export function LocationBentoCard({ location, className }: LocationBentoCardProps) {
+  // Detectar país de la ubicación (basado en currency o location name)
+  const isMexicoLocation = 
+    location.location.toLowerCase().includes('méxico') ||
+    location.location.toLowerCase().includes('mexico') ||
+    location.location.toLowerCase().includes('cdmx')
+  const country: 'ES' | 'MX' = isMexicoLocation ? 'MX' : 'ES'
+  
   // Colores para diferentes tiendas
   const locationColors: { [key: string]: { primary: string; gradient: string; bg: string } } = {
     'Madrid': { primary: '#3b82f6', gradient: '#60a5fa', bg: 'bg-blue-50' },
@@ -49,50 +58,79 @@ export function LocationBentoCard({ location, className }: LocationBentoCardProp
     })) || []
 
   return (
-    <Card className={cn('overflow-hidden border-2 hover:shadow-lg transition-all duration-300', className)}>
-      <CardContent className="p-4">
-        {/* Header con nombre de tienda y % del total */}
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h3 className="text-xl font-bold text-foreground">{location.location}</h3>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              {location.percentageOfTotal.toFixed(1)}% del total
-            </p>
-          </div>
-          <div
-            className="px-3 py-1.5 rounded-lg text-white font-bold text-sm"
-            style={{ backgroundColor: colors.primary }}
-          >
-            {location.percentageOfTotal.toFixed(1)}%
-          </div>
-        </div>
-
-        {/* Grid de métricas principales */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          {/* Facturación */}
-          <div className="space-y-1">
-            <p className="text-xs text-muted-foreground">Facturación</p>
-            <p className="text-lg font-bold">{formatCurrency(location.revenue)}</p>
+    <TooltipProvider>
+      <Card className={cn('overflow-hidden border-2 hover:shadow-lg transition-all duration-300', className)}>
+        <CardContent className="p-4">
+          {/* Header con nombre de tienda y % del total */}
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <h3 className="text-xl font-bold text-foreground">{location.location}</h3>
+              <p className="text-sm text-muted-foreground mt-0.5">
+                {location.percentageOfTotal.toFixed(1)}% del total
+              </p>
+            </div>
+            <div
+              className="px-3 py-1.5 rounded-lg text-white font-bold text-sm"
+              style={{ backgroundColor: colors.primary }}
+            >
+              {location.percentageOfTotal.toFixed(1)}%
+            </div>
           </div>
 
-          {/* Pedidos */}
-          <div className="space-y-1">
-            <p className="text-xs text-muted-foreground">Pedidos</p>
-            <p className="text-lg font-bold">{formatNumber(location.orders)}</p>
-          </div>
+          {/* Grid de métricas principales */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            {/* Facturación */}
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">Facturación</p>
+              {isMexicoLocation && location.revenueInEUR ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-1">
+                      <p className="text-lg font-bold">{formatCurrencyByCountry(location.revenue, country)}</p>
+                      <Info className="h-3 w-3 text-muted-foreground" />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs">≈ {formatCurrency(location.revenueInEUR)} EUR</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <p className="text-lg font-bold">{formatCurrencyByCountry(location.revenue, country)}</p>
+              )}
+            </div>
 
-          {/* AOV */}
-          <div className="space-y-1">
-            <p className="text-xs text-muted-foreground">AOV</p>
-            <p className="text-lg font-bold">{formatCurrency(location.averageOrderValue)}</p>
-          </div>
+            {/* Pedidos */}
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">Pedidos</p>
+              <p className="text-lg font-bold">{formatNumber(location.orders)}</p>
+            </div>
 
-          {/* ROAS */}
-          <div className="space-y-1">
-            <p className="text-xs text-muted-foreground">ROAS</p>
-            <p className="text-lg font-bold">{location.roas !== undefined ? location.roas.toFixed(2) : '—'}</p>
+            {/* AOV */}
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">AOV</p>
+              {isMexicoLocation && location.averageOrderValueInEUR ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-1">
+                      <p className="text-lg font-bold">{formatCurrencyByCountry(location.averageOrderValue, country)}</p>
+                      <Info className="h-3 w-3 text-muted-foreground" />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs">≈ {formatCurrency(location.averageOrderValueInEUR)} EUR</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <p className="text-lg font-bold">{formatCurrencyByCountry(location.averageOrderValue, country)}</p>
+              )}
+            </div>
+
+            {/* ROAS */}
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">ROAS</p>
+              <p className="text-lg font-bold">{location.roas !== undefined ? location.roas.toFixed(2) : '—'}</p>
+            </div>
           </div>
-        </div>
 
         {/* Gráfico de evolución diaria */}
         {dailyChartData.length > 0 && (
@@ -127,14 +165,14 @@ export function LocationBentoCard({ location, className }: LocationBentoCardProp
                       return `€${v}`
                     }}
                   />
-                  <Tooltip
+                  <RechartsTooltip
                     content={({ active, payload, label }) => {
                       if (active && payload && payload.length) {
                         return (
                           <div className="rounded-lg border bg-background p-2 shadow-lg">
                             <p className="text-xs text-muted-foreground">{label}</p>
                             <p className="text-sm font-semibold">
-                              {formatCurrency(payload[0].value as number)}
+                              {formatCurrencyByCountry(payload[0].value as number, country)}
                             </p>
                           </div>
                         )
@@ -189,7 +227,7 @@ export function LocationBentoCard({ location, className }: LocationBentoCardProp
                       {complement.name}
                     </span>
                     <span className="ml-2 font-bold text-foreground flex-shrink-0">
-                      {formatCurrency(complement.revenue)}
+                      {formatCurrencyByCountry(complement.revenue, country)}
                     </span>
                   </div>
                 ))
@@ -201,6 +239,7 @@ export function LocationBentoCard({ location, className }: LocationBentoCardProp
         </div>
       </CardContent>
     </Card>
+    </TooltipProvider>
   )
 }
 

@@ -10,6 +10,37 @@ export function formatCurrency(amount: number, currency: string = 'EUR'): string
   }).format(amount)
 }
 
+export function formatCurrencyMXN(amount: number): string {
+  // Formato: $1,234 MXN
+  const formatted = new Intl.NumberFormat('es-MX', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount)
+  return `$${formatted} MXN`
+}
+
+export function formatCurrencyByCountry(amount: number, country: 'ES' | 'MX'): string {
+  if (country === 'MX') {
+    return formatCurrencyMXN(amount)
+  }
+  return formatCurrency(amount) // EUR por defecto
+}
+
+/**
+ * Tasa de conversión MXN a EUR
+ * Tipo de cambio aproximado: 1 EUR = 21.28 MXN (o 1 MXN = 0.047 EUR)
+ * Actualizar periódicamente según el tipo de cambio real
+ */
+export const MXN_TO_EUR_RATE = 0.047
+
+/**
+ * Convierte MXN a EUR y formatea
+ */
+export function convertMXNtoEUR(amountMXN: number): string {
+  const amountEUR = amountMXN * MXN_TO_EUR_RATE
+  return formatCurrency(amountEUR, 'EUR')
+}
+
 export function formatNumber(num: number): string {
   return new Intl.NumberFormat('es-ES').format(num)
 }

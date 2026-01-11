@@ -1,4 +1,8 @@
 import { ShopifyOrder, ShopifyLineItem } from '@/types'
+import { 
+  getShopifyAccessTokenMX, 
+  isShopifyOAuthConfiguredMX 
+} from './shopify-oauth'
 
 interface ShopifyConfig {
   shopDomain: string
@@ -530,7 +534,7 @@ export class ShopifyService {
     }>
     created_at: string
     processed_at: string
-  }): Omit<ShopifyOrder, 'id'> {
+  }, country: string = 'ES'): Omit<ShopifyOrder, 'id'> {
     // Convertir tags de string a array (Shopify devuelve "tag1, tag2, tag3")
     const tagsArray = apiOrder.tags 
       ? apiOrder.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
@@ -557,11 +561,12 @@ export class ShopifyService {
       created_at: apiOrder.created_at,
       processed_at: apiOrder.processed_at,
       tags: tagsArray,
+      country: country,
     }
   }
 }
 
-// Factory function to create service instance from environment variables
+// Factory function to create service instance from environment variables (España)
 export function createShopifyService(): ShopifyService | null {
   const shopDomain = process.env.SHOPIFY_SHOP_DOMAIN
   const accessToken = process.env.SHOPIFY_ACCESS_TOKEN
@@ -571,6 +576,87 @@ export function createShopifyService(): ShopifyService | null {
     accessToken,
     apiVersion: process.env.SHOPIFY_API_VERSION,
   })
+}
+
+// Factory function to create service instance for México
+// DEPRECATED: Esta función síncrona solo funciona si hay un token directo
+// Para OAuth, usar createShopifyServiceMexicoAsync()
+export function createShopifyServiceMexico(): ShopifyService | null {
+  const shopDomain = process.env.SHOPIFY_SHOP_DOMAIN_MX
+  const accessToken = process.env.SHOPIFY_ACCESS_TOKEN_MX
+  if (!shopDomain || !accessToken) return null
+  return new ShopifyService({
+    shopDomain,
+    accessToken,
+    apiVersion: process.env.SHOPIFY_API_VERSION_MX || process.env.SHOPIFY_API_VERSION,
+  })
+}
+
+/**
+ * Factory function async para crear servicio de México con soporte OAuth
+ * Usa Client Credentials Grant si está configurado
+ */
+export async function createShopifyServiceMexicoAsync(): Promise<ShopifyService | null> {
+  const shopDomain = process.env.SHOPIFY_SHOP_DOMAIN_MX
+  const apiVersion = process.env.SHOPIFY_API_VERSION_MX || process.env.SHOPIFY_API_VERSION
+
+  if (!shopDomain) {
+    console.log('[Shopify MX] Shop domain not configured')
+    return null
+  }
+
+  // Método 1: OAuth con Client Credentials (preferido para Dev Apps)
+  if (isShopifyOAuthConfiguredMX()) {
+    console.log('[Shopify MX] Using OAuth Client Credentials Grant')
+    try {
+      const accessToken = await getShopifyAccessTokenMX()
+      if (accessToken) {
+        return new ShopifyService({
+          shopDomain,
+          accessToken,
+          apiVersion,
+        })
+      }
+    } catch (error) {
+      console.error('[Shopify MX] Failed to get OAuth token:', error)
+      // Continuar al método 2
+    }
+  }
+
+  // Método 2: Token directo (legacy, para Custom Apps)
+  const directToken = process.env.SHOPIFY_ACCESS_TOKEN_MX
+  if (directToken) {
+    console.log('[Shopify MX] Using direct access token (legacy)')
+    return new ShopifyService({
+      shopDomain,
+      accessToken: directToken,
+      apiVersion,
+    })
+  }
+
+  console.log('[Shopify MX] No authentication method available')
+  return null
+}
+
+// Factory function to create service by country
+// DEPRECATED: Usar createShopifyServiceByCountryAsync() para soporte OAuth en México
+export function createShopifyServiceByCountry(country: 'ES' | 'MX'): ShopifyService | null {
+  if (country === 'MX') {
+    return createShopifyServiceMexico()
+  }
+  return createShopifyService()
+}
+
+/**
+ * Factory function async para crear servicio por país con soporte OAuth
+ * México: Soporta OAuth Client Credentials
+ * España: Token directo (Custom App)
+ */
+export async function createShopifyServiceByCountryAsync(country: 'ES' | 'MX'): Promise<ShopifyService | null> {
+  if (country === 'MX') {
+    return await createShopifyServiceMexicoAsync()
+  }
+  return createShopifyService()
 }
 
 // Factory function to create service instance from config object
