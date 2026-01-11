@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { Database } from '@/types/database'
 import { format, subDays, parseISO, startOfDay, endOfDay, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns'
-import { calculatePercentageChange } from '@/lib/utils/format'
+import { calculatePercentageChange, MXN_TO_EUR_RATE } from '@/lib/utils/format'
 import { generateDashboardInsights } from '@/lib/utils/dashboard-insights'
 
 interface DashboardResponse {
@@ -27,6 +27,7 @@ interface DashboardResponse {
     name: string
     city: string | null
     ltv: number
+    currency: string
     orderCount: number
     hasNextAppointment: boolean
     nextAppointmentDate?: string
@@ -71,7 +72,7 @@ async function checkIntegrationStatus(
   return (data as any)?.connected || false
 }
 
-// Obtener ventas ayer y mes desde Shopify
+// Obtener ventas ayer y mes desde Shopify (España + México convertido a EUR)
 async function getShopifySales(supabase: Awaited<ReturnType<typeof createClient>>) {
   const today = new Date()
   const yesterday = subDays(today, 1)
@@ -80,22 +81,35 @@ async function getShopifySales(supabase: Awaited<ReturnType<typeof createClient>
   const monthStart = startOfMonth(today)
   const monthEnd = endOfMonth(today)
 
-  // Ventas ayer
+  // Ventas ayer (España + México)
   const { data: yesterdayOrders } = await supabase
     .from('shopify_orders')
-    .select('total_price')
+    .select('total_price, country')
     .gte('created_at', yesterdayStart.toISOString())
     .lte('created_at', yesterdayEnd.toISOString())
 
-  // Ventas mes
+  // Ventas mes (España + México)
   const { data: monthOrders } = await supabase
     .from('shopify_orders')
-    .select('total_price')
+    .select('total_price, country')
     .gte('created_at', monthStart.toISOString())
     .lte('created_at', monthEnd.toISOString())
 
-  const salesYesterday = ((yesterdayOrders || []) as Array<{ total_price: string | number | null }>).reduce((sum, order) => sum + (Number(order.total_price) || 0), 0)
-  const salesMonth = ((monthOrders || []) as Array<{ total_price: string | number | null }>).reduce((sum, order) => sum + (Number(order.total_price) || 0), 0)
+  // Calcular ventas ayer: España (EUR) + México (MXN → EUR)
+  const salesYesterday = ((yesterdayOrders || []) as Array<{ total_price: string | number | null; country: string }>).reduce((sum, order) => {
+    const price = Number(order.total_price) || 0
+    // Si es México, convertir MXN a EUR
+    const priceInEUR = order.country === 'MX' ? price * MXN_TO_EUR_RATE : price
+    return sum + priceInEUR
+  }, 0)
+
+  // Calcular ventas mes: España (EUR) + México (MXN → EUR)
+  const salesMonth = ((monthOrders || []) as Array<{ total_price: string | number | null; country: string }>).reduce((sum, order) => {
+    const price = Number(order.total_price) || 0
+    // Si es México, convertir MXN a EUR
+    const priceInEUR = order.country === 'MX' ? price * MXN_TO_EUR_RATE : price
+    return sum + priceInEUR
+  }, 0)
 
   return { salesYesterday, salesMonth }
 }
@@ -190,29 +204,31 @@ async function getAccumulatedROAS(supabase: Awaited<ReturnType<typeof createClie
   return roas
 }
 
-// Obtener ingresos diarios del mes en curso
+// Obtener ingresos diarios del mes en curso (España + México convertido a EUR)
 async function getDailyRevenueThisMonth(supabase: Awaited<ReturnType<typeof createClient>>) {
   const today = new Date()
   const monthStart = startOfMonth(today)
   const monthEnd = endOfMonth(today)
   monthEnd.setHours(23, 59, 59, 999)
 
-  // Obtener todos los pedidos del mes
+  // Obtener todos los pedidos del mes (España + México)
   const { data: ordersData } = await supabase
     .from('shopify_orders')
-    .select('total_price, created_at')
+    .select('total_price, created_at, country')
     .gte('created_at', monthStart.toISOString())
     .lte('created_at', monthEnd.toISOString())
     .order('created_at', { ascending: true })
 
-  // Agrupar por fecha
+  // Agrupar por fecha con conversión MXN → EUR
   const dailyRevenue = new Map<string, number>()
 
-  ;((ordersData || []) as Array<{ created_at: string; total_price: string | number | null }>).forEach((order) => {
+  ;((ordersData || []) as Array<{ created_at: string; total_price: string | number | null; country: string }>).forEach((order) => {
     const date = format(parseISO(order.created_at), 'yyyy-MM-dd')
     const revenue = Number(order.total_price) || 0
+    // Si es México, convertir MXN a EUR
+    const revenueInEUR = order.country === 'MX' ? revenue * MXN_TO_EUR_RATE : revenue
     const existing = dailyRevenue.get(date) || 0
-    dailyRevenue.set(date, existing + revenue)
+    dailyRevenue.set(date, existing + revenueInEUR)
   })
 
   // Generar todas las fechas del mes para tener datos completos
@@ -669,30 +685,58 @@ async function getStoreOccupationToday(supabase: Awaited<ReturnType<typeof creat
   return result
 }
 
-// Obtener top 10 clientes VIP
+// Obtener top 10 clientes VIP (mostrar en moneda original, ordenar por EUR)
 async function getTopVIPCustomers(supabase: Awaited<ReturnType<typeof createClient>>) {
-  // Obtener todos los clientes ordenados por LTV
+  // Obtener todos los clientes con su información de país
   const { data: ordersData } = await supabase
     .from('shopify_orders')
-    .select('customer_email, customer_name, total_price, tags')
+    .select('customer_email, customer_name, total_price, tags, country')
     .order('created_at', { ascending: false })
 
   if (!ordersData) return []
 
   // Agrupar por cliente
-  const customerMap = new Map<string, { email: string; name: string; ltv: number; orderCount: number; city: string | null }>()
+  const customerMap = new Map<string, { 
+    email: string
+    name: string
+    ltv: number
+    ltvInEUR: number
+    orderCount: number
+    city: string | null
+    currency: string
+    country: string
+  }>()
 
-  ;(ordersData as Array<{ customer_email: string; customer_name: string | null; total_price: string | number | null; tags: string[] | null }>).forEach((order) => {
+  ;(ordersData as Array<{ 
+    customer_email: string
+    customer_name: string | null
+    total_price: string | number | null
+    tags: string[] | null
+    country: string 
+  }>).forEach((order) => {
     const email = order.customer_email
+    const price = Number(order.total_price) || 0
+    const country = order.country || 'ES'
+    const currency = country === 'MX' ? 'MXN' : 'EUR'
+    
     const existing = customerMap.get(email) || {
       email,
       name: order.customer_name || email,
       ltv: 0,
+      ltvInEUR: 0,
       orderCount: 0,
       city: null,
+      currency,
+      country,
     }
 
-    existing.ltv += Number(order.total_price) || 0
+    // Acumular LTV en moneda original
+    existing.ltv += price
+    
+    // Acumular LTV convertido a EUR para ordenamiento
+    const priceInEUR = country === 'MX' ? price * MXN_TO_EUR_RATE : price
+    existing.ltvInEUR += priceInEUR
+    
     existing.orderCount += 1
 
     // Extraer ciudad de tags si no la tenemos
@@ -700,7 +744,7 @@ async function getTopVIPCustomers(supabase: Awaited<ReturnType<typeof createClie
       const tags = (order.tags as string[]) || []
       const locationTag = tags.find((tag) => {
         const normalized = tag.toLowerCase()
-        return ['madrid', 'barcelona', 'sevilla', 'málaga', 'malaga', 'valencia', 'murcia', 'bilbao', 'zaragoza'].some(
+        return ['madrid', 'barcelona', 'sevilla', 'málaga', 'malaga', 'valencia', 'murcia', 'bilbao', 'zaragoza', 'cdmx', 'mexico'].some(
           (city) => normalized.includes(city)
         )
       })
@@ -712,10 +756,10 @@ async function getTopVIPCustomers(supabase: Awaited<ReturnType<typeof createClie
     customerMap.set(email, existing)
   })
 
-  // Filtrar VIP (LTV >= 2000) y ordenar
+  // Filtrar VIP (LTV >= 2000 EUR equivalente) y ordenar por LTV en EUR
   const vipCustomers = Array.from(customerMap.values())
-    .filter((c) => c.ltv >= 2000)
-    .sort((a, b) => b.ltv - a.ltv)
+    .filter((c) => c.ltvInEUR >= 2000)
+    .sort((a, b) => b.ltvInEUR - a.ltvInEUR)
     .slice(0, 10)
 
   // Obtener próximas citas para estos clientes
@@ -740,12 +784,13 @@ async function getTopVIPCustomers(supabase: Awaited<ReturnType<typeof createClie
     }
   })
 
-  // Combinar datos
+  // Combinar datos (mostrar LTV en moneda original)
   return vipCustomers.map((customer) => ({
     email: customer.email,
     name: customer.name,
     city: customer.city,
-    ltv: Math.round(customer.ltv * 100) / 100,
+    ltv: Math.round(customer.ltv * 100) / 100, // LTV en moneda original
+    currency: customer.currency, // EUR o MXN
     orderCount: customer.orderCount,
     hasNextAppointment: appointmentsByEmail.has(customer.email),
     nextAppointmentDate: appointmentsByEmail.get(customer.email),

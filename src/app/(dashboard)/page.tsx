@@ -38,6 +38,7 @@ interface DashboardData {
     name: string
     city: string | null
     ltv: number
+    currency: string
     orderCount: number
     hasNextAppointment: boolean
     nextAppointmentDate?: string

@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { formatCurrency } from '@/lib/utils/format'
+import { formatCurrency, formatCurrencyByCountry } from '@/lib/utils/format'
 import { format, parseISO } from 'date-fns'
 import { Calendar, MapPin } from 'lucide-react'
 
@@ -19,6 +19,7 @@ interface VIPCustomer {
   name: string
   city: string | null
   ltv: number
+  currency: string
   orderCount: number
   hasNextAppointment: boolean
   nextAppointmentDate?: string
@@ -107,7 +108,12 @@ export function VIPCustomersTable({ customers, className }: VIPCustomersTablePro
                     )}
                   </TableCell>
                   <TableCell className="text-right">
-                    <span className="font-semibold">{formatCurrency(customer.ltv)}</span>
+                    <span className="font-semibold">
+                      {customer.currency === 'MXN' 
+                        ? formatCurrencyByCountry(customer.ltv, 'MX')
+                        : formatCurrency(customer.ltv)
+                      }
+                    </span>
                   </TableCell>
                   <TableCell className="text-center">
                     {customer.hasNextAppointment && customer.nextAppointmentDate ? (
