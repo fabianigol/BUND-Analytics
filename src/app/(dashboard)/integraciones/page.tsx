@@ -53,9 +53,19 @@ interface MetaCredentials {
 
 const integrations: Integration[] = [
   {
-    id: 'shopify',
-    name: 'Shopify',
-    description: 'Importa ventas, pedidos y datos de productos',
+    id: 'shopify_es',
+    name: 'Shopify España',
+    description: 'Importa ventas, pedidos y datos de productos de España',
+    iconImage: '/Logo Shopify.svg',
+    iconColor: 'bg-green-100 text-green-600',
+    connected: false,
+    status: 'disconnected',
+    docsUrl: 'https://shopify.dev/docs/api',
+  },
+  {
+    id: 'shopify_mx',
+    name: 'Shopify México',
+    description: 'Importa ventas, pedidos y datos de productos de México',
     iconImage: '/Logo Shopify.svg',
     iconColor: 'bg-green-100 text-green-600',
     connected: false,
@@ -111,9 +121,19 @@ export default function IntegracionesPage() {
   const [integrations, setIntegrations] = useState<Integration[]>(() => {
     const initialIntegrations: Integration[] = [
       {
-        id: 'shopify',
-        name: 'Shopify',
-        description: 'Importa ventas, pedidos y datos de productos',
+        id: 'shopify_es',
+        name: 'Shopify España',
+        description: 'Importa ventas, pedidos y datos de productos de España',
+        iconImage: '/Logo Shopify.svg',
+        iconColor: 'bg-green-100 text-green-600',
+        connected: false,
+        status: 'disconnected',
+        docsUrl: 'https://shopify.dev/docs/api',
+      },
+      {
+        id: 'shopify_mx',
+        name: 'Shopify México',
+        description: 'Importa ventas, pedidos y datos de productos de México',
         iconImage: '/Logo Shopify.svg',
         iconColor: 'bg-green-100 text-green-600',
         connected: false,
@@ -171,8 +191,10 @@ export default function IntegracionesPage() {
   const [analyticsPropertyId, setAnalyticsPropertyId] = useState('')
   const [acuityCredentials, setAcuityCredentials] = useState({ userId: '', apiKey: '' })
   const [shopifyCredentials, setShopifyCredentials] = useState({ shopDomain: '', accessToken: '' })
+  const [shopifyOAuthCredentials, setShopifyOAuthCredentials] = useState({ shopDomain: '', clientId: '', clientSecret: '' })
   const [connecting, setConnecting] = useState(false)
   const [openDialog, setOpenDialog] = useState<string | null>(null)
+  const [currentIntegrationId, setCurrentIntegrationId] = useState<string | null>(null)
 
   // Cargar estado de integraciones
   useEffect(() => {
@@ -225,23 +247,35 @@ export default function IntegracionesPage() {
         }
       }
       
-      const [metaData, analyticsData, acuityData, shopifyData] = await Promise.all([
+      const [metaData, analyticsData, acuityData, shopifyESData, shopifyMXData] = await Promise.all([
         fetchWithErrorHandling(`/api/integrations/meta?t=${timestamp}&_=${Math.random()}`),
         fetchWithErrorHandling(`/api/integrations/analytics?t=${timestamp}&_=${Math.random()}`),
         fetchWithErrorHandling(`/api/integrations/acuity?t=${timestamp}&_=${Math.random()}`),
-        fetchWithErrorHandling(`/api/integrations/shopify?t=${timestamp}&_=${Math.random()}`),
+        fetchWithErrorHandling(`/api/integrations/shopify?country=ES&t=${timestamp}&_=${Math.random()}`),
+        fetchWithErrorHandling(`/api/integrations/shopify?country=MX&t=${timestamp}&_=${Math.random()}`),
       ])
 
       const baseIntegrations: Integration[] = [
         {
-          id: 'shopify',
-          name: 'Shopify',
-          description: 'Importa ventas, pedidos y datos de productos',
+          id: 'shopify_es',
+          name: 'Shopify España',
+          description: 'Importa ventas, pedidos y datos de productos de España',
           iconImage: '/Logo Shopify.svg',
           iconColor: 'bg-green-100 text-green-600',
-          connected: shopifyData.connected || false,
-          lastSync: shopifyData.lastSync || undefined,
-          status: shopifyData.connected ? 'connected' : 'disconnected',
+          connected: shopifyESData.connected || false,
+          lastSync: shopifyESData.lastSync || undefined,
+          status: shopifyESData.connected ? 'connected' : 'disconnected',
+          docsUrl: 'https://shopify.dev/docs/api',
+        },
+        {
+          id: 'shopify_mx',
+          name: 'Shopify México',
+          description: 'Importa ventas, pedidos y datos de productos de México',
+          iconImage: '/Logo Shopify.svg',
+          iconColor: 'bg-green-100 text-green-600',
+          connected: shopifyMXData.connected || false,
+          lastSync: shopifyMXData.lastSync || undefined,
+          status: shopifyMXData.connected ? 'connected' : 'disconnected',
           docsUrl: 'https://shopify.dev/docs/api',
         },
         {
@@ -621,19 +655,56 @@ export default function IntegracionesPage() {
   }
 
   const handleConnectShopify = async () => {
-    if (!shopifyCredentials.shopDomain || !shopifyCredentials.accessToken) {
-      alert('Por favor, completa todos los campos')
-      return
+    // Determinar país según el integration ID
+    const country = currentIntegrationId === 'shopify_mx' ? 'MX' : 'ES'
+
+    // Para México, validar OAuth credentials O access token directo
+    // Para España, validar solo access token directo
+    if (country === 'MX') {
+      const hasOAuthCredentials = shopifyOAuthCredentials.shopDomain && 
+                                   shopifyOAuthCredentials.clientId && 
+                                   shopifyOAuthCredentials.clientSecret
+      const hasDirectToken = shopifyCredentials.shopDomain && shopifyCredentials.accessToken
+
+      if (!hasOAuthCredentials && !hasDirectToken) {
+        alert('Por favor, completa Client ID + Client Secret (para Dev App) O Access Token (para Custom App)')
+        return
+      }
+    } else {
+      if (!shopifyCredentials.shopDomain || !shopifyCredentials.accessToken) {
+        alert('Por favor, completa todos los campos')
+        return
+      }
     }
 
     try {
       setConnecting(true)
+
+      // Preparar body según el método de autenticación
+      let requestBody: any = { country }
+
+      if (country === 'MX' && shopifyOAuthCredentials.clientId && shopifyOAuthCredentials.clientSecret) {
+        // México con OAuth
+        requestBody = {
+          ...requestBody,
+          shopDomain: shopifyOAuthCredentials.shopDomain,
+          clientId: shopifyOAuthCredentials.clientId,
+          clientSecret: shopifyOAuthCredentials.clientSecret,
+        }
+      } else {
+        // Token directo (España o México legacy)
+        requestBody = {
+          ...requestBody,
+          ...shopifyCredentials,
+        }
+      }
+
       const response = await fetch('/api/integrations/shopify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(shopifyCredentials),
+        body: JSON.stringify(requestBody),
       })
 
       if (!response.ok) {
@@ -647,7 +718,10 @@ export default function IntegracionesPage() {
       await loadIntegrations()
       setOpenDialog(null)
       setShopifyCredentials({ shopDomain: '', accessToken: '' })
-      alert('Shopify conectado correctamente')
+      setShopifyOAuthCredentials({ shopDomain: '', clientId: '', clientSecret: '' })
+      setCurrentIntegrationId(null)
+      const countryName = country === 'MX' ? 'México' : 'España'
+      alert(`Shopify ${countryName} conectado correctamente`)
     } catch (error) {
       console.error('Error connecting Shopify:', error)
       alert(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`)
@@ -656,13 +730,16 @@ export default function IntegracionesPage() {
     }
   }
 
-  const handleDisconnectShopify = async () => {
-    if (!confirm('¿Estás seguro de que deseas desconectar Shopify?')) {
+  const handleDisconnectShopify = async (integrationId: string) => {
+    const country = integrationId === 'shopify_mx' ? 'MX' : 'ES'
+    const countryName = country === 'MX' ? 'México' : 'España'
+    
+    if (!confirm(`¿Estás seguro de que deseas desconectar Shopify ${countryName}?`)) {
       return
     }
 
     try {
-      const response = await fetch('/api/integrations/shopify', {
+      const response = await fetch(`/api/integrations/shopify?country=${country}`, {
         method: 'DELETE',
       })
 
@@ -673,23 +750,29 @@ export default function IntegracionesPage() {
 
       // Recargar integraciones
       await loadIntegrations()
-      alert('Shopify desconectado correctamente')
+      alert(`Shopify ${countryName} desconectado correctamente`)
     } catch (error) {
       console.error('Error disconnecting Shopify:', error)
       alert(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`)
     }
   }
 
-  const handleSyncShopify = async () => {
+  const handleSyncShopify = async (integrationId: string) => {
+    const country = integrationId === 'shopify_mx' ? 'MX' : 'ES'
+    const countryName = country === 'MX' ? 'México' : 'España'
+    
     try {
-      setSyncing('shopify')
-      const response = await fetch('/api/sync/shopify', {
+      setSyncing(integrationId)
+      const response = await fetch(`/api/sync/shopify?country=${country}`, {
         method: 'POST',
       })
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Error al sincronizar')
+        const errorData = await response.json().catch(() => ({ error: 'Error desconocido' }))
+        const errorMsg = errorData.details 
+          ? `${errorData.error}\n\nDetalles: ${errorData.details}`
+          : errorData.error || 'Error al sincronizar'
+        throw new Error(errorMsg)
       }
 
       const data = await response.json()
@@ -697,11 +780,11 @@ export default function IntegracionesPage() {
       // Recargar integraciones para actualizar lastSync
       await loadIntegrations()
       
-      alert(`Sincronización completada:\n\n✅ ${data.records_synced || 0} pedido(s) sincronizado(s)`)
+      alert(`Sincronización de Shopify ${countryName} completada:\n\n✅ ${data.records_synced || 0} pedido(s) sincronizado(s)`)
     } catch (error) {
       console.error('Error syncing Shopify:', error)
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
-      alert(`Error al sincronizar:\n\n${errorMessage}`)
+      alert(`Error al sincronizar Shopify ${countryName}:\n\n${errorMessage}\n\nPor favor verifica:\n- Las credenciales son correctas\n- El token tiene permisos read_orders\n- El dominio de la tienda es correcto`)
     } finally {
       setSyncing(null)
     }
@@ -820,13 +903,21 @@ export default function IntegracionesPage() {
                 </div>
 
                 <div className="flex gap-2">
-                  <Dialog open={openDialog === integration.id} onOpenChange={(open) => setOpenDialog(open ? integration.id : null)}>
+                  <Dialog open={openDialog === integration.id} onOpenChange={(open) => {
+                    setOpenDialog(open ? integration.id : null)
+                    if (!open) {
+                      // Limpiar al cerrar
+                      setShopifyCredentials({ shopDomain: '', accessToken: '' })
+                      setCurrentIntegrationId(null)
+                    }
+                  }}>
                     <DialogTrigger asChild>
                       <Button
                         className="flex-1"
                         variant={integration.connected ? 'outline' : 'default'}
                         onClick={() => {
                           setSelectedIntegration(integration)
+                          setCurrentIntegrationId(integration.id)
                           if (integration.id === 'meta' && integration.connected) {
                             // Si ya está conectado, solo abrir para ver configuración
                           }
@@ -857,7 +948,7 @@ export default function IntegracionesPage() {
                         </DialogDescription>
                       </DialogHeader>
                       <div className="space-y-4 py-4">
-                        {integration.id === 'shopify' && (
+                        {integration.id === 'shopify_es' && (
                           <>
                             <div className="space-y-2">
                               <Label>Shop Domain</Label>
@@ -893,11 +984,77 @@ export default function IntegracionesPage() {
                                 El Access Token debe comenzar con <code>shpat_</code> o <code>shpca_</code>
                               </p>
                             </div>
+                          </>
+                        )}
+                        {integration.id === 'shopify_mx' && (
+                          <>
+                            <div className="bg-blue-50 border border-blue-200 p-3 rounded-md mb-4">
+                              <p className="text-sm text-blue-800 font-medium">
+                                🔐 Autenticación OAuth (Dev App)
+                              </p>
+                              <p className="text-xs text-blue-600 mt-1">
+                                Para Dev Apps de Shopify (2026+), usa Client ID + Client Secret.
+                                El sistema obtendrá automáticamente los tokens de acceso.
+                              </p>
+                              <p className="text-xs text-blue-700 mt-2 font-medium">
+                                ⚠️ Scopes requeridos: <code className="bg-blue-100 px-1 py-0.5 rounded">read_all_orders</code> (o <code className="bg-blue-100 px-1 py-0.5 rounded">read_orders + write_orders</code>), <code className="bg-blue-100 px-1 py-0.5 rounded">read_products</code>, <code className="bg-blue-100 px-1 py-0.5 rounded">read_customers</code>
+                              </p>
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Shop Domain</Label>
+                              <Input
+                                placeholder="tu-tienda-mx.myshopify.com"
+                                value={shopifyOAuthCredentials.shopDomain}
+                                onChange={(e) =>
+                                  setShopifyOAuthCredentials({
+                                    ...shopifyOAuthCredentials,
+                                    shopDomain: e.target.value,
+                                  })
+                                }
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Client ID</Label>
+                              <Input
+                                placeholder="tu_client_id"
+                                value={shopifyOAuthCredentials.clientId}
+                                onChange={(e) =>
+                                  setShopifyOAuthCredentials({
+                                    ...shopifyOAuthCredentials,
+                                    clientId: e.target.value,
+                                  })
+                                }
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Client Secret</Label>
+                              <Input
+                                type="password"
+                                placeholder="shpss_..."
+                                value={shopifyOAuthCredentials.clientSecret}
+                                onChange={(e) =>
+                                  setShopifyOAuthCredentials({
+                                    ...shopifyOAuthCredentials,
+                                    clientSecret: e.target.value,
+                                  })
+                                }
+                              />
+                              <p className="text-xs text-muted-foreground">
+                                Encuentra estas credenciales en la configuración de tu Dev App en el
+                                Partner Dashboard de Shopify.
+                                <br />
+                                <strong>⚠️ Permisos requeridos:</strong> <code>read_all_orders</code> (o <code>read_orders + write_orders</code>), <code>read_products</code>, <code>read_customers</code>
+                                <br />
+                                El Client Secret comienza con <code>shpss_</code>
+                                <br />
+                                <span className="text-amber-600">Después de configurar scopes, reinstala la app en tu tienda.</span>
+                              </p>
+                            </div>
                             {integration.connected && (
                               <div className="rounded-lg bg-blue-50 p-3 text-sm text-blue-800">
                                 <strong>✓ Conectado</strong>
                                 <br />
-                                Shopify está conectado y listo para sincronizar datos.
+                                Shopify {integration.id === 'shopify_mx' ? 'México' : 'España'} está conectado y listo para sincronizar datos.
                                 {integration.lastSync && (
                                   <>
                                     <br />
@@ -1078,7 +1235,7 @@ export default function IntegracionesPage() {
                               integration.connected ? 'Actualizar' : 'Conectar'
                             )}
                           </Button>
-                        ) : integration.id === 'shopify' ? (
+                        ) : integration.id === 'shopify_es' || integration.id === 'shopify_mx' ? (
                           <Button
                             onClick={handleConnectShopify}
                             disabled={connecting}
@@ -1140,14 +1297,14 @@ export default function IntegracionesPage() {
                       )}
                     </Button>
                   )}
-                  {integration.connected && integration.id === 'shopify' && (
+                  {integration.connected && (integration.id === 'shopify_es' || integration.id === 'shopify_mx') && (
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={handleSyncShopify}
-                      disabled={syncing === 'shopify'}
+                      onClick={() => handleSyncShopify(integration.id)}
+                      disabled={syncing === integration.id}
                     >
-                      {syncing === 'shopify' ? (
+                      {syncing === integration.id ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
                         <RefreshCw className="h-4 w-4" />
