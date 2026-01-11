@@ -542,58 +542,77 @@ async function getStoreOccupationToday(supabase: Awaited<ReturnType<typeof creat
     'Valencia',
   ]
 
-  // Obtener datos de acuity_availability_by_store para HOY
-  const { data: availabilityByStore } = await supabase
-    .from('acuity_availability_by_store')
+  // Obtener datos del snapshot diario para HOY
+  // Este snapshot captura el total del día COMPLETO al inicio del día
+  // Usamos acuity_availability_history con period_type='daily'
+  const { data: dailySnapshot } = await supabase
+    .from('acuity_availability_history')
     .select('store_name, appointment_category, booked_slots, total_slots, available_slots')
-    .eq('date', todayStr)
+    .eq('snapshot_date', todayStr)
+    .eq('period_type', 'daily')
+  
+  // Si no hay snapshot diario (ej: el cron no se ha ejecutado hoy), 
+  // usar datos de acuity_availability_by_store como fallback
+  const { data: availabilityByStore } = !dailySnapshot || dailySnapshot.length === 0
+    ? await supabase
+        .from('acuity_availability_by_store')
+        .select('store_name, appointment_category, booked_slots, total_slots, available_slots')
+        .eq('date', todayStr)
+    : { data: null }
 
   // Agrupar por tienda y categoría
   const storeMap = new Map<
     string,
     {
-      medicion: { booked: number; available: number }
-      fitting: { booked: number; available: number }
+      medicion: { booked: number; total: number }
+      fitting: { booked: number; total: number }
     }
   >()
 
-  if (availabilityByStore && availabilityByStore.length > 0) {
-    console.log('[Dashboard] Raw availability data:', {
-      count: availabilityByStore.length,
-      sample: availabilityByStore.slice(0, 5).map((item: any) => ({
+  // Usar datos del snapshot diario si está disponible (preferido)
+  const dataToProcess = dailySnapshot && dailySnapshot.length > 0 ? dailySnapshot : availabilityByStore
+  const dataSource = dailySnapshot && dailySnapshot.length > 0 ? 'daily_snapshot' : 'availability_by_store'
+
+  if (dataToProcess && dataToProcess.length > 0) {
+    console.log('[Dashboard] Raw occupation data:', {
+      source: dataSource,
+      count: dataToProcess.length,
+      sample: dataToProcess.slice(0, 5).map((item: any) => ({
         store_name: item.store_name,
         normalized: normalizeStoreName(item.store_name || 'Unknown'),
         category: item.appointment_category,
         booked: item.booked_slots,
+        total: item.total_slots_day || item.total_slots,
         available: item.available_slots,
-        total: item.total_slots,
       })),
     })
 
-    availabilityByStore.forEach((item: any) => {
+    dataToProcess.forEach((item: any) => {
       const storeName = normalizeStoreName(item.store_name || 'Unknown')
       const category = item.appointment_category
       const booked = item.booked_slots || 0
-      const available = item.available_slots || 0
+      // total_slots viene de acuity_availability_history o acuity_availability_by_store
+      const total = item.total_slots || 0
 
       if (!storeMap.has(storeName)) {
         storeMap.set(storeName, {
-          medicion: { booked: 0, available: 0 },
-          fitting: { booked: 0, available: 0 },
+          medicion: { booked: 0, total: 0 },
+          fitting: { booked: 0, total: 0 },
         })
       }
 
       const store = storeMap.get(storeName)!
       if (category === 'medición') {
         store.medicion.booked += booked
-        store.medicion.available += available
+        store.medicion.total += total
       } else if (category === 'fitting') {
         store.fitting.booked += booked
-        store.fitting.available += available
+        store.fitting.total += total
       }
     })
 
     console.log('[Dashboard] Store map after processing:', {
+      dataSource: dataSource,
       storesInMap: Array.from(storeMap.keys()),
       orderedStores: orderedStores,
     })
@@ -604,13 +623,13 @@ async function getStoreOccupationToday(supabase: Awaited<ReturnType<typeof creat
   // Crear resultado con todas las tiendas en el orden especificado
   const result = orderedStores.map((storeName) => {
     const data = storeMap.get(storeName) || {
-      medicion: { booked: 0, available: 0 },
-      fitting: { booked: 0, available: 0 },
+      medicion: { booked: 0, total: 0 },
+      fitting: { booked: 0, total: 0 },
     }
 
-    // Calcular total real: reservadas + libres
-    const medicionTotal = data.medicion.booked + data.medicion.available
-    const fittingTotal = data.fitting.booked + data.fitting.available
+    // El total ya viene del snapshot (es el total del día completo)
+    const medicionTotal = data.medicion.total
+    const fittingTotal = data.fitting.total
 
     return {
       storeName,
@@ -1048,8 +1067,9 @@ async function getOrdersBreakdown(supabase: Awaited<ReturnType<typeof createClie
     const customerEmails = [...new Set(storeOrders.map(o => o.customer_email).filter(Boolean))]
 
     if (customerEmails.length > 0) {
-      // Obtener todas las citas relevantes (30 días antes del inicio del mes hasta 7 días después del final)
-      const appointmentsSearchStart = subDays(monthStart, 30)
+      // Obtener todas las citas relevantes (90 días antes del inicio del mes hasta 7 días después del final)
+      // Ampliar ventana para capturar más citas (medición puede ser varios meses antes de la compra)
+      const appointmentsSearchStart = subDays(monthStart, 90)
       const appointmentsSearchEnd = new Date(monthEnd)
       appointmentsSearchEnd.setDate(appointmentsSearchEnd.getDate() + 7)
 
@@ -1070,11 +1090,12 @@ async function getOrdersBreakdown(supabase: Awaited<ReturnType<typeof createClie
           if (!order.customer_email) return
 
           const orderDate = parseISO(order.created_at)
+          // Ampliar ventana de búsqueda: buscar citas hasta 90 días antes del pedido
           const relevantAppointments = (allAppointments as any[])
             .filter((apt: any) =>
               apt.customer_email === order.customer_email &&
               parseISO(apt.datetime) <= orderDate &&
-              parseISO(apt.datetime) >= subDays(orderDate, 30)
+              parseISO(apt.datetime) >= subDays(orderDate, 90)
             )
             .sort((a: any, b: any) => parseISO(b.datetime).getTime() - parseISO(a.datetime).getTime())
 
@@ -1092,22 +1113,87 @@ async function getOrdersBreakdown(supabase: Awaited<ReturnType<typeof createClie
         })
       }
 
-      // Contar pedidos en tienda por tipo de cita
-      storeOrders.forEach(order => {
-        if (!order.customer_email) {
-          ordersWithoutAppointment++
-          return
+      // Función para inferir tipo de cita desde los tags de Shopify
+      const inferAppointmentTypeFromTags = (tags: string[] | null): 'medición' | 'fitting' => {
+        if (!tags || tags.length === 0) {
+          return 'medición' // Default si no hay tags
         }
 
+        const tagsLower = tags.map(t => t.toLowerCase())
+        
+        // INDICADORES DE MEDICIÓN (primera visita)
+        // 1. Cliente nuevo → definitivamente medición
+        if (tagsLower.some(t => t.includes('nuevo cliente'))) {
+          return 'medición'
+        }
+
+        // 2. Motivos que sugieren primera compra
+        const firstTimePurchaseMotives = [
+          'su propia boda',
+          'laboral',
+          'boda o celebración ajena'
+        ]
+        const hasFirstTimeMotive = tagsLower.some(t => 
+          firstTimePurchaseMotives.some(motive => t.includes(motive))
+        )
+
+        // INDICADORES DE FITTING (segunda visita, ajustes)
+        // 1. Cliente recurrente → más probable fitting
+        const isRecurrent = tagsLower.some(t => t.includes('recurrente'))
+        
+        // 2. Motivos que sugieren compra recurrente
+        const recurrentMotives = [
+          'diario por gusto',
+          'ocasional para ocio'
+        ]
+        const hasRecurrentMotive = tagsLower.some(t => 
+          recurrentMotives.some(motive => t.includes(motive))
+        )
+
+        // LÓGICA DE DECISIÓN:
+        // Si es recurrente Y tiene motivo recurrente → FITTING
+        if (isRecurrent && hasRecurrentMotive) {
+          return 'fitting'
+        }
+        
+        // Si es recurrente pero con motivo de primera compra → MEDICIÓN (nuevo traje)
+        if (isRecurrent && hasFirstTimeMotive) {
+          return 'medición'
+        }
+
+        // Si es recurrente sin más info → FITTING (probablemente ajuste)
+        if (isRecurrent) {
+          return 'fitting'
+        }
+
+        // Por defecto: MEDICIÓN (es el 74% de las citas y el primer paso)
+        return 'medición'
+      }
+
+      // Contar pedidos en tienda por tipo de cita
+      storeOrders.forEach(order => {
         const appointment = appointmentsByEmail.get(order.customer_email)
+        
         if (!appointment) {
-          ordersWithoutAppointment++
+          // Sin cita encontrada en BD: inferir desde tags
+          const inferredType = inferAppointmentTypeFromTags(order.tags as string[] | null)
+          if (inferredType === 'medición') {
+            ordersFromMedicion++
+          } else {
+            ordersFromFitting++
+          }
         } else if (appointment.category === 'medición') {
           ordersFromMedicion++
         } else if (appointment.category === 'fitting') {
           ordersFromFitting++
         } else {
-          ordersWithoutAppointment++
+          // Categoría desconocida: inferir desde tags
+          const inferredType = inferAppointmentTypeFromTags(order.tags as string[] | null)
+          if (inferredType === 'medición') {
+            ordersFromMedicion++
+          } else {
+            ordersFromFitting++
+          }
         }
       })
     } else {

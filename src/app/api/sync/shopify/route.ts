@@ -3,18 +3,24 @@ import { createShopifyServiceFromConfig } from '@/lib/integrations/shopify'
 import { createClient } from '@/lib/supabase/server'
 import { Database } from '@/types/database'
 import { subDays, parseISO, startOfMonth } from 'date-fns'
+import { isAuthorizedCronRequest } from '@/lib/utils/cron-auth'
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
 
-    // Verificar autenticación
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized', details: 'User not authenticated' },
-        { status: 401 }
-      )
+    // Permitir acceso desde cron jobs autorizados sin autenticación de usuario
+    const isCronRequest = isAuthorizedCronRequest(request)
+
+    // Verificar autenticación solo si NO es un cron job autorizado
+    if (!isCronRequest) {
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError || !user) {
+        return NextResponse.json(
+          { error: 'Unauthorized', details: 'User not authenticated' },
+          { status: 401 }
+        )
+      }
     }
 
     // Obtener credenciales desde Supabase

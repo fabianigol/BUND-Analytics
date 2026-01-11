@@ -1,11 +1,12 @@
 'use client'
 
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useCallback } from 'react'
 import { Header } from '@/components/dashboard/Header'
 import { MetricCard } from '@/components/dashboard/MetricCard'
 import { QuickStatCard } from '@/components/dashboard/QuickStatCard'
 import { AreaChart, BarChart } from '@/components/dashboard/Charts'
 import { LocationBentoCard } from '@/components/dashboard/LocationBentoCard'
+import { ObjetivosTab } from '@/components/dashboard/ObjetivosTab'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -37,6 +38,7 @@ import {
   ExternalLink,
   RefreshCw,
   AlertCircle,
+  Target,
 } from 'lucide-react'
 import { formatCurrency, formatNumber, formatDate } from '@/lib/utils/format'
 import { ShopifyOrder, ShopifyCustomer, ShopifyCustomerMetrics, ShopifyLocationMetrics } from '@/types'
@@ -74,7 +76,7 @@ interface Metrics {
   previousMetaSpend?: number | null
 }
 
-type DateFilterType = 'last7' | 'last30' | 'last90' | 'thisMonth' | 'lastMonth' | 'custom'
+type DateFilterType = 'today' | 'last7' | 'last30' | 'last90' | 'thisMonth' | 'lastMonth' | 'custom'
 
 export default function VentasPage() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -147,24 +149,54 @@ export default function VentasPage() {
     taxes: 21.00, // porcentaje (IVA)
   })
   
-  // Estados para filtro de fechas - Por defecto: desde el día 1 del mes actual hasta hoy
-  const [dateFilterType, setDateFilterType] = useState<DateFilterType>('thisMonth')
-  const [customStartDate, setCustomStartDate] = useState<string>(() => {
+  // Estados para filtro de fechas - INDEPENDIENTES para cada pestaña
+  // Filtros para pestaña Pedidos
+  const [dateFilterTypePedidos, setDateFilterTypePedidos] = useState<DateFilterType>('thisMonth')
+  const [customStartDatePedidos, setCustomStartDatePedidos] = useState<string>(() => {
     const today = new Date()
     const firstDay = startOfMonth(today)
     return format(firstDay, 'yyyy-MM-dd')
   })
-  const [customEndDate, setCustomEndDate] = useState<string>(() => {
+  const [customEndDatePedidos, setCustomEndDatePedidos] = useState<string>(() => {
+    const today = new Date()
+    return format(today, 'yyyy-MM-dd')
+  })
+  
+  // Filtros para pestaña Pedidos Online
+  const [dateFilterTypeOnline, setDateFilterTypeOnline] = useState<DateFilterType>('thisMonth')
+  const [customStartDateOnline, setCustomStartDateOnline] = useState<string>(() => {
+    const today = new Date()
+    const firstDay = startOfMonth(today)
+    return format(firstDay, 'yyyy-MM-dd')
+  })
+  const [customEndDateOnline, setCustomEndDateOnline] = useState<string>(() => {
+    const today = new Date()
+    return format(today, 'yyyy-MM-dd')
+  })
+  
+  // Filtros para pestaña Clientes
+  const [dateFilterTypeClientes, setDateFilterTypeClientes] = useState<DateFilterType>('thisMonth')
+  const [customStartDateClientes, setCustomStartDateClientes] = useState<string>(() => {
+    const today = new Date()
+    const firstDay = startOfMonth(today)
+    return format(firstDay, 'yyyy-MM-dd')
+  })
+  const [customEndDateClientes, setCustomEndDateClientes] = useState<string>(() => {
     const today = new Date()
     return format(today, 'yyyy-MM-dd')
   })
 
-  // Calcular rango de fechas según el tipo de filtro
-  const dateRange = useMemo(() => {
+  // Función helper para calcular rango de fechas
+  const calculateDateRange = (filterType: DateFilterType, customStart: string, customEnd: string) => {
     const today = new Date()
     today.setHours(23, 59, 59, 999)
 
-    switch (dateFilterType) {
+    switch (filterType) {
+      case 'today': {
+        const start = new Date()
+        start.setHours(0, 0, 0, 0)
+        return { start: format(start, 'yyyy-MM-dd'), end: format(today, 'yyyy-MM-dd') }
+      }
       case 'last7': {
         const start = subDays(today, 6)
         start.setHours(0, 0, 0, 0)
@@ -193,22 +225,37 @@ export default function VentasPage() {
         return { start: format(lastMonth, 'yyyy-MM-dd'), end: format(lastDayOfLastMonth, 'yyyy-MM-dd') }
       }
       case 'custom': {
-        // Si no hay fechas personalizadas, usar el día 1 del mes actual hasta hoy
-        if (!customStartDate || !customEndDate) {
+        if (!customStart || !customEnd) {
           const start = startOfMonth(today)
           return { start: format(start, 'yyyy-MM-dd'), end: format(today, 'yyyy-MM-dd') }
         }
-        return { start: customStartDate, end: customEndDate }
+        return { start: customStart, end: customEnd }
       }
       default:
         return null
     }
-  }, [dateFilterType, customStartDate, customEndDate])
+  }
+
+  // Calcular rangos de fechas INDEPENDIENTES para cada pestaña
+  const dateRangePedidos = useMemo(() => 
+    calculateDateRange(dateFilterTypePedidos, customStartDatePedidos, customEndDatePedidos),
+    [dateFilterTypePedidos, customStartDatePedidos, customEndDatePedidos]
+  )
+  
+  const dateRangeOnline = useMemo(() => 
+    calculateDateRange(dateFilterTypeOnline, customStartDateOnline, customEndDateOnline),
+    [dateFilterTypeOnline, customStartDateOnline, customEndDateOnline]
+  )
+  
+  const dateRangeClientes = useMemo(() => 
+    calculateDateRange(dateFilterTypeClientes, customStartDateClientes, customEndDateClientes),
+    [dateFilterTypeClientes, customStartDateClientes, customEndDateClientes]
+  )
 
   // Formatear el período visible
-  const periodLabel = useMemo(() => {
+  // Función helper para crear period labels
+  const createPeriodLabel = (dateRange: { start: string; end: string } | null) => {
     if (!dateRange) return 'Sin filtro'
-    
     try {
       const start = parseISO(dateRange.start)
       const end = parseISO(dateRange.end)
@@ -216,30 +263,22 @@ export default function VentasPage() {
     } catch {
       return `${dateRange.start} - ${dateRange.end}`
     }
-  }, [dateRange])
+  }
 
-  // Cargar datos cuando cambie el rango de fechas o filtros
-  useEffect(() => {
-    if (dateRange || dateFilterType !== 'custom') {
-      loadData()
-      loadDataOnline()
-    }
-  }, [dateRange, productsFilterType, complementsFilterType])
+  // Period labels independientes para cada pestaña
+  const periodLabelPedidos = useMemo(() => createPeriodLabel(dateRangePedidos), [dateRangePedidos])
+  const periodLabelOnline = useMemo(() => createPeriodLabel(dateRangeOnline), [dateRangeOnline])
+  const periodLabelClientes = useMemo(() => createPeriodLabel(dateRangeClientes), [dateRangeClientes])
 
-  // Cargar datos de clientes cuando cambie el filtro o rango de fechas
-  useEffect(() => {
-    if (isConnected) {
-      loadCustomersData()
-      loadLocationsData()
-    }
-  }, [dateRange, customerEmailFilter, customerPage, isConnected])
-
+  // ========== FUNCIONES DE CARGA DE DATOS ==========
+  
   // Cargar datos de Ubicaciones
   const loadLocationsData = async () => {
     try {
       setLocationsLoading(true)
-      const dateParams = dateRange 
-        ? `&startDate=${dateRange.start}&endDate=${dateRange.end}`
+      // Ubicaciones usa el filtro de Pedidos
+      const dateParams = dateRangePedidos
+        ? `&startDate=${dateRangePedidos.start}&endDate=${dateRangePedidos.end}`
         : ''
 
       const locationsRes = await fetch(`/api/shopify?type=locations${dateParams}`)
@@ -256,11 +295,6 @@ export default function VentasPage() {
       setLocationsLoading(false)
     }
   }
-
-  // Cargar datos iniciales
-  useEffect(() => {
-    checkConnection()
-  }, [])
 
   const checkConnection = async () => {
     try {
@@ -279,16 +313,16 @@ export default function VentasPage() {
       setLoading(true)
       setError(null)
 
-      // Construir parámetros de fecha para las peticiones
-      const dateParams = dateRange 
-        ? `&startDate=${dateRange.start}&endDate=${dateRange.end}`
+      // Construir parámetros de fecha para las peticiones - USA dateRangePedidos
+      const dateParams = dateRangePedidos
+        ? `&startDate=${dateRangePedidos.start}&endDate=${dateRangePedidos.end}`
         : ''
 
       // Calcular días para el gráfico
       let days = 30
-      if (dateRange) {
-        const start = parseISO(dateRange.start)
-        const end = parseISO(dateRange.end)
+      if (dateRangePedidos) {
+        const start = parseISO(dateRangePedidos.start)
+        const end = parseISO(dateRangePedidos.end)
         days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
       }
 
@@ -350,16 +384,16 @@ export default function VentasPage() {
       setLoadingOnline(true)
       setError(null)
 
-      // Construir parámetros de fecha para las peticiones
-      const dateParams = dateRange 
-        ? `&startDate=${dateRange.start}&endDate=${dateRange.end}`
+      // Construir parámetros de fecha para las peticiones - USA dateRangeOnline
+      const dateParams = dateRangeOnline
+        ? `&startDate=${dateRangeOnline.start}&endDate=${dateRangeOnline.end}`
         : ''
 
       // Calcular días para el gráfico
       let days = 30
-      if (dateRange) {
-        const start = parseISO(dateRange.start)
-        const end = parseISO(dateRange.end)
+      if (dateRangeOnline) {
+        const start = parseISO(dateRangeOnline.start)
+        const end = parseISO(dateRangeOnline.end)
         days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
       }
 
@@ -427,12 +461,13 @@ export default function VentasPage() {
   }
 
   // Cargar datos de clientes
-  const loadCustomersData = async () => {
+  const loadCustomersData = useCallback(async () => {
     try {
       setCustomersLoading(true)
-      
-      const dateParams = dateRange 
-        ? `&startDate=${dateRange.start}&endDate=${dateRange.end}`
+
+      // Construir parámetros de fecha para las peticiones - USA dateRangeClientes
+      const dateParams = dateRangeClientes
+        ? `&startDate=${dateRangeClientes.start}&endDate=${dateRangeClientes.end}`
         : ''
 
       const emailParam = customerEmailFilter ? `&email=${encodeURIComponent(customerEmailFilter)}` : ''
@@ -443,7 +478,7 @@ export default function VentasPage() {
       const [customersRes, metricsRes, top10MonthRes, top10HistoricalRes] = await Promise.all([
         fetch(`/api/shopify?type=customers${dateParams}${emailParam}&limit=${limit}&offset=${offset}`),
         fetch(`/api/shopify?type=customer-metrics${dateParams}`),
-        fetch(`/api/shopify?type=customers${dateParams}&limit=10&offset=0`), // Top 10 del período
+        fetch(`/api/shopify?type=customers${dateParams}&limit=10&offset=0&periodBasedLTV=true`), // Top 10 del período - CON LTV del período
         fetch(`/api/shopify?type=customers&limit=10&offset=0`), // Top 10 histórico (sin filtro de fechas)
       ])
 
@@ -476,7 +511,44 @@ export default function VentasPage() {
     } finally {
       setCustomersLoading(false)
     }
-  }
+  }, [dateRangeClientes, customerEmailFilter, customerPage])
+
+  // ========== USE EFFECTS ==========
+  
+  // Cargar datos iniciales
+  useEffect(() => {
+    checkConnection()
+  }, [])
+
+  // useEffect para pestaña Pedidos
+  useEffect(() => {
+    if (dateRangePedidos || dateFilterTypePedidos !== 'custom') {
+      loadData()
+    }
+  }, [dateRangePedidos, productsFilterType, complementsFilterType, isConnected])
+
+  // useEffect para pestaña Pedidos Online
+  useEffect(() => {
+    if (dateRangeOnline || dateFilterTypeOnline !== 'custom') {
+      loadDataOnline()
+    }
+  }, [dateRangeOnline, isConnected])
+
+  // useEffect para pestaña Clientes
+  useEffect(() => {
+    if (isConnected) {
+      loadCustomersData()
+    }
+  }, [isConnected, loadCustomersData])
+  
+  // useEffect para pestaña Ubicaciones (usa filtro de Pedidos)
+  useEffect(() => {
+    if (isConnected && dateRangePedidos) {
+      loadLocationsData()
+    }
+  }, [dateRangePedidos, isConnected])
+
+  // ========== OTRAS FUNCIONES ==========
 
   const handleSync = async () => {
     try {
@@ -724,111 +796,122 @@ export default function VentasPage() {
               <MapPin className="h-4 w-4 mr-2" />
               Ubicaciones
             </TabsTrigger>
+            <TabsTrigger value="objetivos">
+              <Target className="h-4 w-4 mr-2" />
+              Objetivos
+            </TabsTrigger>
           </TabsList>
-
-        {/* Filtro de Fechas - Compartido entre pestañas */}
-        <Card>
-          <CardContent className="pt-4">
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3 flex-wrap">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <Button
-                  variant={dateFilterType === 'last7' ? 'default' : 'outline'}
-                  size="sm"
-                  className="text-xs h-7 px-2"
-                  onClick={() => setDateFilterType('last7')}
-                >
-                  7 días
-                </Button>
-                <Button
-                  variant={dateFilterType === 'last30' ? 'default' : 'outline'}
-                  size="sm"
-                  className="text-xs h-7 px-2"
-                  onClick={() => setDateFilterType('last30')}
-                >
-                  30 días
-                </Button>
-                <Button
-                  variant={dateFilterType === 'last90' ? 'default' : 'outline'}
-                  size="sm"
-                  className="text-xs h-7 px-2"
-                  onClick={() => setDateFilterType('last90')}
-                >
-                  90 días
-                </Button>
-                <Button
-                  variant={dateFilterType === 'thisMonth' ? 'default' : 'outline'}
-                  size="sm"
-                  className="text-xs h-7 px-2"
-                  onClick={() => setDateFilterType('thisMonth')}
-                >
-                  Este mes
-                </Button>
-                <Button
-                  variant={dateFilterType === 'lastMonth' ? 'default' : 'outline'}
-                  size="sm"
-                  className="text-xs h-7 px-2"
-                  onClick={() => setDateFilterType('lastMonth')}
-                >
-                  Mes anterior
-                </Button>
-                <Button
-                  variant={dateFilterType === 'custom' ? 'default' : 'outline'}
-                  size="sm"
-                  className="text-xs h-7 px-2"
-                  onClick={() => {
-                    // Al seleccionar personalizado, inicializar con día 1 del mes actual hasta hoy
-                    const today = new Date()
-                    const firstDay = startOfMonth(today)
-                    setCustomStartDate(format(firstDay, 'yyyy-MM-dd'))
-                    setCustomEndDate(format(today, 'yyyy-MM-dd'))
-                    setDateFilterType('custom')
-                  }}
-                >
-                  Personalizado
-                </Button>
-                {dateRange && (
-                  <span className="text-xs text-muted-foreground ml-auto">
-                    {periodLabel}
-                  </span>
-                )}
-              </div>
-
-              {dateFilterType === 'custom' && (
-                <div className="flex gap-3 items-end pt-2 border-t">
-                  <div className="space-y-1">
-                    <Label htmlFor="customStartDate" className="text-xs">Inicio</Label>
-                    <Input
-                      id="customStartDate"
-                      type="date"
-                      value={customStartDate}
-                      onChange={(e) => setCustomStartDate(e.target.value)}
-                      className="h-7 text-xs"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label htmlFor="customEndDate" className="text-xs">Fin</Label>
-                    <Input
-                      id="customEndDate"
-                      type="date"
-                      value={customEndDate}
-                      onChange={(e) => setCustomEndDate(e.target.value)}
-                      max={format(new Date(), 'yyyy-MM-dd')}
-                      className="h-7 text-xs"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
 
           {/* Pestaña: Pedidos */}
           <TabsContent value="pedidos" className="space-y-6 mt-6">
+            {/* Filtro de Fechas para Pedidos */}
+            <Card>
+              <CardContent className="pt-4">
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <Button
+                      variant={dateFilterTypePedidos === 'today' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypePedidos('today')}
+                    >
+                      HOY
+                    </Button>
+                    <Button
+                      variant={dateFilterTypePedidos === 'last7' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypePedidos('last7')}
+                    >
+                      7 días
+                    </Button>
+                    <Button
+                      variant={dateFilterTypePedidos === 'last30' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypePedidos('last30')}
+                    >
+                      30 días
+                    </Button>
+                    <Button
+                      variant={dateFilterTypePedidos === 'last90' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypePedidos('last90')}
+                    >
+                      90 días
+                    </Button>
+                    <Button
+                      variant={dateFilterTypePedidos === 'thisMonth' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypePedidos('thisMonth')}
+                    >
+                      Este mes
+                    </Button>
+                    <Button
+                      variant={dateFilterTypePedidos === 'lastMonth' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypePedidos('lastMonth')}
+                    >
+                      Mes anterior
+                    </Button>
+                    <Button
+                      variant={dateFilterTypePedidos === 'custom' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => {
+                        const today = new Date()
+                        const firstDay = startOfMonth(today)
+                        setCustomStartDatePedidos(format(firstDay, 'yyyy-MM-dd'))
+                        setCustomEndDatePedidos(format(today, 'yyyy-MM-dd'))
+                        setDateFilterTypePedidos('custom')
+                      }}
+                    >
+                      Personalizado
+                    </Button>
+                    {dateRangePedidos && (
+                      <span className="text-xs text-muted-foreground ml-auto">
+                        {periodLabelPedidos}
+                      </span>
+                    )}
+                  </div>
+
+                  {dateFilterTypePedidos === 'custom' && (
+                    <div className="flex gap-3 items-end pt-2 border-t">
+                      <div className="space-y-1">
+                        <Label htmlFor="customStartDatePedidos" className="text-xs">Inicio</Label>
+                        <Input
+                          id="customStartDatePedidos"
+                          type="date"
+                          value={customStartDatePedidos}
+                          onChange={(e) => setCustomStartDatePedidos(e.target.value)}
+                          className="h-7 text-xs"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label htmlFor="customEndDatePedidos" className="text-xs">Fin</Label>
+                        <Input
+                          id="customEndDatePedidos"
+                          type="date"
+                          value={customEndDatePedidos}
+                          onChange={(e) => setCustomEndDatePedidos(e.target.value)}
+                          max={format(new Date(), 'yyyy-MM-dd')}
+                          className="h-7 text-xs"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Quick Stats */}
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
               <QuickStatCard
-                title="Ingresos Totales"
+                title="Ingresos brutos totales"
                 value={metrics?.totalRevenue ? formatCurrency(metrics.totalRevenue) : '—'}
                 emoji="💰"
                 emojiBgColor="bg-emerald-100"
@@ -878,7 +961,7 @@ export default function VentasPage() {
           {/* Gráfica de Evolución Diaria */}
           {hasChartData ? (
             <AreaChart
-              title={`Ingresos Diarios - ${periodLabel}`}
+              title={`Ingresos Diarios - ${periodLabelPedidos}`}
               data={salesChartData.map(d => ({ date: d.date, value: d.value }))}
               height={280}
               formatValue={(v) => formatCurrency(v)}
@@ -888,7 +971,7 @@ export default function VentasPage() {
           ) : (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base font-medium">Ingresos Diarios - {periodLabel}</CardTitle>
+                <CardTitle className="text-base font-medium">Ingresos Diarios - {periodLabelPedidos}</CardTitle>
                 <CardDescription>Sin datos. Sincroniza Shopify para ver el histórico.</CardDescription>
               </CardHeader>
             </Card>
@@ -1109,10 +1192,114 @@ export default function VentasPage() {
 
           {/* Pestaña: Pedidos online */}
           <TabsContent value="pedidos-online" className="space-y-6 mt-6">
+            {/* Filtro de Fechas para Pedidos Online */}
+            <Card>
+              <CardContent className="pt-4">
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <Button
+                      variant={dateFilterTypeOnline === 'today' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypeOnline('today')}
+                    >
+                      HOY
+                    </Button>
+                    <Button
+                      variant={dateFilterTypeOnline === 'last7' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypeOnline('last7')}
+                    >
+                      7 días
+                    </Button>
+                    <Button
+                      variant={dateFilterTypeOnline === 'last30' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypeOnline('last30')}
+                    >
+                      30 días
+                    </Button>
+                    <Button
+                      variant={dateFilterTypeOnline === 'last90' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypeOnline('last90')}
+                    >
+                      90 días
+                    </Button>
+                    <Button
+                      variant={dateFilterTypeOnline === 'thisMonth' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypeOnline('thisMonth')}
+                    >
+                      Este mes
+                    </Button>
+                    <Button
+                      variant={dateFilterTypeOnline === 'lastMonth' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypeOnline('lastMonth')}
+                    >
+                      Mes anterior
+                    </Button>
+                    <Button
+                      variant={dateFilterTypeOnline === 'custom' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => {
+                        const today = new Date()
+                        const firstDay = startOfMonth(today)
+                        setCustomStartDateOnline(format(firstDay, 'yyyy-MM-dd'))
+                        setCustomEndDateOnline(format(today, 'yyyy-MM-dd'))
+                        setDateFilterTypeOnline('custom')
+                      }}
+                    >
+                      Personalizado
+                    </Button>
+                    {dateRangeOnline && (
+                      <span className="text-xs text-muted-foreground ml-auto">
+                        {periodLabelOnline}
+                      </span>
+                    )}
+                  </div>
+
+                  {dateFilterTypeOnline === 'custom' && (
+                    <div className="flex gap-3 items-end pt-2 border-t">
+                      <div className="space-y-1">
+                        <Label htmlFor="customStartDateOnline" className="text-xs">Inicio</Label>
+                        <Input
+                          id="customStartDateOnline"
+                          type="date"
+                          value={customStartDateOnline}
+                          onChange={(e) => setCustomStartDateOnline(e.target.value)}
+                          className="h-7 text-xs"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label htmlFor="customEndDateOnline" className="text-xs">Fin</Label>
+                        <Input
+                          id="customEndDateOnline"
+                          type="date"
+                          value={customEndDateOnline}
+                          onChange={(e) => setCustomEndDateOnline(e.target.value)}
+                          max={format(new Date(), 'yyyy-MM-dd')}
+                          className="h-7 text-xs"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Quick Stats */}
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
               <QuickStatCard
-                title="Ingresos Totales"
+                title="Ingresos brutos totales"
                 value={metricsOnline?.totalRevenue ? formatCurrency(metricsOnline.totalRevenue) : '—'}
                 emoji="💰"
                 emojiBgColor="bg-emerald-100"
@@ -1162,7 +1349,7 @@ export default function VentasPage() {
           {/* Gráfica de Evolución Diaria */}
           {hasChartDataOnline ? (
             <AreaChart
-              title={`Ingresos Diarios - ${periodLabel}`}
+              title={`Ingresos Diarios - ${periodLabelOnline}`}
               data={salesChartDataOnline.map(d => ({ date: d.date, value: d.value }))}
               height={280}
               formatValue={(v) => formatCurrency(v)}
@@ -1172,7 +1359,7 @@ export default function VentasPage() {
           ) : (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base font-medium">Ingresos Diarios - {periodLabel}</CardTitle>
+                <CardTitle className="text-base font-medium">Ingresos Diarios - {periodLabelOnline}</CardTitle>
                 <CardDescription>Sin datos. Sincroniza Shopify para ver el histórico.</CardDescription>
               </CardHeader>
             </Card>
@@ -1749,6 +1936,110 @@ export default function VentasPage() {
 
           {/* Pestaña: Clientes */}
           <TabsContent value="clientes" className="space-y-6 mt-6">
+            {/* Filtro de Fechas para Clientes */}
+            <Card>
+              <CardContent className="pt-4">
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <Button
+                      variant={dateFilterTypeClientes === 'today' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypeClientes('today')}
+                    >
+                      HOY
+                    </Button>
+                    <Button
+                      variant={dateFilterTypeClientes === 'last7' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypeClientes('last7')}
+                    >
+                      7 días
+                    </Button>
+                    <Button
+                      variant={dateFilterTypeClientes === 'last30' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypeClientes('last30')}
+                    >
+                      30 días
+                    </Button>
+                    <Button
+                      variant={dateFilterTypeClientes === 'last90' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypeClientes('last90')}
+                    >
+                      90 días
+                    </Button>
+                    <Button
+                      variant={dateFilterTypeClientes === 'thisMonth' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypeClientes('thisMonth')}
+                    >
+                      Este mes
+                    </Button>
+                    <Button
+                      variant={dateFilterTypeClientes === 'lastMonth' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => setDateFilterTypeClientes('lastMonth')}
+                    >
+                      Mes anterior
+                    </Button>
+                    <Button
+                      variant={dateFilterTypeClientes === 'custom' ? 'default' : 'outline'}
+                      size="sm"
+                      className="text-xs h-7 px-2"
+                      onClick={() => {
+                        const today = new Date()
+                        const firstDay = startOfMonth(today)
+                        setCustomStartDateClientes(format(firstDay, 'yyyy-MM-dd'))
+                        setCustomEndDateClientes(format(today, 'yyyy-MM-dd'))
+                        setDateFilterTypeClientes('custom')
+                      }}
+                    >
+                      Personalizado
+                    </Button>
+                    {dateRangeClientes && (
+                      <span className="text-xs text-muted-foreground ml-auto">
+                        {periodLabelClientes}
+                      </span>
+                    )}
+                  </div>
+
+                  {dateFilterTypeClientes === 'custom' && (
+                    <div className="flex gap-3 items-end pt-2 border-t">
+                      <div className="space-y-1">
+                        <Label htmlFor="customStartDateClientes" className="text-xs">Inicio</Label>
+                        <Input
+                          id="customStartDateClientes"
+                          type="date"
+                          value={customStartDateClientes}
+                          onChange={(e) => setCustomStartDateClientes(e.target.value)}
+                          className="h-7 text-xs"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label htmlFor="customEndDateClientes" className="text-xs">Fin</Label>
+                        <Input
+                          id="customEndDateClientes"
+                          type="date"
+                          value={customEndDateClientes}
+                          onChange={(e) => setCustomEndDateClientes(e.target.value)}
+                          max={format(new Date(), 'yyyy-MM-dd')}
+                          className="h-7 text-xs"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
             {customersLoading ? (
               <div className="flex items-center justify-center p-12">
                 <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -1835,6 +2126,7 @@ export default function VentasPage() {
                         <TableBody>
                           {top10CustomersMonth.map((customer, index) => {
                             const historicalIndex = top10CustomersHistorical.findIndex(c => c.email === customer.email)
+                            // Calcular cambio de posición: positivo = mejoró vs histórico, negativo = empeoró vs histórico
                             const positionChange = historicalIndex !== -1 ? historicalIndex - index : null
                             const getPositionIcon = (pos: number) => {
                               if (pos === 0) return '🥇'
@@ -1850,9 +2142,20 @@ export default function VentasPage() {
                                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-base">
                                       {positionIcon || <span className="text-sm font-semibold text-primary">{index + 1}</span>}
                                     </div>
-                                    <div>
-                                      <p className="font-medium">{customer.name || customer.email}</p>
-                                      <p className="text-xs text-muted-foreground">{customer.orderCount} pedido{customer.orderCount !== 1 ? 's' : ''}</p>
+                                    <div className="flex items-center gap-2">
+                                      <div>
+                                        <div className="flex items-center gap-2">
+                                          <p className="font-medium">{customer.name || customer.email}</p>
+                                          {positionChange !== null && positionChange !== 0 && (
+                                            positionChange > 0 ? (
+                                              <TrendingUp className="h-4 w-4 text-emerald-600" />
+                                            ) : (
+                                              <TrendingDown className="h-4 w-4 text-red-600" />
+                                            )
+                                          )}
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">{customer.orderCount} pedido{customer.orderCount !== 1 ? 's' : ''}</p>
+                                      </div>
                                     </div>
                                   </div>
                                 </TableCell>
@@ -1902,6 +2205,7 @@ export default function VentasPage() {
                         <TableBody>
                           {top10CustomersHistorical.map((customer, index) => {
                             const monthIndex = top10CustomersMonth.findIndex(c => c.email === customer.email)
+                            // Calcular cambio de posición: positivo = mejoró en el periodo, negativo = empeoró
                             const positionChange = monthIndex !== -1 ? index - monthIndex : null
                             const getPositionIcon = (pos: number) => {
                               if (pos === 0) return '🥇'
@@ -1923,9 +2227,9 @@ export default function VentasPage() {
                                           <p className="font-medium">{customer.name || customer.email}</p>
                                           {positionChange !== null && positionChange !== 0 && (
                                             positionChange > 0 ? (
-                                              <TrendingDown className="h-4 w-4 text-red-600" />
-                                            ) : (
                                               <TrendingUp className="h-4 w-4 text-emerald-600" />
+                                            ) : (
+                                              <TrendingDown className="h-4 w-4 text-red-600" />
                                             )
                                           )}
                                         </div>
@@ -2179,6 +2483,11 @@ export default function VentasPage() {
                 </CardContent>
               </Card>
             )}
+          </TabsContent>
+
+          {/* Pestaña: Objetivos */}
+          <TabsContent value="objetivos" className="mt-6">
+            <ObjetivosTab />
           </TabsContent>
         </Tabs>
       </div>

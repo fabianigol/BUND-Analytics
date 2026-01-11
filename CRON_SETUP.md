@@ -1,6 +1,6 @@
-# Configuración de Sincronización Automática Diaria
+# Configuración de Sincronización Automática
 
-Este documento explica cómo configurar la sincronización automática diaria de Acuity usando Vercel Cron Jobs.
+Este documento explica cómo configurar la sincronización automática de Acuity y Shopify usando Vercel Cron Jobs.
 
 ## ✅ ¿Es seguro y fiable?
 
@@ -30,9 +30,22 @@ Este documento explica cómo configurar la sincronización automática diaria de
 
 ### Paso 2: Verificar vercel.json
 
-El archivo `vercel.json` ya está configurado con:
+El archivo `vercel.json` ya está configurado con los siguientes cron jobs:
+
+#### Acuity Scheduling
 - **Ruta**: `/api/cron/sync-acuity-daily`
 - **Horario**: `0 6 * * *` (6:00 AM UTC = 7:00 AM CET / 8:00 AM CEST diariamente)
+- **Descripción**: Sincronización diaria de citas, disponibilidad y snapshots
+
+#### Shopify
+- **Ruta**: `/api/cron/sync-shopify-periodic`
+- **Horarios**: 5 ejecuciones diarias cada 4 horas
+  - `0 6 * * *` (07:00 CET)
+  - `0 10 * * *` (11:00 CET)
+  - `0 14 * * *` (15:00 CET)
+  - `0 18 * * *` (19:00 CET)
+  - `0 22 * * *` (23:00 CET)
+- **Descripción**: Sincronización periódica de pedidos de Shopify
 
 **Nota sobre zonas horarias:**
 - **CET (invierno, UTC+1)**: 6:00 AM UTC = 7:00 AM CET ✅
@@ -71,21 +84,31 @@ Si necesitas cambiar la hora, modifica el `schedule` en formato cron:
 
 ### Probar manualmente (sin esperar al cron):
 
-Puedes probar el endpoint manualmente desde tu terminal:
+Puedes probar los endpoints manualmente desde tu terminal:
 
+**Probar Acuity:**
 ```bash
 # Reemplaza YOUR_SECRET con el valor de CRON_SECRET
 curl -X GET "https://tu-dominio.vercel.app/api/cron/sync-acuity-daily?secret=YOUR_SECRET"
 ```
 
+**Probar Shopify:**
+```bash
+# Reemplaza YOUR_SECRET con el valor de CRON_SECRET
+curl -X GET "https://tu-dominio.vercel.app/api/cron/sync-shopify-periodic?secret=YOUR_SECRET"
+```
+
 O desde el navegador (solo para pruebas):
 ```
 https://tu-dominio.vercel.app/api/cron/sync-acuity-daily?secret=YOUR_SECRET
+https://tu-dominio.vercel.app/api/cron/sync-shopify-periodic?secret=YOUR_SECRET
 ```
 
-## 📊 ¿Qué hace el cron job?
+## 📊 ¿Qué hacen los cron jobs?
 
-El cron job ejecuta automáticamente (en este orden):
+### Cron Job de Acuity (Diario a las 07:00)
+
+El cron job de Acuity ejecuta automáticamente (en este orden):
 
 1. **Sincronizar Citas** (`/api/sync/acuity`)
    - Obtiene todas las citas desde Acuity
@@ -96,9 +119,22 @@ El cron job ejecuta automáticamente (en este orden):
    - Calcula `booked_slots` desde las citas
    - Actualiza `acuity_availability` y `acuity_availability_by_store`
 
-3. **Crear Snapshot Diario** (`/api/sync/acuity/availability/snapshot`)
+3. **Crear Snapshot Diario** (`/api/sync/acuity/daily-snapshot`)
+   - Crea un snapshot del día actual
+   - Guarda en `acuity_daily_snapshot` para el dashboard
+
+4. **Crear Snapshot Histórico** (`/api/sync/acuity/availability/snapshot`)
    - Crea un snapshot del día anterior
    - Guarda en `acuity_availability_history` con `period_type: 'daily'`
+
+### Cron Job de Shopify (Cada 4 horas de 07:00 a 23:00)
+
+El cron job de Shopify ejecuta automáticamente:
+
+1. **Sincronizar Pedidos** (`/api/sync/shopify`)
+   - Obtiene todos los pedidos del mes actual desde Shopify
+   - Actualiza `shopify_orders`
+   - Sincroniza 5 veces al día para mantener los datos actualizados
 
 ## ⚠️ Manejo de Errores
 
@@ -130,10 +166,20 @@ Si quieres ajustar el horario:
 
 ## 📝 Notas
 
-- El cron job se ejecuta **una vez al día** automáticamente
-- No necesitas abrir la web ni hacer nada manualmente
-- Los datos se actualizan automáticamente cada día
+### Acuity Scheduling
+- El cron job de Acuity se ejecuta **una vez al día a las 07:00 CET**
+- Sincroniza citas, disponibilidad y crea snapshots automáticamente
 - Los snapshots históricos se guardan para análisis futuro
+
+### Shopify
+- El cron job de Shopify se ejecuta **5 veces al día cada 4 horas** (07:00, 11:00, 15:00, 19:00, 23:00 CET)
+- Mantiene los pedidos actualizados a lo largo del día
+- Sincroniza todos los pedidos del mes actual
+
+### General
+- No necesitas abrir la web ni hacer nada manualmente
+- Los datos se actualizan automáticamente según los horarios configurados
+- Todos los cron jobs están protegidos con autenticación mediante secret
 
 ## 🆘 Troubleshooting
 
@@ -147,7 +193,15 @@ Si quieres ajustar el horario:
 2. Asegúrate de que la variable esté en el environment correcto (Production)
 
 ### Errores de sincronización:
+
+**Para Acuity:**
 1. Verifica que Acuity esté conectado en la configuración
 2. Revisa los logs detallados en Vercel
 3. Verifica que las credenciales de Acuity sean válidas
+
+**Para Shopify:**
+1. Verifica que Shopify esté conectado en la configuración
+2. Revisa los logs detallados en Vercel
+3. Verifica que las credenciales de Shopify sean válidas (Shop Domain y Access Token)
+4. Asegúrate de que el Access Token tenga los permisos correctos (read_orders, read_products)
 

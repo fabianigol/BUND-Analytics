@@ -800,12 +800,25 @@ async function getCustomers(
   const emailFilter = searchParams.get('email') // Filtro por email
   const limit = parseInt(searchParams.get('limit') || '50', 10)
   const offset = parseInt(searchParams.get('offset') || '0', 10)
+  const periodBasedLTV = searchParams.get('periodBasedLTV') === 'true' // Nuevo parámetro
 
-  // Obtener todos los pedidos (sin filtro de fecha para histórico completo)
+  // Obtener pedidos
   let query = supabase
     .from('shopify_orders')
     .select('customer_email, customer_name, total_price, created_at, tags')
     .order('created_at', { ascending: false })
+
+  // Si periodBasedLTV=true y hay fechas, filtrar pedidos por período
+  if (periodBasedLTV && startDate && endDate) {
+    const start = parseISO(startDate)
+    start.setHours(0, 0, 0, 0)
+    const end = parseISO(endDate)
+    end.setHours(23, 59, 59, 999)
+    
+    query = query
+      .gte('created_at', start.toISOString())
+      .lte('created_at', end.toISOString())
+  }
 
   if (emailFilter) {
     query = query.ilike('customer_email', `%${emailFilter}%`)

@@ -76,7 +76,8 @@ export async function GET(request: NextRequest) {
     const results = {
       appointments: { success: false, error: null as string | null },
       availability: { success: false, error: null as string | null },
-      snapshot: { success: false, error: null as string | null },
+      dailySnapshot: { success: false, error: null as string | null },
+      historicalSnapshot: { success: false, error: null as string | null },
     }
 
     // 1. Sincronizar citas
@@ -88,8 +89,7 @@ export async function GET(request: NextRequest) {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            // Nota: Los endpoints internos no requieren autenticación de usuario
-            // porque ya estamos autenticados por el cron secret
+            'x-cron-secret': cronSecret, // Pasar el secret a los endpoints internos
           },
           body: JSON.stringify({}),
         }
@@ -122,6 +122,7 @@ export async function GET(request: NextRequest) {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'x-cron-secret': cronSecret, // Pasar el secret a los endpoints internos
           },
           body: JSON.stringify({ maxDays: 21 }),
         }
@@ -142,39 +143,72 @@ export async function GET(request: NextRequest) {
       // Continuar con el snapshot aunque falle este
     }
 
-    // Esperar un poco antes del snapshot
+    // Esperar un poco antes del snapshot diario
     await new Promise(resolve => setTimeout(resolve, 1000))
 
-    // 3. Crear snapshot del día anterior
+    // 3. Crear snapshot del DÍA ACTUAL (para el dashboard)
     try {
-      console.log('[Cron Sync] Paso 3/3: Creando snapshot del día anterior...')
-      const snapshotResponse = await fetch(
+      console.log('[Cron Sync] Paso 3/4: Creando snapshot del día actual...')
+      const dailySnapshotResponse = await fetch(
+        `${request.nextUrl.origin}/api/sync/acuity/daily-snapshot`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-cron-secret': cronSecret, // Pasar el secret a los endpoints internos
+          },
+          body: JSON.stringify({}),
+        }
+      )
+
+      if (!dailySnapshotResponse.ok) {
+        const errorData = await dailySnapshotResponse.json()
+        throw new Error(errorData.error || 'Error creando snapshot diario')
+      }
+
+      const dailySnapshotData = await dailySnapshotResponse.json()
+      results.dailySnapshot.success = true
+      console.log(`[Cron Sync] Snapshot diario creado: ${dailySnapshotData.records_saved || 0} registros`)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      results.dailySnapshot.error = errorMessage
+      console.error('[Cron Sync] Error creando snapshot diario:', errorMessage)
+    }
+
+    // Esperar un poco antes del snapshot histórico
+    await new Promise(resolve => setTimeout(resolve, 1000))
+
+    // 4. Crear snapshot del día ANTERIOR (para históricos)
+    try {
+      console.log('[Cron Sync] Paso 4/4: Creando snapshot histórico del día anterior...')
+      const historicalSnapshotResponse = await fetch(
         `${request.nextUrl.origin}/api/sync/acuity/availability/snapshot`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'x-cron-secret': cronSecret, // Pasar el secret a los endpoints internos
           },
           body: JSON.stringify({ periodType: 'daily' }),
         }
       )
 
-      if (!snapshotResponse.ok) {
-        const errorData = await snapshotResponse.json()
-        throw new Error(errorData.error || 'Error creando snapshot')
+      if (!historicalSnapshotResponse.ok) {
+        const errorData = await historicalSnapshotResponse.json()
+        throw new Error(errorData.error || 'Error creando snapshot histórico')
       }
 
-      const snapshotData = await snapshotResponse.json()
-      results.snapshot.success = true
-      console.log(`[Cron Sync] Snapshot creado: ${snapshotData.records_created || 0} registros`)
+      const historicalSnapshotData = await historicalSnapshotResponse.json()
+      results.historicalSnapshot.success = true
+      console.log(`[Cron Sync] Snapshot histórico creado: ${historicalSnapshotData.records_created || 0} registros`)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error)
-      results.snapshot.error = errorMessage
-      console.error('[Cron Sync] Error creando snapshot:', errorMessage)
+      results.historicalSnapshot.error = errorMessage
+      console.error('[Cron Sync] Error creando snapshot histórico:', errorMessage)
     }
 
     const duration = Date.now() - startTime
-    const allSuccess = results.appointments.success && results.availability.success && results.snapshot.success
+    const allSuccess = results.appointments.success && results.availability.success && results.dailySnapshot.success && results.historicalSnapshot.success
 
     console.log(`[Cron Sync] Sincronización completada en ${duration}ms`)
 
@@ -191,9 +225,13 @@ export async function GET(request: NextRequest) {
           success: results.availability.success,
           error: results.availability.error,
         },
-        snapshot: {
-          success: results.snapshot.success,
-          error: results.snapshot.error,
+        dailySnapshot: {
+          success: results.dailySnapshot.success,
+          error: results.dailySnapshot.error,
+        },
+        historicalSnapshot: {
+          success: results.historicalSnapshot.success,
+          error: results.historicalSnapshot.error,
         },
       },
     }, {

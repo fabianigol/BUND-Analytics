@@ -408,3 +408,83 @@ export interface IntegrationSettings {
   };
 }
 
+// Sales Targets Types
+export interface SalesTarget {
+  id: string;
+  location: string;
+  year: number;
+  month: number;
+  targetRevenue: number;
+  targetAov: number;
+  conversionRate: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LocationTargetProgress {
+  location: string;
+  targetRevenue: number;
+  currentRevenue: number;
+  progressPercentage: number;
+  targetAov: number;
+  currentAov: number;
+  conversionRate: number;
+  
+  // Cálculos de citas
+  targetOrders: number; // targetRevenue / targetAov
+  currentOrders: number;
+  targetAppointments: number; // targetOrders / (conversionRate / 100)
+  currentAppointments: number; // Del mes actual (solo medición)
+  
+  // Desglose semanal
+  weeklyBreakdown: WeeklyProgress[];
+  
+  // Datos mensuales
+  monthlyRevenue: Array<{ date: string; value: number }>;
+  dailyRevenue: Array<{ date: string; value: number }>;
+}
+
+export interface WeeklyProgress {
+  weekNumber: number; // 1-5
+  weekLabel: string; // "Semana 1 (1-7 Ene)"
+  startDate: string;
+  endDate: string;
+  
+  // Revenue
+  targetRevenue: number; // targetRevenue / numWeeks
+  currentRevenue: number;
+  revenueProgress: number; // %
+  
+  // Appointments
+  targetAppointments: number; // targetAppointments / numWeeks
+  currentAppointments: number; // Solo medición
+  appointmentsProgress: number; // %
+  
+  // Orders
+  targetOrders: number;
+  currentOrders: number;
+  ordersProgress: number; // %
+}
+
+export interface MonthlyTargetData {
+  month: number; // 1-12
+  monthLabel: string; // "Ene", "Feb", etc.
+  targetRevenue: number;
+  currentRevenue: number;
+  achievementPercentage: number; // (currentRevenue / targetRevenue) * 100
+}
+
+export interface YearlyTargetTrend {
+  year: number;
+  totalTargetRevenue: number; // Suma de todos los objetivos del año
+  totalCurrentRevenue: number; // Suma de toda la facturación del año
+  totalAchievementPercentage: number; // % total de consecución
+  monthlyData: MonthlyTargetData[]; // Datos mes a mes
+}
+
+export interface StoreYearlyTrend {
+  location: string;
+  year: number;
+  monthlyData: MonthlyTargetData[]; // Datos mes a mes de esta tienda
+}
+

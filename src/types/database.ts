@@ -754,7 +754,7 @@ export interface Database {
           snapshot_date?: string
           store_name?: string
           appointment_category?: 'medición' | 'fitting'
-          period_type?: 'weekly' | 'monthly' | 'quarterly'
+          period_type?: 'daily' | 'weekly' | 'monthly' | 'quarterly'
           period_start?: string
           period_end?: string
           total_slots?: number
@@ -800,6 +800,44 @@ export interface Database {
           attachments?: Json
           created_at?: string
           updated_at?: string
+        }
+      }
+      sales_targets: {
+        Row: {
+          id: string
+          location: string
+          year: number
+          month: number
+          target_revenue: number
+          target_aov: number
+          conversion_rate: number
+          created_at: string
+          updated_at: string
+          created_by: string | null
+        }
+        Insert: {
+          id?: string
+          location: string
+          year: number
+          month: number
+          target_revenue: number
+          target_aov: number
+          conversion_rate?: number
+          created_at?: string
+          updated_at?: string
+          created_by?: string | null
+        }
+        Update: {
+          id?: string
+          location?: string
+          year?: number
+          month?: number
+          target_revenue?: number
+          target_aov?: number
+          conversion_rate?: number
+          created_at?: string
+          updated_at?: string
+          created_by?: string | null
         }
       }
     }
