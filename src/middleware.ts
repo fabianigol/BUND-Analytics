@@ -53,8 +53,9 @@ export async function middleware(request: NextRequest) {
   // Protected routes
   const isAuthPage = request.nextUrl.pathname.startsWith('/login')
   const isPublicRoute = request.nextUrl.pathname.startsWith('/api')
+  const isPrivacyPage = request.nextUrl.pathname === '/privacidad'
 
-  if (!user && !isAuthPage && !isPublicRoute) {
+  if (!user && !isAuthPage && !isPublicRoute && !isPrivacyPage) {
     console.log('🔒 Redirecting to login')
     const url = request.nextUrl.clone()
     url.pathname = '/login'

@@ -6402,3 +6402,122 @@ Error: fetch failed
   ]
 }
  GET /api/dashboard 200 in 1243ms (compile: 5ms, proxy.ts: 91ms, render: 1147ms)
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 565ms (compile: 250ms, proxy.ts: 263ms, render: 52ms)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+○ Compiling /integraciones ...
+ GET /integraciones 200 in 6.3s (compile: 5.4s, proxy.ts: 869ms, render: 54ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/shopify?country=ES&t=1768410331504&_=0.3419421346628252 200 in 3.1s (compile: 2.6s, proxy.ts: 254ms, render: 295ms)
+ GET /api/integrations/shopify?country=MX&t=1768410331504&_=0.9013979726785978 200 in 3.1s (compile: 2.6s, proxy.ts: 242ms, render: 298ms)
+ GET /api/integrations/acuity?t=1768410331504&_=0.5620274087518139 200 in 3.1s (compile: 2.6s, proxy.ts: 249ms, render: 299ms)
+ GET /api/integrations/meta?t=1768410331507&_=0.03701218599320988 200 in 3.1s (compile: 2.6s, proxy.ts: 234ms, render: 302ms)
+ GET /api/integrations/meta?t=1768410331504&_=0.3097607875705498 200 in 3.1s (compile: 2.6s, proxy.ts: 229ms, render: 302ms)
+ GET /api/integrations/analytics?t=1768410331504&_=0.36976265414462484 200 in 3.1s (compile: 2.6s, proxy.ts: 233ms, render: 303ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/shopify?country=MX&t=1768410331507&_=0.593306372425522 200 in 265ms (compile: 11ms, proxy.ts: 92ms, render: 163ms)
+ GET /api/integrations/analytics?t=1768410331507&_=0.7262154027458968 200 in 272ms (compile: 8ms, proxy.ts: 88ms, render: 176ms)
+ GET /api/integrations/shopify?country=ES&t=1768410331507&_=0.2824403918392562 200 in 273ms (compile: 6ms, proxy.ts: 96ms, render: 170ms)
+ GET /api/integrations/acuity?t=1768410331507&_=0.2915853234988809 200 in 296ms (compile: -176µs, proxy.ts: 115ms, render: 182ms)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (131kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 1212ms (compile: 231ms, proxy.ts: 916ms, render: 64ms)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 114ms (compile: 3ms, proxy.ts: 96ms, render: 16ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/shopify?country=ES&t=1768411830816&_=0.9349495606450813 200 in 868ms (compile: 1893µs, proxy.ts: 379ms, render: 487ms)
+ GET /api/integrations/analytics?t=1768411830816&_=0.9923776295121582 200 in 873ms (compile: 4ms, proxy.ts: 323ms, render: 546ms)
+ GET /api/integrations/shopify?country=MX&t=1768411830816&_=0.8490875337176612 200 in 877ms (compile: 3ms, proxy.ts: 259ms, render: 615ms)
+ GET /api/integrations/acuity?t=1768411830816&_=0.2984063883817981 200 in 880ms (compile: 3ms, proxy.ts: 361ms, render: 516ms)
+ GET /api/integrations/meta?t=1768411830816&_=0.5231038752365513 200 in 882ms (compile: 16ms, proxy.ts: 210ms, render: 656ms)

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -148,12 +149,12 @@ export default function LoginPage() {
         </p>
         
         <p className="text-center text-xs text-gray-400 mt-4">
-          <a 
+          <Link 
             href="/privacidad" 
             className="hover:text-gray-600 hover:underline"
           >
             Política de Privacidad
-          </a>
+          </Link>
         </p>
       </form>
     </div>
