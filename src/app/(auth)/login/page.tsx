@@ -146,6 +146,15 @@ export default function LoginPage() {
             Contacta con Juan
           </a>
         </p>
+        
+        <p className="text-center text-xs text-gray-400 mt-4">
+          <a 
+            href="/privacidad" 
+            className="hover:text-gray-600 hover:underline"
+          >
+            Política de Privacidad
+          </a>
+        </p>
       </form>
     </div>
   )

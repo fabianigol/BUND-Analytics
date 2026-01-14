@@ -28,9 +28,21 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased flex flex-col min-h-screen`}
       >
-        {children}
+        <div className="flex-1">
+          {children}
+        </div>
+        <footer className="border-t py-4 mt-auto">
+          <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+            <a 
+              href="/privacidad" 
+              className="hover:text-foreground hover:underline"
+            >
+              Política de Privacidad
+            </a>
+          </div>
+        </footer>
       </body>
     </html>
   )
