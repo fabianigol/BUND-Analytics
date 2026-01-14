@@ -657,12 +657,14 @@ export default function IntegracionesPage() {
   const handleConnectShopify = async () => {
     // Determinar país según el integration ID
     const country = currentIntegrationId === 'shopify_mx' ? 'MX' : 'ES'
+    
+    console.log(`[Shopify Connect] Integration ID: ${currentIntegrationId}, Country: ${country}`)
 
     // Para México, validar OAuth credentials O access token directo
     // Para España, validar solo access token directo
     if (country === 'MX') {
-      const hasOAuthCredentials = shopifyOAuthCredentials.shopDomain && 
-                                   shopifyOAuthCredentials.clientId && 
+      const hasOAuthCredentials = shopifyOAuthCredentials.shopDomain &&
+                                   shopifyOAuthCredentials.clientId &&
                                    shopifyOAuthCredentials.clientSecret
       const hasDirectToken = shopifyCredentials.shopDomain && shopifyCredentials.accessToken
 
@@ -671,8 +673,14 @@ export default function IntegracionesPage() {
         return
       }
     } else {
+      // España - SOLO acepta token directo
       if (!shopifyCredentials.shopDomain || !shopifyCredentials.accessToken) {
-        alert('Por favor, completa todos los campos')
+        alert('Por favor, completa todos los campos (Shop Domain y Access Token)')
+        return
+      }
+      // Validar que el token sea del tipo correcto
+      if (!shopifyCredentials.accessToken.startsWith('shpat_') && !shopifyCredentials.accessToken.startsWith('shpca_')) {
+        alert('El Access Token de España debe comenzar con shpat_ o shpca_')
         return
       }
     }
@@ -684,18 +692,30 @@ export default function IntegracionesPage() {
       let requestBody: any = { country }
 
       if (country === 'MX' && shopifyOAuthCredentials.clientId && shopifyOAuthCredentials.clientSecret) {
-        // México con OAuth
+        // México con OAuth - SOLO enviar credenciales de OAuth
+        console.log(`[Shopify Connect] Sending OAuth credentials for Mexico`)
         requestBody = {
-          ...requestBody,
+          country: 'MX', // Forzar explícitamente
           shopDomain: shopifyOAuthCredentials.shopDomain,
           clientId: shopifyOAuthCredentials.clientId,
           clientSecret: shopifyOAuthCredentials.clientSecret,
         }
-      } else {
-        // Token directo (España o México legacy)
+      } else if (country === 'ES') {
+        // España - SOLO token directo, NUNCA OAuth
+        console.log(`[Shopify Connect] Sending direct token for Spain`)
         requestBody = {
-          ...requestBody,
-          ...shopifyCredentials,
+          country: 'ES', // Forzar explícitamente
+          shopDomain: shopifyCredentials.shopDomain,
+          accessToken: shopifyCredentials.accessToken,
+          // NO incluir clientId ni clientSecret
+        }
+      } else {
+        // México legacy con token directo
+        console.log(`[Shopify Connect] Sending direct token for Mexico (legacy)`)
+        requestBody = {
+          country: 'MX',
+          shopDomain: shopifyCredentials.shopDomain,
+          accessToken: shopifyCredentials.accessToken,
         }
       }
 
@@ -918,6 +938,14 @@ export default function IntegracionesPage() {
                         onClick={() => {
                           setSelectedIntegration(integration)
                           setCurrentIntegrationId(integration.id)
+                          // IMPORTANTE: Limpiar campos al cambiar de integración para evitar mezclas
+                          if (integration.id === 'shopify_es') {
+                            setShopifyCredentials({ shopDomain: '', accessToken: '' })
+                            setShopifyOAuthCredentials({ shopDomain: '', clientId: '', clientSecret: '' })
+                          } else if (integration.id === 'shopify_mx') {
+                            setShopifyCredentials({ shopDomain: '', accessToken: '' })
+                            setShopifyOAuthCredentials({ shopDomain: '', clientId: '', clientSecret: '' })
+                          }
                           if (integration.id === 'meta' && integration.connected) {
                             // Si ya está conectado, solo abrir para ver configuración
                           }

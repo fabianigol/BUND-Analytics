@@ -76,6 +76,12 @@ export async function POST(request: NextRequest) {
     }
 
     const { shop_domain, access_token } = (settings.settings as any) || {}
+    
+    console.log(`[Shopify Sync ${country}] Loaded settings:`)
+    console.log(`[Shopify Sync ${country}] - Shop domain: "${shop_domain}"`)
+    console.log(`[Shopify Sync ${country}] - Access token exists: ${!!access_token}`)
+    console.log(`[Shopify Sync ${country}] - Access token length: ${access_token?.length || 0}`)
+    console.log(`[Shopify Sync ${country}] - Access token prefix: ${access_token?.substring(0, 10)}...`)
 
     if (!shop_domain) {
       return NextResponse.json(
@@ -85,7 +91,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Para México: Intentar obtener token via OAuth si está configurado
-    let finalAccessToken = access_token
+    let finalAccessToken = access_token?.trim()
     if (country === 'MX' && isShopifyOAuthConfiguredMX()) {
       console.log(`[Shopify Sync MX] Using OAuth to get access token...`)
       try {

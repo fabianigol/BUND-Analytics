@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { MetaService } from '@/lib/integrations/meta'
 import { createClient } from '@/lib/supabase/server'
 import { Database } from '@/types/database'
+import { detectCampaignCountry } from '@/lib/utils/meta-country-detector'
 
 export async function POST(request: NextRequest) {
   try {
@@ -294,20 +295,25 @@ export async function POST(request: NextRequest) {
 
       // Guardar campañas en Supabase
       if (transformedCampaigns.length > 0) {
-        // Asegurar que actions se guarde como JSONB
+        // Asegurar que actions se guarde como JSONB y detectar país automáticamente
         const campaignsToSave = transformedCampaigns.map((campaign) => {
           // Log para ver qué estamos guardando
           if (campaign.actions && campaign.actions.length > 0) {
-            console.log(`[Meta Sync] Saving campaign ${campaign.campaign_name} with ${campaign.actions.length} actions:`, 
+            console.log(`[Meta Sync] Saving campaign ${campaign.campaign_name} with ${campaign.actions.length} actions:`,
               campaign.actions.slice(0, 3).map(a => `${a.action_type}: ${a.value}`))
           }
-          
+
+          // Detectar país de la campaña automáticamente
+          const country = detectCampaignCountry(campaign.campaign_name)
+          console.log(`[Meta Sync] Campaign ${campaign.campaign_name} detected as country: ${country}`)
+
           return {
             ...campaign,
             actions: Array.isArray(campaign.actions) ? campaign.actions : [],
             reach: campaign.reach || 0,
             link_clicks: campaign.link_clicks || 0,
             cost_per_result: campaign.cost_per_result || 0,
+            country, // Agregar país detectado
           }
         })
         

@@ -22,9 +22,16 @@ export class ShopifyService {
   private readonly rateLimitDelay = 500 // 500ms entre requests (2 req/s)
 
   constructor(config: ShopifyConfig) {
-    this.shopDomain = config.shopDomain
-    this.accessToken = config.accessToken
+    // Sanitizar inputs
+    this.shopDomain = config.shopDomain?.trim()
+    this.accessToken = config.accessToken?.trim()
     this.apiVersion = config.apiVersion || '2024-01'
+    
+    console.log(`[ShopifyService] Created with:`)
+    console.log(`[ShopifyService] - Domain: "${this.shopDomain}"`)
+    console.log(`[ShopifyService] - Token length: ${this.accessToken?.length || 0}`)
+    console.log(`[ShopifyService] - Token prefix: ${this.accessToken?.substring(0, 10)}...`)
+    console.log(`[ShopifyService] - API version: ${this.apiVersion}`)
   }
 
   private get baseUrl(): string {
@@ -63,6 +70,12 @@ export class ShopifyService {
         if (!response.ok) {
           const errorText = await response.text()
           let errorMessage = `Shopify API error: ${response.status} ${response.statusText}`
+          
+          console.error(`[ShopifyService] API Error:`)
+          console.error(`[ShopifyService] - Status: ${response.status}`)
+          console.error(`[ShopifyService] - URL: ${this.baseUrl}${endpoint}`)
+          console.error(`[ShopifyService] - Response: ${errorText.substring(0, 500)}`)
+          
           try {
             const errorJson = JSON.parse(errorText)
             // Manejar diferentes formatos de error de Shopify

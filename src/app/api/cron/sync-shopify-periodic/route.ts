@@ -69,14 +69,15 @@ export async function GET(request: NextRequest) {
     }
 
     const results = {
-      orders: { success: false, error: null as string | null },
+      ordersES: { success: false, error: null as string | null, records: 0 },
+      ordersMX: { success: false, error: null as string | null, records: 0 },
     }
 
-    // Sincronizar pedidos
+    // Sincronizar pedidos de España
     try {
-      console.log('[Cron Shopify] Sincronizando pedidos...')
+      console.log('[Cron Shopify] Sincronizando pedidos de España...')
       const ordersResponse = await fetch(
-        `${request.nextUrl.origin}/api/sync/shopify`,
+        `${request.nextUrl.origin}/api/sync/shopify?country=ES`,
         {
           method: 'POST',
           headers: {
@@ -88,20 +89,52 @@ export async function GET(request: NextRequest) {
 
       if (!ordersResponse.ok) {
         const errorData = await ordersResponse.json()
-        throw new Error(errorData.error || 'Error sincronizando pedidos')
+        throw new Error(errorData.error || 'Error sincronizando pedidos de España')
       }
 
       const ordersData = await ordersResponse.json()
-      results.orders.success = true
-      console.log(`[Cron Shopify] Pedidos sincronizados: ${ordersData.records_synced || 0} registros`)
+      results.ordersES.success = true
+      results.ordersES.records = ordersData.records_synced || 0
+      console.log(`[Cron Shopify] Pedidos España sincronizados: ${ordersData.records_synced || 0} registros`)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error)
-      results.orders.error = errorMessage
-      console.error('[Cron Shopify] Error sincronizando pedidos:', errorMessage)
+      results.ordersES.error = errorMessage
+      console.error('[Cron Shopify] Error sincronizando pedidos de España:', errorMessage)
+    }
+
+    // Sincronizar pedidos de México
+    try {
+      console.log('[Cron Shopify] Sincronizando pedidos de México...')
+      const ordersResponse = await fetch(
+        `${request.nextUrl.origin}/api/sync/shopify?country=MX`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-cron-secret': cronSecret, // Pasar el secret a los endpoints internos
+          },
+        }
+      )
+
+      if (!ordersResponse.ok) {
+        const errorData = await ordersResponse.json()
+        // No fallar si México no está conectado aún
+        console.warn('[Cron Shopify] México no sincronizado:', errorData.error)
+        results.ordersMX.error = errorData.error || 'Error sincronizando pedidos de México'
+      } else {
+        const ordersData = await ordersResponse.json()
+        results.ordersMX.success = true
+        results.ordersMX.records = ordersData.records_synced || 0
+        console.log(`[Cron Shopify] Pedidos México sincronizados: ${ordersData.records_synced || 0} registros`)
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      results.ordersMX.error = errorMessage
+      console.error('[Cron Shopify] Error sincronizando pedidos de México:', errorMessage)
     }
 
     const duration = Date.now() - startTime
-    const allSuccess = results.orders.success
+    const allSuccess = results.ordersES.success // Al menos España debe ser exitoso
 
     console.log(`[Cron Shopify] Sincronización completada en ${duration}ms`)
 
@@ -110,9 +143,15 @@ export async function GET(request: NextRequest) {
       timestamp: new Date().toISOString(),
       duration_ms: duration,
       results: {
-        orders: {
-          success: results.orders.success,
-          error: results.orders.error,
+        ordersES: {
+          success: results.ordersES.success,
+          records: results.ordersES.records,
+          error: results.ordersES.error,
+        },
+        ordersMX: {
+          success: results.ordersMX.success,
+          records: results.ordersMX.records,
+          error: results.ordersMX.error,
         },
       },
     }, {

@@ -208,6 +208,7 @@ export interface Database {
           customer_email: string
           customer_name: string
           line_items: Json
+          country: string
           created_at: string
           processed_at: string
           updated_at: string
@@ -224,6 +225,7 @@ export interface Database {
           customer_email: string
           customer_name: string
           line_items: Json
+          country?: string
           created_at?: string
           processed_at: string
           updated_at?: string
@@ -240,6 +242,7 @@ export interface Database {
           customer_email?: string
           customer_name?: string
           line_items?: Json
+          country?: string
           created_at?: string
           processed_at?: string
           updated_at?: string
@@ -260,6 +263,7 @@ export interface Database {
           cpc: number
           ctr: number
           roas: number
+          country: string
           date: string
           created_at: string
           updated_at: string
@@ -278,6 +282,7 @@ export interface Database {
           cpc: number
           ctr: number
           roas: number
+          country?: string
           date: string
           created_at?: string
           updated_at?: string
@@ -296,6 +301,7 @@ export interface Database {
           cpc?: number
           ctr?: number
           roas?: number
+          country?: string
           date?: string
           created_at?: string
           updated_at?: string
@@ -811,6 +817,7 @@ export interface Database {
           target_revenue: number
           target_aov: number
           conversion_rate: number
+          country: string
           created_at: string
           updated_at: string
           created_by: string | null
@@ -823,6 +830,7 @@ export interface Database {
           target_revenue: number
           target_aov: number
           conversion_rate?: number
+          country?: string
           created_at?: string
           updated_at?: string
           created_by?: string | null
@@ -835,6 +843,7 @@ export interface Database {
           target_revenue?: number
           target_aov?: number
           conversion_rate?: number
+          country?: string
           created_at?: string
           updated_at?: string
           created_by?: string | null

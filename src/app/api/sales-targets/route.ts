@@ -68,7 +68,16 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     // Validaciones
-    const { location, year, month, targetRevenue, targetAov, conversionRate } = body;
+    const { location, year, month, targetRevenue, targetAov, conversionRate, country } = body;
+    
+    // Detectar país automáticamente si no se proporciona
+    const targetCountry = country || (
+      location.toLowerCase().includes('méxico') ||
+      location.toLowerCase().includes('mexico') ||
+      location.toLowerCase().includes('cdmx')
+        ? 'MX'
+        : 'ES'
+    )
     
     if (!location || !year || !month || !targetRevenue || !targetAov) {
       return NextResponse.json(
@@ -123,6 +132,7 @@ export async function POST(request: NextRequest) {
       target_revenue: parseFloat(targetRevenue),
       target_aov: parseFloat(targetAov),
       conversion_rate: conversionRate ? parseFloat(conversionRate) : 50.00,
+      country: targetCountry,
       created_by: user.id,
     };
     

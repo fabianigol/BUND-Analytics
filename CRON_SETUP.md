@@ -204,4 +204,3 @@ Si quieres ajustar el horario:
 2. Revisa los logs detallados en Vercel
 3. Verifica que las credenciales de Shopify sean válidas (Shop Domain y Access Token)
 4. Asegúrate de que el Access Token tenga los permisos correctos (read_orders, read_products)
-

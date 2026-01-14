@@ -15,6 +15,7 @@ interface QuickStatCardProps {
   historicalChange?: number
   formatValue?: (value: number) => string
   className?: string
+  conversionToEur?: string // Conversión a EUR para mostrar (ej: "€10,161.50")
 }
 
 export function QuickStatCard({
@@ -28,6 +29,7 @@ export function QuickStatCard({
   historicalChange,
   formatValue = (v) => v.toLocaleString('es-ES', { maximumFractionDigits: 0 }),
   className,
+  conversionToEur,
 }: QuickStatCardProps) {
   const formatChange = (change: number | undefined) => {
     if (change === undefined) return null
@@ -60,6 +62,14 @@ export function QuickStatCard({
           
           {/* Leyenda de comparaciones */}
           <div className="space-y-1 text-xs">
+            {/* Conversión a EUR (solo para México) */}
+            {conversionToEur && (
+              <div className="flex items-center justify-between gap-2 border-b border-gray-100 pb-1">
+                <span className="text-muted-foreground font-medium">Conversión a €:</span>
+                <span className="text-muted-foreground font-semibold">{conversionToEur}</span>
+              </div>
+            )}
+            
             {/* Vs Período Previo */}
             <div className="flex items-center justify-between gap-2">
               <span className="text-muted-foreground">vs. período previo:</span>
