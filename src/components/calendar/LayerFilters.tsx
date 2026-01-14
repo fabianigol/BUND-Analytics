@@ -13,7 +13,7 @@ export function LayerFilters({ visibleLayers, onToggleLayer }: LayerFiltersProps
   return (
     <div className="space-y-1.5">
       <span className="text-xs font-semibold text-gray-700">Capas:</span>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-nowrap gap-1.5">
         {allLayers.map((layer) => {
           const isVisible = visibleLayers.includes(layer)
           const color = getLayerColor(layer)

@@ -1,0 +1,2553 @@
+▲ Next.js 16.1.1 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.44:3000
+- Environments: .env.local
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 1267ms
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (131kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+○ Compiling / ...
+ GET / 200 in 7.0s (compile: 5.6s, proxy.ts: 454ms, render: 966ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/ventas/espana', hasSupabaseUrl: true, hasSupabaseKey: true }
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+ GET /api/dashboard 200 in 4.3s (compile: 2.8s, proxy.ts: 357ms, render: 1095ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /ventas/espana 200 in 660ms (compile: 499ms, proxy.ts: 91ms, render: 70ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+ GET /ventas?country=ES 200 in 1238ms (compile: 1115ms, proxy.ts: 93ms, render: 31ms)
+🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/dashboard 200 in 1653ms (compile: 50ms, proxy.ts: 280ms, render: 1323ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ventas?country=ES 200 in 94ms (compile: 3ms, proxy.ts: 81ms, render: 11ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-11&days=10&country=ES 200 in 1530ms (compile: 1244ms, proxy.ts: 116ms, render: 170ms)
+ GET /api/integrations/shopify?country=ES 200 in 1532ms (compile: 1247ms, proxy.ts: 113ms, render: 171ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=monthly-revenue&months=12&country=ES 200 in 1583ms (compile: 1240ms, proxy.ts: 120ms, render: 223ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&country=ES 200 in 1708ms (compile: 1038ms, proxy.ts: 322ms, render: 348ms)
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-11&country=ES 200 in 1721ms (compile: 1259ms, proxy.ts: 101ms, render: 361ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&country=ES 200 in 412ms (compile: 1876µs, proxy.ts: 76ms, render: 334ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-11&days=10&onlineOnly=true&country=ES 200 in 485ms (compile: 1453µs, proxy.ts: 78ms, render: 405ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=monthly-revenue&months=12&onlineOnly=true&country=ES 200 in 298ms (compile: 6ms, proxy.ts: 89ms, render: 202ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&onlineOnly=true&country=ES 200 in 639ms (compile: 2ms, proxy.ts: 81ms, render: 556ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-11&onlineOnly=true&country=ES 200 in 794ms (compile: 2ms, proxy.ts: 88ms, render: 703ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=online-time-analysis&startDate=2026-01-01&endDate=2026-01-11&country=ES 200 in 247ms (compile: 3ms, proxy.ts: 92ms, render: 152ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&onlineOnly=true&country=ES 200 in 317ms (compile: 5ms, proxy.ts: 106ms, render: 206ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-11&days=10&country=ES 200 in 251ms (compile: 2ms, proxy.ts: 85ms, render: 164ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=online-customer-segmentation&startDate=2026-01-01&endDate=2026-01-11&country=ES 200 in 347ms (compile: 3ms, proxy.ts: 144ms, render: 200ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/shopify?country=ES 200 in 251ms (compile: 1892µs, proxy.ts: 86ms, render: 163ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=customers&startDate=2026-01-01&endDate=2026-01-11&limit=50&offset=0&country=ES 200 in 332ms (compile: 8ms, proxy.ts: 84ms, render: 240ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=customers&startDate=2026-01-01&endDate=2026-01-11&limit=10&offset=0&periodBasedLTV=true&country=ES 200 in 288ms (compile: 3ms, proxy.ts: 95ms, render: 189ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=customers&limit=10&offset=0&country=ES 200 in 301ms (compile: 1457µs, proxy.ts: 78ms, render: 221ms)
+ GET /api/shopify?type=customer-metrics&startDate=2026-01-01&endDate=2026-01-11&country=ES 200 in 417ms (compile: 1639µs, proxy.ts: 81ms, render: 334ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-11&onlineOnly=true&country=ES 200 in 1694ms (compile: 1548µs, proxy.ts: 90ms, render: 1603ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=monthly-revenue&months=12&country=ES 200 in 270ms (compile: 1593µs, proxy.ts: 89ms, render: 180ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=locations&startDate=2026-01-01&endDate=2026-01-11&country=ALL 200 in 417ms (compile: 3ms, proxy.ts: 101ms, render: 313ms)
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-11&country=ES 200 in 3.3s (compile: 1248ms, proxy.ts: 112ms, render: 1943ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&country=ES 200 in 277ms (compile: 1592µs, proxy.ts: 84ms, render: 191ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-11&country=ES 200 in 427ms (compile: 1428µs, proxy.ts: 99ms, render: 327ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-11&days=10&onlineOnly=true&country=ES 200 in 240ms (compile: 2ms, proxy.ts: 79ms, render: 159ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=monthly-revenue&months=12&onlineOnly=true&country=ES 200 in 413ms (compile: 1425µs, proxy.ts: 75ms, render: 336ms)
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&country=ES 200 in 582ms (compile: 1653µs, proxy.ts: 93ms, render: 488ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&onlineOnly=true&country=ES 200 in 599ms (compile: 1367µs, proxy.ts: 93ms, render: 505ms)
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-11&onlineOnly=true&country=ES 200 in 570ms (compile: 1575µs, proxy.ts: 88ms, render: 480ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=online-time-analysis&startDate=2026-01-01&endDate=2026-01-11&country=ES 200 in 461ms (compile: 67ms, proxy.ts: 169ms, render: 225ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&onlineOnly=true&country=ES 200 in 548ms (compile: 65ms, proxy.ts: 156ms, render: 327ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-11&days=10&country=ES 200 in 317ms (compile: 2ms, proxy.ts: 155ms, render: 160ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=online-customer-segmentation&startDate=2026-01-01&endDate=2026-01-11&country=ES 200 in 353ms (compile: 1348µs, proxy.ts: 171ms, render: 181ms)
+ GET /api/shopify?type=monthly-revenue&months=12&country=ES 200 in 275ms (compile: 1726µs, proxy.ts: 96ms, render: 178ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&country=ES 200 in 323ms (compile: 3ms, proxy.ts: 95ms, render: 225ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-11&days=10&onlineOnly=true&country=ES 200 in 266ms (compile: 4ms, proxy.ts: 80ms, render: 182ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-11&country=ES 200 in 335ms (compile: 5ms, proxy.ts: 80ms, render: 249ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=monthly-revenue&months=12&onlineOnly=true&country=ES 200 in 300ms (compile: 1817µs, proxy.ts: 82ms, render: 216ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&country=ES 200 in 276ms (compile: 2ms, proxy.ts: 74ms, render: 199ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=online-time-analysis&startDate=2026-01-01&endDate=2026-01-11&country=ES 200 in 234ms (compile: 1797µs, proxy.ts: 69ms, render: 163ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&onlineOnly=true&country=ES 200 in 312ms (compile: 2ms, proxy.ts: 82ms, render: 227ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-11&onlineOnly=true&country=ES 200 in 332ms (compile: 1831µs, proxy.ts: 93ms, render: 237ms)
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-11&onlineOnly=true&country=ES 200 in 998ms (compile: 1422µs, proxy.ts: 82ms, render: 915ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=online-customer-segmentation&startDate=2026-01-01&endDate=2026-01-11&country=ES 200 in 265ms (compile: 2ms, proxy.ts: 76ms, render: 187ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&onlineOnly=true&country=ES 200 in 349ms (compile: 1609µs, proxy.ts: 88ms, render: 260ms)
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-11&onlineOnly=true&country=ES 200 in 1110ms (compile: 4ms, proxy.ts: 93ms, render: 1013ms)
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-11&country=ES 200 in 3.0s (compile: 10ms, proxy.ts: 90ms, render: 2.9s)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-11&country=ES 200 in 1327ms (compile: 1631µs, proxy.ts: 92ms, render: 1233ms)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 2.2s (compile: 2.1s, proxy.ts: 141ms, render: 32ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/shopify?country=ES&t=1768147074694&_=0.4632375071810586 200 in 1171ms (compile: 799ms, proxy.ts: 206ms, render: 167ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/integrations/meta?t=1768147074697&_=0.2700319270773256 200 in 1183ms (compile: 797ms, proxy.ts: 208ms, render: 178ms)
+ GET /api/integrations/shopify?country=MX&t=1768147074694&_=0.7827153759197022 200 in 1187ms (compile: 809ms, proxy.ts: 196ms, render: 182ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/integrations/meta?t=1768147074694&_=0.005008813391536582 200 in 1192ms (compile: 889ms, proxy.ts: 116ms, render: 187ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/integrations/analytics?t=1768147074694&_=0.3964333002501834 200 in 1206ms (compile: 810ms, proxy.ts: 194ms, render: 202ms)
+ GET /api/integrations/acuity?t=1768147074694&_=0.7818231191801863 200 in 1216ms (compile: 628ms, proxy.ts: 377ms, render: 211ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/analytics?t=1768147074697&_=0.5881339441101802 200 in 246ms (compile: 1482µs, proxy.ts: 78ms, render: 166ms)
+ GET /api/integrations/shopify?country=MX&t=1768147074697&_=0.08586500701912403 200 in 257ms (compile: 979µs, proxy.ts: 89ms, render: 166ms)
+ GET /api/integrations/shopify?country=ES&t=1768147074697&_=0.39809410365518516 200 in 258ms (compile: 1430µs, proxy.ts: 84ms, render: 173ms)
+ GET /api/integrations/acuity?t=1768147074697&_=0.57251682935591 200 in 283ms (compile: 6ms, proxy.ts: 83ms, render: 194ms)
+🔍 Middleware Debug: { url: '/ventas/mexico', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ventas/mexico 200 in 1205ms (compile: 942ms, proxy.ts: 223ms, render: 41ms)
+🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ventas?country=MX 200 in 147ms (compile: 25ms, proxy.ts: 100ms, render: 22ms)
+🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ventas?country=MX 200 in 99ms (compile: 3ms, proxy.ts: 84ms, render: 12ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/shopify?country=MX 200 in 825ms (compile: 292ms, proxy.ts: 198ms, render: 335ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=monthly-revenue&months=12&country=MX 200 in 977ms (compile: 65ms, proxy.ts: 720ms, render: 192ms)
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-11&days=10&country=MX 200 in 980ms (compile: 190ms, proxy.ts: 595ms, render: 195ms)
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&country=MX 200 in 990ms (compile: 80ms, proxy.ts: 705ms, render: 205ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-11&country=MX 200 in 1004ms (compile: 78ms, proxy.ts: 707ms, render: 219ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&country=MX 200 in 396ms (compile: 2ms, proxy.ts: 85ms, render: 309ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-11&days=10&onlineOnly=true&country=MX 200 in 256ms (compile: 1510µs, proxy.ts: 92ms, render: 162ms)
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&onlineOnly=true&country=MX 200 in 272ms (compile: 2ms, proxy.ts: 89ms, render: 180ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-11&onlineOnly=true&country=MX 200 in 318ms (compile: 5ms, proxy.ts: 92ms, render: 222ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=monthly-revenue&months=12&onlineOnly=true&country=MX 200 in 297ms (compile: 3ms, proxy.ts: 79ms, render: 216ms)
+ GET /api/shopify?type=online-time-analysis&startDate=2026-01-01&endDate=2026-01-11&country=MX 200 in 262ms (compile: 1512µs, proxy.ts: 94ms, render: 166ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=online-customer-segmentation&startDate=2026-01-01&endDate=2026-01-11&country=MX 200 in 381ms (compile: 1902µs, proxy.ts: 85ms, render: 294ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&onlineOnly=true&country=MX 200 in 485ms (compile: 2ms, proxy.ts: 107ms, render: 375ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/shopify?country=MX 200 in 264ms (compile: 1741µs, proxy.ts: 98ms, render: 165ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-11&country=MX 200 in 1810ms (compile: 75ms, proxy.ts: 710ms, render: 1025ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=customers&startDate=2026-01-01&endDate=2026-01-11&limit=50&offset=0&country=MX 200 in 342ms (compile: 5ms, proxy.ts: 158ms, render: 179ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=customers&startDate=2026-01-01&endDate=2026-01-11&limit=10&offset=0&periodBasedLTV=true&country=MX 200 in 282ms (compile: 1990µs, proxy.ts: 103ms, render: 178ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=customers&limit=10&offset=0&country=MX 200 in 290ms (compile: 1301µs, proxy.ts: 124ms, render: 165ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-11&onlineOnly=true&country=MX 200 in 1121ms (compile: 4ms, proxy.ts: 93ms, render: 1025ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=monthly-revenue&months=12&country=MX 200 in 257ms (compile: 1677µs, proxy.ts: 87ms, render: 169ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=customer-metrics&startDate=2026-01-01&endDate=2026-01-11&country=MX 200 in 445ms (compile: 2ms, proxy.ts: 86ms, render: 357ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=locations&startDate=2026-01-01&endDate=2026-01-11&country=ALL 200 in 518ms (compile: 10ms, proxy.ts: 93ms, render: 415ms)
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-11&days=10&country=MX 200 in 306ms (compile: 5ms, proxy.ts: 102ms, render: 200ms)
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&country=MX 200 in 265ms (compile: 1738µs, proxy.ts: 82ms, render: 181ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&country=MX 200 in 304ms (compile: 1865µs, proxy.ts: 84ms, render: 218ms)
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-11&days=10&onlineOnly=true&country=MX 200 in 297ms (compile: 1668µs, proxy.ts: 92ms, render: 203ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-11&country=MX 200 in 330ms (compile: 2ms, proxy.ts: 89ms, render: 239ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-11&onlineOnly=true&country=MX 200 in 268ms (compile: 8ms, proxy.ts: 99ms, render: 161ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=monthly-revenue&months=12&onlineOnly=true&country=MX 200 in 292ms (compile: 8ms, proxy.ts: 96ms, render: 189ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&onlineOnly=true&country=MX 200 in 307ms (compile: 7ms, proxy.ts: 100ms, render: 199ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=online-time-analysis&startDate=2026-01-01&endDate=2026-01-11&country=MX 200 in 255ms (compile: 4ms, proxy.ts: 91ms, render: 160ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=online-customer-segmentation&startDate=2026-01-01&endDate=2026-01-11&country=MX 200 in 313ms (compile: 4ms, proxy.ts: 100ms, render: 209ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&onlineOnly=true&country=MX 200 in 403ms (compile: 4ms, proxy.ts: 93ms, render: 307ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=monthly-revenue&months=12&country=MX 200 in 254ms (compile: 1812µs, proxy.ts: 89ms, render: 163ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-11&days=10&country=MX 200 in 285ms (compile: 3ms, proxy.ts: 78ms, render: 204ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&country=MX 200 in 244ms (compile: 2ms, proxy.ts: 83ms, render: 159ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=charts&startDate=2026-01-01&endDate=2026-01-11&days=10&onlineOnly=true&country=MX 200 in 249ms (compile: 4ms, proxy.ts: 87ms, render: 158ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-11&country=MX 200 in 304ms (compile: 1860µs, proxy.ts: 90ms, render: 212ms)
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&country=MX 200 in 466ms (compile: 2ms, proxy.ts: 82ms, render: 381ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=orders&limit=100&startDate=2026-01-01&endDate=2026-01-11&onlineOnly=true&country=MX 200 in 381ms (compile: 1413µs, proxy.ts: 87ms, render: 293ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=monthly-revenue&months=12&onlineOnly=true&country=MX 200 in 362ms (compile: 1957µs, proxy.ts: 195ms, render: 164ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-11&country=MX 200 in 930ms (compile: 1831µs, proxy.ts: 84ms, render: 845ms)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+ GET /api/shopify?type=products&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&onlineOnly=true&country=MX 200 in 280ms (compile: 1926µs, proxy.ts: 119ms, render: 159ms)
+ GET /api/shopify?type=online-time-analysis&startDate=2026-01-01&endDate=2026-01-11&country=MX 200 in 273ms (compile: 1339µs, proxy.ts: 92ms, render: 180ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=online-customer-segmentation&startDate=2026-01-01&endDate=2026-01-11&country=MX 200 in 259ms (compile: 1471µs, proxy.ts: 81ms, render: 177ms)
+ GET /api/shopify?type=complements&limit=10&startDate=2026-01-01&endDate=2026-01-11&filterType=monthly&onlineOnly=true&country=MX 200 in 337ms (compile: 3ms, proxy.ts: 77ms, render: 256ms)
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-11&country=MX 200 in 828ms (compile: 3ms, proxy.ts: 79ms, render: 745ms)
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-11&onlineOnly=true&country=MX 200 in 2.6s (compile: 1924µs, proxy.ts: 84ms, render: 2.6s)
+🔍 Middleware Debug: { url: '/api/shopify', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/shopify?type=metrics&startDate=2026-01-01&endDate=2026-01-11&onlineOnly=true&country=MX 200 in 1263ms (compile: 4ms, proxy.ts: 91ms, render: 1168ms)
+🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ventas?country=MX 200 in 728ms (compile: 257ms, proxy.ts: 375ms, render: 96ms)
+🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ventas?country=MX 200 in 166ms (compile: 3ms, proxy.ts: 149ms, render: 14ms)
+🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ventas?country=MX 200 in 441ms (compile: 6ms, proxy.ts: 413ms, render: 22ms)
+🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ventas?country=MX 200 in 175ms (compile: 3ms, proxy.ts: 159ms, render: 13ms)
+🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ventas?country=MX 200 in 158ms (compile: 4ms, proxy.ts: 133ms, render: 21ms)
+🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ventas?country=MX 200 in 171ms (compile: 8ms, proxy.ts: 143ms, render: 19ms)
+🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ventas?country=MX 200 in 183ms (compile: 5ms, proxy.ts: 157ms, render: 21ms)
+🔍 Middleware Debug: { url: '/ventas', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /ventas?country=MX 200 in 223ms (compile: 5ms, proxy.ts: 196ms, render: 22ms)
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 1465ms (compile: 1264ms, proxy.ts: 181ms, render: 20ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 190ms (compile: 37ms, proxy.ts: 127ms, render: 27ms)
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+ GET /api/dashboard 200 in 2.0s (compile: 945ms, proxy.ts: 87ms, render: 973ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+ GET /api/dashboard 200 in 1129ms (compile: 6ms, proxy.ts: 98ms, render: 1024ms)
+⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+⚠ `eslint` configuration in next.config.ts is no longer supported. See more info here: https://nextjs.org/docs/app/api-reference/cli/next#next-lint-options
+⚠ Invalid next.config.ts options detected: 
+⚠     Unrecognized key(s) in object: 'eslint'
+⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+▲ Next.js 16.1.1 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.44:3000
+- Environments: .env.local
+- Experiments (use with caution):
+  · cpus: 1
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 2.2s
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+○ Compiling / ...
+ GET / 200 in 8.4s (compile: 6.8s, proxy.ts: 668ms, render: 879ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+○ Compiling /api/dashboard ...
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 5.1s (compile: 3.4s, proxy.ts: 238ms, render: 1555ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 1455ms (compile: 9ms, proxy.ts: 102ms, render: 1344ms)
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 363ms (compile: 72ms, proxy.ts: 248ms, render: 43ms)
+⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+⚠ `eslint` configuration in next.config.ts is no longer supported. See more info here: https://nextjs.org/docs/app/api-reference/cli/next#next-lint-options
+⚠ Invalid next.config.ts options detected: 
+⚠     Unrecognized key(s) in object: 'eslint'
+⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+▲ Next.js 16.1.1 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.44:3000
+- Environments: .env.local
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 1861ms
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (131kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+○ Compiling / ...
+ GET / 200 in 8.1s (compile: 7.1s, proxy.ts: 712ms, render: 298ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 2.8s (compile: 1283ms, proxy.ts: 241ms, render: 1290ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 1205ms (compile: 6ms, proxy.ts: 117ms, render: 1082ms)
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 250ms (compile: 63ms, proxy.ts: 150ms, render: 37ms)
+⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+⚠ `eslint` configuration in next.config.ts is no longer supported. See more info here: https://nextjs.org/docs/app/api-reference/cli/next#next-lint-options
+⚠ Invalid next.config.ts options detected: 
+⚠     Unrecognized key(s) in object: 'eslint'
+⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+▲ Next.js 16.1.1 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.44:3000
+- Environments: .env.local
+- Experiments (use with caution):
+  · cpus: 1
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 2s
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+○ Compiling / ...
+ GET / 200 in 5.2s (compile: 4.4s, proxy.ts: 227ms, render: 553ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 3.1s (compile: 1715ms, proxy.ts: 151ms, render: 1220ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+ GET /api/dashboard 200 in 2.6s (compile: 18ms, proxy.ts: 97ms, render: 2.5s)
+⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+⚠ `eslint` configuration in next.config.ts is no longer supported. See more info here: https://nextjs.org/docs/app/api-reference/cli/next#next-lint-options
+⚠ Invalid next.config.ts options detected: 
+⚠     Unrecognized key(s) in object: 'eslint'
+⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+▲ Next.js 16.1.1 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.44:3000
+- Environments: .env.local
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 1423ms
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 3.7s (compile: 3.2s, proxy.ts: 207ms, render: 291ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 240ms (compile: 46ms, proxy.ts: 157ms, render: 37ms)
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 2.6s (compile: 1265ms, proxy.ts: 176ms, render: 1135ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 1113ms (compile: 8ms, proxy.ts: 118ms, render: 986ms)
+⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+⚠ `eslint` configuration in next.config.ts is no longer supported. See more info here: https://nextjs.org/docs/app/api-reference/cli/next#next-lint-options
+⚠ Invalid next.config.ts options detected: 
+⚠     Unrecognized key(s) in object: 'eslint'
+⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+▲ Next.js 16.1.1 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.44:3000
+- Environments: .env.local
+- Experiments (use with caution):
+  · cpus: 1
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 2.1s
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+○ Compiling / ...
+ GET / 200 in 4.8s (compile: 3.8s, proxy.ts: 224ms, render: 766ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+ GET /api/dashboard 200 in 3.9s (compile: 1934ms, proxy.ts: 141ms, render: 1843ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+ GET /api/dashboard 200 in 4.7s (compile: 14ms, proxy.ts: 118ms, render: 4.6s)
+⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+⚠ `eslint` configuration in next.config.ts is no longer supported. See more info here: https://nextjs.org/docs/app/api-reference/cli/next#next-lint-options
+⚠ Invalid next.config.ts options detected: 
+⚠     Unrecognized key(s) in object: 'eslint'
+⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+▲ Next.js 16.1.1 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.44:3000
+- Environments: .env.local
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 1750ms
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+○ Compiling / ...
+ GET / 200 in 4.1s (compile: 3.4s, proxy.ts: 233ms, render: 456ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+ GET /api/dashboard 200 in 3.0s (compile: 1696ms, proxy.ts: 145ms, render: 1121ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+ GET /api/dashboard 200 in 1140ms (compile: 22ms, proxy.ts: 105ms, render: 1013ms)
+⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+▲ Next.js 16.1.1 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.44:3000
+- Environments: .env.local
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 1579ms
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+○ Compiling / ...
+ GET / 200 in 4.9s (compile: 4.0s, proxy.ts: 490ms, render: 360ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 3.1s (compile: 1747ms, proxy.ts: 265ms, render: 1108ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 1139ms (compile: 11ms, proxy.ts: 131ms, render: 996ms)
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 1128ms (compile: 102ms, proxy.ts: 632ms, render: 394ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+ GET /api/dashboard 200 in 1613ms (compile: 10ms, proxy.ts: 118ms, render: 1485ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+Error: fetch failed
+    at context.fetch (/Users/juanfabianidelaiglesia/Downloads/2º BUSINESS/BUND-Analytics/node_modules/next/dist/server/web/sandbox/context.js:321:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:120:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:106:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:96:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1290:82)
+    at SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1176:26)
+    at async SupabaseAuthClient._getUser (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1280:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1264:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1121:28) {
+  
+}
+👤 User status: { hasUser: false, email: undefined }
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 13,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+[Dashboard] No availability data found for today: 2026-01-11
+[Dashboard] Store occupation data: {
+  today: '2026-01-11',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+ GET /api/dashboard 200 in 87.3min (compile: 41ms, proxy.ts: 87.2min, render: 3.0s)
+🔍 Middleware Debug: { url: '/', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET / 200 in 462ms (compile: 13ms, proxy.ts: 397ms, render: 52ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Raw occupation data: {
+  source: 'availability_by_store',
+  count: 16,
+  sample: [
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'medición',
+      booked: 3,
+      total: 34,
+      available: 31
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      total: 6,
+      available: 5
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 4,
+      total: 8,
+      available: 4
+    },
+    {
+      store_name: 'The Bundclub Barcelona',
+      normalized: 'Barcelona',
+      category: 'fitting',
+      booked: 2,
+      total: 1,
+      available: 0
+    },
+    {
+      store_name: 'The Bundclub Zaragoza',
+      normalized: 'Zaragoza',
+      category: 'fitting',
+      booked: 1,
+      total: 7,
+      available: 6
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  dataSource: 'availability_by_store',
+  storesInMap: [
+    'Málaga',    'Sevilla',
+    'Barcelona', 'Zaragoza',
+    'Cdmx',      'Murcia',
+    'Bilbao',    'Madrid'
+  ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2026-01-14',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+ GET /api/dashboard 200 in 1715ms (compile: 3ms, proxy.ts: 94ms, render: 1617ms)
+🔍 Middleware Debug: { url: '/api/dashboard', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Dashboard] Investment data: {
+  totalAdsRecords: 1000,
+  uniqueDates: 12,
+  sampleDates: [
+    [ '2025-12-16', 0 ],
+    [ '2025-12-18', 0 ],
+    [ '2025-12-22', 0 ],
+    [ '2025-12-21', 92.77 ],
+    [ '2025-12-23', 0 ]
+  ]
+}
+[Dashboard] Raw occupation data: {
+  source: 'availability_by_store',
+  count: 16,
+  sample: [
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'medición',
+      booked: 3,
+      total: 34,
+      available: 31
+    },
+    {
+      store_name: 'The Bundclub Sevilla',
+      normalized: 'Sevilla',
+      category: 'fitting',
+      booked: 1,
+      total: 6,
+      available: 5
+    },
+    {
+      store_name: 'The Bundclub Málaga',
+      normalized: 'Málaga',
+      category: 'fitting',
+      booked: 4,
+      total: 8,
+      available: 4
+    },
+    {
+      store_name: 'The Bundclub Barcelona',
+      normalized: 'Barcelona',
+      category: 'fitting',
+      booked: 2,
+      total: 1,
+      available: 0
+    },
+    {
+      store_name: 'The Bundclub Zaragoza',
+      normalized: 'Zaragoza',
+      category: 'fitting',
+      booked: 1,
+      total: 7,
+      available: 6
+    }
+  ]
+}
+[Dashboard] Store map after processing: {
+  dataSource: 'availability_by_store',
+  storesInMap: [
+    'Málaga',    'Sevilla',
+    'Barcelona', 'Zaragoza',
+    'Cdmx',      'Murcia',
+    'Bilbao',    'Madrid'
+  ],
+  orderedStores: [
+    'Madrid',   'Sevilla',
+    'Málaga',   'Barcelona',
+    'Murcia',   'Cdmx',
+    'Bilbao',   'Zaragoza',
+    'Valencia'
+  ]
+}
+[Dashboard] Store occupation data: {
+  today: '2026-01-14',
+  storesFound: 9,
+  stores: [
+    {
+      name: 'Madrid',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Sevilla',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Málaga',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Barcelona',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Murcia',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Cdmx',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Bilbao',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Zaragoza',
+      hasData: true,
+      medicion: [Object],
+      fitting: [Object]
+    },
+    {
+      name: 'Valencia',
+      hasData: false,
+      medicion: [Object],
+      fitting: [Object]
+    }
+  ]
+}
+ GET /api/dashboard 200 in 1626ms (compile: 9ms, proxy.ts: 104ms, render: 1513ms)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 2.0s (compile: 1709ms, proxy.ts: 193ms, render: 142ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/analytics?t=1768376224994&_=0.7753998824849885 200 in 1040ms (compile: 701ms, proxy.ts: 175ms, render: 164ms)
+ GET /api/integrations/acuity?t=1768376224994&_=0.29521134122911796 200 in 1042ms (compile: 707ms, proxy.ts: 169ms, render: 167ms)
+ GET /api/integrations/meta?t=1768376224994&_=0.7301672088486276 200 in 1047ms (compile: 756ms, proxy.ts: 120ms, render: 172ms)
+ GET /api/integrations/meta?t=1768376224995&_=0.7885017961491098 200 in 1050ms (compile: 613ms, proxy.ts: 262ms, render: 175ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/integrations/shopify?country=ES&t=1768376224994&_=0.2827112401389952 200 in 1061ms (compile: 609ms, proxy.ts: 267ms, render: 186ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+ GET /api/integrations/shopify?country=MX&t=1768376224994&_=0.9692803602374332 200 in 1074ms (compile: 612ms, proxy.ts: 263ms, render: 199ms)
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /api/integrations/analytics?t=1768376224995&_=0.16663564523557273 200 in 258ms (compile: 19ms, proxy.ts: 89ms, render: 150ms)
+ GET /api/integrations/acuity?t=1768376224995&_=0.07797979587832471 200 in 259ms (compile: 17ms, proxy.ts: 97ms, render: 145ms)
+ GET /api/integrations/shopify?country=ES&t=1768376224995&_=0.039108657914334044 200 in 261ms (compile: 15ms, proxy.ts: 98ms, render: 148ms)
+ GET /api/integrations/shopify?country=MX&t=1768376224995&_=0.968176237393128 200 in 274ms (compile: 13ms, proxy.ts: 100ms, render: 161ms)
+🔍 Middleware Debug: {
+  url: '/api/sync/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+[Shopify Sync] Starting sync for country: ES
+[Shopify Sync ES] Creating Shopify service with domain: bund-mexico.myshopify.com
+[Shopify Sync ES] Error creating sync log: {
+  code: '23514',
+  details: null,
+  hint: null,
+  message: 'new row for relation "sync_logs" violates check constraint "sync_logs_integration_check"'
+}
+[Shopify Sync ES] Starting sync process...
+[Shopify Sync ES] ==========================================
+[Shopify Sync ES] Country: ES
+[Shopify Sync ES] Today: 2026-01-14T07:37:09.181Z
+[Shopify Sync ES] Year: 2026, Month: 1
+[Shopify Sync ES] First day ISO: 2026-01-01T00:00:00.000Z
+[Shopify Sync ES] Today ISO: 2026-01-14T23:59:59.999Z
+[Shopify Sync ES] Sync start date: 2026-01-01T00:00:00.000Z
+[Shopify Sync ES] Sync end date: 2026-01-14T23:59:59.999Z
+[Shopify Sync ES] Connection date: 2025-12-14T16:51:26.285Z
+[Shopify Sync ES] ==========================================
+[Shopify Sync ES] Fetching orders from Shopify API...
+[Shopify] Fetching page 1 (first page)
+Request failed, retrying in 1000ms (attempt 1/3)
+Request failed, retrying in 2000ms (attempt 2/3)
+[Shopify] Error fetching page 1: Error: [API] Invalid API key or access token (unrecognized login or wrong password)
+    at ShopifyService.request (src/lib/integrations/shopify.ts:86:17)
+    at async ShopifyService.getAllOrders (src/lib/integrations/shopify.ts:235:24)
+    at async syncShopifyData (src/app/api/sync/shopify/route.ts:189:19)
+    at async POST (src/app/api/sync/shopify/route.ts:110:12)
+  84 |             errorMessage = errorText || errorMessage
+  85 |           }
+> 86 |           throw new Error(errorMessage)
+     |                 ^
+  87 |         }
+  88 |
+  89 |         const data = await response.json()
+[Shopify Sync ES] Error fetching orders from Shopify API: Error: Error fetching Shopify orders: [API] Invalid API key or access token (unrecognized login or wrong password)
+    at ShopifyService.getAllOrders (src/lib/integrations/shopify.ts:310:15)
+    at async syncShopifyData (src/app/api/sync/shopify/route.ts:189:19)
+    at async POST (src/app/api/sync/shopify/route.ts:110:12)
+  308 |         }
+  309 |         // Si es la primera página o no hay pedidos, lanzar el error
+> 310 |         throw new Error(`Error fetching Shopify orders: ${error?.message || String(error)}`)
+      |               ^
+  311 |       }
+  312 |     } while (pageInfo)
+  313 |
+[Shopify Sync ES] Error during sync: Error: Failed to fetch orders from Shopify: Error fetching Shopify orders: [API] Invalid API key or access token (unrecognized login or wrong password)
+    at syncShopifyData (src/app/api/sync/shopify/route.ts:197:13)
+    at async POST (src/app/api/sync/shopify/route.ts:110:12)
+  195 |     } catch (fetchError: any) {
+  196 |       console.error(`[Shopify Sync ${country}] Error fetching orders from Shopify API:`, fetchError)
+> 197 |       throw new Error(`Failed to fetch orders from Shopify: ${fetchError.message || String(fetchError)}`)
+      |             ^
+  198 |     }
+  199 |
+  200 |     // Transformar y guardar pedidos en BD
+Shopify sync error: Error: Failed to fetch orders from Shopify: Error fetching Shopify orders: [API] Invalid API key or access token (unrecognized login or wrong password)
+    at syncShopifyData (src/app/api/sync/shopify/route.ts:197:13)
+    at async POST (src/app/api/sync/shopify/route.ts:110:12)
+  195 |     } catch (fetchError: any) {
+  196 |       console.error(`[Shopify Sync ${country}] Error fetching orders from Shopify API:`, fetchError)
+> 197 |       throw new Error(`Failed to fetch orders from Shopify: ${fetchError.message || String(fetchError)}`)
+      |             ^
+  198 |     }
+  199 |
+  200 |     // Transformar y guardar pedidos en BD
+ POST /api/sync/shopify?country=ES 500 in 4.7s (compile: 738ms, proxy.ts: 98ms, render: 3.8s)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 585ms (compile: 234ms, proxy.ts: 292ms, render: 59ms)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 98ms (compile: 2ms, proxy.ts: 79ms, render: 16ms)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 98ms (compile: 2ms, proxy.ts: 75ms, render: 20ms)
+🔍 Middleware Debug: { url: '/integraciones', hasSupabaseUrl: true, hasSupabaseKey: true }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+ GET /integraciones 200 in 105ms (compile: 3ms, proxy.ts: 80ms, render: 22ms)
+🔍 Middleware Debug: {
+  url: '/api/integrations/meta',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/analytics',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/acuity',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+🔍 Middleware Debug: {
+  url: '/api/integrations/shopify',
+  hasSupabaseUrl: true,
+  hasSupabaseKey: true
+}
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }
+👤 User status: { hasUser: true, email: 'fabiani@bundcompany.com' }

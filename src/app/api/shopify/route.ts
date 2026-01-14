@@ -1478,10 +1478,12 @@ async function getLocations(
 
   // Calcular revenue total para calcular porcentajes
   let totalRevenue = 0
+  let totalRevenueInEUR = 0 // Para calcular porcentajes correctamente (México en EUR)
 
   // Agrupar por ubicación
   const locationMap = new Map<string, {
     revenue: number
+    revenueInEUR: number // Para calcular porcentaje correctamente
     orders: number
     customers: Map<string, { name: string; email: string; revenue: number }>
     complements: Map<string, { name: string; revenue: number; sales: number }>
@@ -1511,6 +1513,7 @@ async function getLocations(
 
     const existing = locationMap.get(finalLocation) || {
       revenue: 0,
+      revenueInEUR: 0,
       orders: 0,
       customers: new Map(),
       complements: new Map(),
@@ -1519,9 +1522,16 @@ async function getLocations(
     }
 
     const orderRevenue = Number(order.total_price) || 0
+    // Para México, convertir a EUR para cálculos de porcentaje
+    const orderRevenueInEUR = orderCountry === 'MX' 
+      ? orderRevenue * MXN_TO_EUR_RATE 
+      : orderRevenue
+    
     existing.revenue += orderRevenue
+    existing.revenueInEUR += orderRevenueInEUR
     existing.orders += 1
     totalRevenue += orderRevenue // Acumular para el total
+    totalRevenueInEUR += orderRevenueInEUR // Acumular en EUR para porcentajes
 
     // Agregar cliente
     const customerEmail = order.customer_email || ''
@@ -1616,7 +1626,7 @@ async function getLocations(
       // Para México, calcular conversión a EUR
       const isMexico = location === 'México'
       const revenueInEUR = isMexico 
-        ? Math.round(data.revenue * MXN_TO_EUR_RATE * 100) / 100 
+        ? Math.round(data.revenueInEUR * 100) / 100 
         : data.revenue
       const aovInEUR = isMexico && data.orders > 0
         ? Math.round((data.revenue / data.orders) * MXN_TO_EUR_RATE * 100) / 100
@@ -1629,7 +1639,8 @@ async function getLocations(
         orders: data.orders,
         averageOrderValue: data.orders > 0 ? Math.round((data.revenue / data.orders) * 100) / 100 : 0,
         averageOrderValueInEUR: aovInEUR, // Para tooltip
-        percentageOfTotal: totalRevenue > 0 ? Math.round((data.revenue / totalRevenue) * 100 * 100) / 100 : 0,
+        // Calcular porcentaje usando valores en EUR para comparación justa entre países
+        percentageOfTotal: totalRevenueInEUR > 0 ? Math.round((data.revenueInEUR / totalRevenueInEUR) * 100 * 100) / 100 : 0,
         roas: locationROAS ? Math.round(locationROAS * 100) / 100 : undefined, // ROAS específico por tienda
         topCustomers,
         topComplements,

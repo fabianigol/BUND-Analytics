@@ -101,9 +101,9 @@ export function FullYearCalendar({ onCreateEvent, onEditEvent, refreshTrigger }:
   return (
     <div className="space-y-6">
       {/* Header con filtros y navegación de año */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center">
+      <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
         {/* Filtros de capas */}
-        <div>
+        <div className="flex-1 min-w-0">
           <LayerFilters
             visibleLayers={visibleLayers}
             onToggleLayer={handleToggleLayer}
@@ -111,7 +111,7 @@ export function FullYearCalendar({ onCreateEvent, onEditEvent, refreshTrigger }:
         </div>
 
         {/* Navegación de año */}
-        <div className="flex items-center justify-between lg:justify-end gap-4">
+        <div className="flex items-center gap-4 flex-shrink-0">
           {isLoading && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
