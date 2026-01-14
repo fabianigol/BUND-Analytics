@@ -51,6 +51,55 @@ Si quieres que cualquier usuario pueda usar la aplicación sin estar en la lista
 
 ### Scopes Necesarios:
 - `https://www.googleapis.com/auth/analytics.readonly` - Para leer datos de Analytics
+- `https://www.googleapis.com/auth/webmasters.readonly` - Para leer datos de Search Console (NUEVO)
+
+## Habilitar API de Search Console
+
+Para que la funcionalidad de consultas de búsqueda funcione, **solo necesitas habilitar la API**. Los scopes ya están configurados en el código y se solicitarán automáticamente.
+
+### Paso 1: Habilitar la API de Search Console
+1. Ve a [Google Cloud Console](https://console.cloud.google.com/)
+2. Selecciona tu proyecto (ej: `mkth-hub`)
+3. En el menú lateral izquierdo, ve a **APIs y servicios** → **Biblioteca**
+4. En el buscador, escribe: **"Search Console API"** o **"Google Search Console API"**
+5. Haz clic en el resultado
+6. Haz clic en el botón azul **"Habilitar"**
+7. Espera unos segundos hasta que aparezca el mensaje de confirmación
+
+### Paso 2: Verificar que la API esté habilitada
+1. Ve a **APIs y servicios** → **APIs habilitadas** (o **Enabled APIs**)
+2. Busca en la lista y deberías ver:
+   - ✅ **Analytics Data API** (si ya la tenías antes)
+   - ✅ **Google Search Console API** (nueva - debe aparecer después del paso anterior)
+
+### Paso 3: Configurar Scopes en Google Auth Platform
+
+En la nueva interfaz de Google Auth Platform, los scopes se pueden configurar de dos formas:
+
+#### Opción A: A través de "Acceso a los datos" (Recomendado)
+1. En Google Cloud Console, ve a **Google Auth Platform** → **Acceso a los datos**
+2. Aquí puedes ver/agregar los scopes que tu aplicación necesita
+3. Si no ves esta opción o no puedes editarla, no te preocupes - el código ya está configurado para solicitarlos automáticamente
+
+#### Opción B: Automático (Ya configurado)
+✅ **Buenas noticias**: El código de tu aplicación **ya está configurado** para solicitar ambos scopes automáticamente cuando el usuario autoriza:
+- `https://www.googleapis.com/auth/analytics.readonly`
+- `https://www.googleapis.com/auth/webmasters.readonly`
+
+Esto significa que **no necesitas configurar los scopes manualmente**. Se solicitarán automáticamente cuando reconectes.
+
+### Paso 4: Reconectar Google Analytics
+⚠️ **IMPORTANTE**: Después de habilitar la API y agregar el scope, necesitas:
+1. Desconectar Google Analytics desde la página de Integraciones (si ya estaba conectado)
+2. Volver a conectar Google Analytics
+3. Durante la autorización, Google te pedirá permiso para ambos servicios (Analytics y Search Console)
+4. Acepta ambos permisos
+
+### Verificación
+Una vez completados los pasos, deberías poder:
+- ✅ Ver datos de Analytics como antes
+- ✅ Ver la nueva sección "Consultas que llevan a tu sitio" en la página de Analytics
+- ✅ Ver datos actualizados de Search Console cuando cambies el filtro de fechas
 
 ### Redirect URIs Configurados:
 - Desarrollo: `http://localhost:3000/api/integrations/analytics/callback`

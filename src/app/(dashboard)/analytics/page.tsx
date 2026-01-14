@@ -29,12 +29,16 @@ import {
   Clock,
   MousePointer,
   TrendingUp,
+  TrendingDown,
   Globe,
   Smartphone,
   Monitor,
   Loader2,
   Calendar,
   X,
+  Search,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react'
 import { formatNumber, formatCompactNumber, formatPercentage, formatDuration } from '@/lib/utils/format'
 import { subDays, format, parseISO } from 'date-fns'
@@ -157,24 +161,34 @@ interface AnalyticsData {
   hourlyData: Array<{ hour: number; sessions: number; users: number }>
 }
 
+interface SearchQueryGroup {
+  mainQuery: string
+  relatedQueries: string[]
+  totalClicks: number
+  totalImpressions: number
+  avgCtr: number
+  avgPosition: number
+  trend: number
+}
+
+interface SearchConsoleData {
+  queries: SearchQueryGroup[]
+  message?: string
+}
+
 type DateFilterType = 'last28' | 'last7' | 'last30' | 'thisMonth' | 'lastMonth' | 'custom'
 
 export default function AnalyticsPage() {
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null)
+  const [searchConsoleData, setSearchConsoleData] = useState<SearchConsoleData | null>(null)
+  const [searchConsoleLoading, setSearchConsoleLoading] = useState(false)
+  const [expandedQueries, setExpandedQueries] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [dateFilterType, setDateFilterType] = useState<DateFilterType>('last28')
   const [startDate, setStartDate] = useState<string>('')
   const [endDate, setEndDate] = useState<string>('')
   const [isMobile, setIsMobile] = useState(false)
-  const [tooltipData, setTooltipData] = useState<{
-    day: string
-    hour: number
-    sessions: number
-    users: number
-    x: number
-    y: number
-  } | null>(null)
 
   // Detectar tamaño de pantalla
   useEffect(() => {
@@ -239,7 +253,45 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     loadAnalyticsData()
+    loadSearchConsoleData()
   }, [dateRange])
+
+  const loadSearchConsoleData = async () => {
+    try {
+      setSearchConsoleLoading(true)
+      
+      let url = '/api/search-console'
+      if (dateRange) {
+        url += `?startDate=${dateRange.start}&endDate=${dateRange.end}`
+      }
+      
+      const response = await fetch(url)
+      const result = await response.json()
+
+      if (result.success && result.data) {
+        setSearchConsoleData(result.data)
+      } else {
+        setSearchConsoleData({ queries: [], message: result.error || result.data?.message })
+      }
+    } catch (err) {
+      console.error('Error loading search console data:', err)
+      setSearchConsoleData({ queries: [], message: 'Error al cargar datos de Search Console' })
+    } finally {
+      setSearchConsoleLoading(false)
+    }
+  }
+
+  const toggleQueryExpanded = (query: string) => {
+    setExpandedQueries(prev => {
+      const next = new Set(prev)
+      if (next.has(query)) {
+        next.delete(query)
+      } else {
+        next.add(query)
+      }
+      return next
+    })
+  }
 
   const loadAnalyticsData = async () => {
     try {
@@ -480,227 +532,195 @@ export default function AnalyticsPage() {
           </Card>
         </div>
 
-        {/* Charts Row - Embudo y Heatmap */}
-        <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
-          {/* Embudo de Conversión */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Embudo de Conversión</CardTitle>
-              <CardDescription>Flujo de usuarios desde visitas hasta nuevos usuarios</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {analyticsData ? (
-                <div className="space-y-4">
-                  {(() => {
-                    const pageViews = analyticsData.totalPageViews || 0
-                    const sessions = analyticsData.totalSessions || 0
-                    const users = analyticsData.totalUsers || 0
-                    const newUsers = analyticsData.totalNewUsers || 0
+        {/* Embudo de Conversión */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Embudo de Conversión</CardTitle>
+            <CardDescription>Flujo de usuarios desde visitas hasta nuevos usuarios</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {analyticsData ? (
+              <div className="space-y-4">
+                {(() => {
+                  const pageViews = analyticsData.totalPageViews || 0
+                  const sessions = analyticsData.totalSessions || 0
+                  const users = analyticsData.totalUsers || 0
+                  const newUsers = analyticsData.totalNewUsers || 0
+                  
+                  const steps = [
+                    { label: 'Páginas Vistas', value: pageViews, color: '#3b82f6' },
+                    { label: 'Sesiones', value: sessions, color: '#10b981' },
+                    { label: 'Usuarios', value: users, color: '#8b5cf6' },
+                    { label: 'Nuevos Usuarios', value: newUsers, color: '#f59e0b' },
+                  ]
+                  
+                  const maxValue = Math.max(...steps.map(s => s.value), 1)
+                  
+                  return steps.map((step, index) => {
+                    const width = (step.value / maxValue) * 100
+                    const conversionRate = index > 0 
+                      ? ((step.value / steps[index - 1].value) * 100).toFixed(1)
+                      : '100'
                     
-                    const steps = [
-                      { label: 'Páginas Vistas', value: pageViews, color: '#3b82f6' },
-                      { label: 'Sesiones', value: sessions, color: '#10b981' },
-                      { label: 'Usuarios', value: users, color: '#8b5cf6' },
-                      { label: 'Nuevos Usuarios', value: newUsers, color: '#f59e0b' },
-                    ]
-                    
-                    const maxValue = Math.max(...steps.map(s => s.value), 1)
-                    
-                    return steps.map((step, index) => {
-                      const width = (step.value / maxValue) * 100
-                      const conversionRate = index > 0 
-                        ? ((step.value / steps[index - 1].value) * 100).toFixed(1)
-                        : '100'
-                      
-                      return (
-                        <div key={index} className="space-y-1">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="font-medium">{step.label}</span>
-                            <div className="flex items-center gap-2">
-                              <span className="text-muted-foreground">{formatCompactNumber(step.value)}</span>
-                              {index > 0 && (
-                                <span className="text-xs text-muted-foreground">
-                                  ({conversionRate}%)
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <div className="relative h-8 rounded-md overflow-hidden bg-muted">
-                            <div
-                              className="h-full flex items-center justify-end pr-2 transition-all"
-                              style={{
-                                width: `${width}%`,
-                                backgroundColor: step.color,
-                              }}
-                            >
-                              {width > 15 && (
-                                <span className="text-xs font-medium text-white">
-                                  {formatCompactNumber(step.value)}
-                                </span>
-                              )}
-                            </div>
+                    return (
+                      <div key={index} className="space-y-1">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="font-medium">{step.label}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground">{formatCompactNumber(step.value)}</span>
+                            {index > 0 && (
+                              <span className="text-xs text-muted-foreground">
+                                ({conversionRate}%)
+                              </span>
+                            )}
                           </div>
                         </div>
-                      )
-                    })
-                  })()}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-sm text-muted-foreground">
-                  Sin datos. Conecta GA4 y sincroniza.
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Heatmap de Actividad */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Heatmap de Actividad</CardTitle>
-              <CardDescription>Distribución de tráfico por día y hora</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {analyticsData?.hourlyData && analyticsData.hourlyData.length > 0 ? (
-                <div className="space-y-3">
-                  {(() => {
-                    // Agrupar datos por día de la semana (asumiendo que tenemos datos de múltiples días)
-                    // Por ahora, vamos a mostrar un heatmap basado en las horas del día
-                    // y simular días de la semana basado en los datos horarios
-                    const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
-                    const hours = Array.from({ length: 24 }, (_, i) => i)
-                    
-                    // Crear un mapa de datos por hora con sesiones y usuarios
-                    const hourlyMap = new Map<number, { sessions: number; users: number }>()
-                    analyticsData.hourlyData.forEach(item => {
-                      hourlyMap.set(item.hour, {
-                        sessions: item.sessions || 0,
-                        users: item.users || 0,
-                      })
-                    })
-                    
-                    const maxSessions = Math.max(...Array.from(hourlyMap.values()).map(d => d.sessions), 1)
-                    
-                    // Para el heatmap, vamos a usar los datos horarios y distribuirlos por días
-                    // Como no tenemos datos por día de la semana, vamos a crear un heatmap
-                    // que muestre la distribución promedio por hora
-                    return (
-                      <div className="space-y-2 overflow-x-auto relative">
-                        {/* Tooltip personalizado */}
-                        {tooltipData && (
+                        <div className="relative h-8 rounded-md overflow-hidden bg-muted">
                           <div
-                            className="fixed z-50 rounded-lg border bg-background p-3 shadow-lg pointer-events-none"
+                            className="h-full flex items-center justify-end pr-2 transition-all"
                             style={{
-                              left: `${tooltipData.x}px`,
-                              top: `${tooltipData.y}px`,
-                              transform: 'translate(-50%, calc(-100% - 8px))',
+                              width: `${width}%`,
+                              backgroundColor: step.color,
                             }}
                           >
-                            <p className="text-xs font-medium text-muted-foreground mb-1">
-                              {tooltipData.day} {tooltipData.hour.toString().padStart(2, '0')}:00
-                            </p>
-                            <div className="space-y-1">
-                              <p className="text-sm font-semibold">
-                                {formatCompactNumber(tooltipData.sessions)} sesiones
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {formatCompactNumber(tooltipData.users)} usuarios
-                              </p>
-                            </div>
+                            {width > 15 && (
+                              <span className="text-xs font-medium text-white">
+                                {formatCompactNumber(step.value)}
+                              </span>
+                            )}
                           </div>
-                        )}
-                        
-                        {/* Header con horas */}
-                        <div className="flex gap-1 min-w-[600px]">
-                          <div className="w-12 flex-shrink-0 text-xs text-muted-foreground text-center">Hora</div>
-                          {hours.map(hour => (
-                            <div key={hour} className="flex-1 text-xs text-muted-foreground text-center min-w-[20px]">
-                              {hour}
-                            </div>
-                          ))}
-                        </div>
-                        
-                        {/* Filas por día */}
-                        {days.map((day, dayIndex) => {
-                          // Usar los mismos datos horarios para cada día (promedio)
-                          // En una implementación real, esto vendría de datos agrupados por día de semana
-                          return (
-                            <div key={dayIndex} className="flex gap-1 items-center min-w-[600px]">
-                              <div className="w-12 flex-shrink-0 text-xs font-medium">{day}</div>
-                              {hours.map(hour => {
-                                const data = hourlyMap.get(hour) || { sessions: 0, users: 0 }
-                                const sessions = data.sessions
-                                const users = data.users
-                                const intensity = (sessions / maxSessions) * 100
-                                
-                                // Calcular color basado en intensidad
-                                const getColor = (intensity: number) => {
-                                  if (intensity === 0) return 'bg-muted'
-                                  if (intensity < 20) return 'bg-blue-100'
-                                  if (intensity < 40) return 'bg-blue-300'
-                                  if (intensity < 60) return 'bg-blue-500'
-                                  if (intensity < 80) return 'bg-blue-700'
-                                  return 'bg-blue-900'
-                                }
-                                
-                                return (
-                                  <div
-                                    key={hour}
-                                    className={`flex-1 h-6 rounded-sm ${getColor(intensity)} border border-background min-w-[20px] cursor-pointer hover:opacity-80 transition-opacity`}
-                                    onMouseEnter={(e) => {
-                                      const rect = e.currentTarget.getBoundingClientRect()
-                                      setTooltipData({
-                                        day,
-                                        hour,
-                                        sessions,
-                                        users,
-                                        x: rect.left + rect.width / 2,
-                                        y: rect.top,
-                                      })
-                                    }}
-                                    onMouseLeave={() => setTooltipData(null)}
-                                    onMouseMove={(e) => {
-                                      const rect = e.currentTarget.getBoundingClientRect()
-                                      setTooltipData({
-                                        day,
-                                        hour,
-                                        sessions,
-                                        users,
-                                        x: rect.left + rect.width / 2,
-                                        y: rect.top,
-                                      })
-                                    }}
-                                  />
-                                )
-                              })}
-                            </div>
-                          )
-                        })}
-                        
-                        {/* Leyenda */}
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-muted-foreground pt-2 border-t">
-                          <span>Menos tráfico</span>
-                          <div className="flex gap-1">
-                            <div className="w-3 h-3 rounded-sm bg-muted" />
-                            <div className="w-3 h-3 rounded-sm bg-blue-100" />
-                            <div className="w-3 h-3 rounded-sm bg-blue-300" />
-                            <div className="w-3 h-3 rounded-sm bg-blue-500" />
-                            <div className="w-3 h-3 rounded-sm bg-blue-700" />
-                            <div className="w-3 h-3 rounded-sm bg-blue-900" />
-                          </div>
-                          <span>Más tráfico</span>
                         </div>
                       </div>
                     )
-                  })()}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-sm text-muted-foreground">
-                  Sin datos. Conecta GA4 y sincroniza.
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+                  })
+                })()}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-sm text-muted-foreground">
+                Sin datos. Conecta GA4 y sincroniza.
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Consultas de Búsqueda - Search Console */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Search className="h-5 w-5" />
+                  Consultas que llevan a tu sitio
+                </CardTitle>
+                <CardDescription>
+                  Términos de búsqueda que generan tráfico desde Google
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {searchConsoleLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : searchConsoleData?.queries && searchConsoleData.queries.length > 0 ? (
+              <div className="space-y-3">
+                {searchConsoleData.queries.map((queryGroup, index) => {
+                  const isExpanded = expandedQueries.has(queryGroup.mainQuery)
+                  const hasRelatedQueries = queryGroup.relatedQueries.length > 0
+                  
+                  return (
+                    <div
+                      key={index}
+                      className="border rounded-lg p-3 hover:bg-muted/30 transition-colors"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            {hasRelatedQueries && (
+                              <button
+                                onClick={() => toggleQueryExpanded(queryGroup.mainQuery)}
+                                className="text-muted-foreground hover:text-foreground transition-colors"
+                              >
+                                {isExpanded ? (
+                                  <ChevronUp className="h-4 w-4" />
+                                ) : (
+                                  <ChevronDown className="h-4 w-4" />
+                                )}
+                              </button>
+                            )}
+                            <h4 className="font-medium text-sm truncate">
+                              {queryGroup.mainQuery}
+                            </h4>
+                          </div>
+                          {hasRelatedQueries && (
+                            <p className="text-xs text-muted-foreground mt-1 ml-6 truncate">
+                              {queryGroup.relatedQueries.slice(0, 3).join(', ')}
+                              {queryGroup.relatedQueries.length > 3 && '...'}
+                            </p>
+                          )}
+                          
+                          {/* Expanded related queries */}
+                          {isExpanded && hasRelatedQueries && (
+                            <div className="mt-2 ml-6 space-y-1">
+                              {queryGroup.relatedQueries.map((related, i) => (
+                                <p key={i} className="text-xs text-muted-foreground">
+                                  • {related}
+                                </p>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center gap-4 flex-shrink-0">
+                          {/* Trend indicator */}
+                          <div className={`flex items-center gap-1 text-xs font-medium ${
+                            queryGroup.trend > 0 
+                              ? 'text-emerald-600' 
+                              : queryGroup.trend < 0 
+                                ? 'text-red-500' 
+                                : 'text-muted-foreground'
+                          }`}>
+                            {queryGroup.trend > 0 ? (
+                              <TrendingUp className="h-3.5 w-3.5" />
+                            ) : queryGroup.trend < 0 ? (
+                              <TrendingDown className="h-3.5 w-3.5" />
+                            ) : null}
+                            <span>
+                              {queryGroup.trend > 0 ? '+' : ''}
+                              {Math.round(queryGroup.trend)} %
+                            </span>
+                          </div>
+                          
+                          {/* Clicks */}
+                          <div className="text-right min-w-[60px]">
+                            <p className="text-sm font-semibold">
+                              {formatCompactNumber(queryGroup.totalClicks)}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground">clics</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-sm text-muted-foreground">
+                {searchConsoleData?.message || (
+                  <>
+                    Sin datos de Search Console.
+                    <br />
+                    <span className="text-xs">
+                      Reconecta Google Analytics desde Integraciones para activar Search Console.
+                    </span>
+                  </>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-stretch">
           <Card className="flex flex-col">
             <CardHeader className="flex-shrink-0">

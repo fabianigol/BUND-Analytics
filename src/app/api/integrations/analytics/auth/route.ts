@@ -12,12 +12,17 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // OAuth 2.0 parameters
+    // OAuth 2.0 parameters - Include both Analytics and Search Console scopes
+    const scopes = [
+      'https://www.googleapis.com/auth/analytics.readonly',
+      'https://www.googleapis.com/auth/webmasters.readonly', // Search Console
+    ]
+    
     const params = new URLSearchParams({
       client_id: clientId,
       redirect_uri: redirectUri,
       response_type: 'code',
-      scope: 'https://www.googleapis.com/auth/analytics.readonly',
+      scope: scopes.join(' '),
       access_type: 'offline', // Required to get refresh token
       prompt: 'consent', // Force consent to get refresh token
     })
